@@ -10,18 +10,24 @@
 typedef std::bitset<BLOCK_SIZE> Block;
 typedef std::bitset<FEISTELBLOCK_SIZE> Feistelblock;
 
-Feistelblock F(Feistelblock m, const Feistelblock& key);
-std::pair<Feistelblock, Feistelblock> Feistel(Feistelblock l, Feistelblock r, const std::array<Feistelblock, 8>& keys, bool reverseKeyOrder = false);
 
-int Mod(int numerator, int denominator)
-{
-    return (denominator + (numerator % denominator)) % denominator;
-}
+
+// Split a data block into two feistel blocks (into L and R)
+std::pair<Feistelblock, Feistelblock> FeistelSplit(const Block& block);
+
+// Combine two feistel blocks (L and R) into a regular data block
+Block FeistelCombine(const Feistelblock& l, const Feistelblock& r);
+
+// Feistel-cipher
+Block Feistel(const Block& data, const std::array<Feistelblock, 8>& keys, bool reverseKeyOrder = false);
+
+// Arbitrary cipher function
+Feistelblock F(Feistelblock m, const Feistelblock& key);
 
 int main()
 {
-    Feistelblock l = 0b10101010;
-    Feistelblock r = 0b10101010;
+    Block message = 0b1010101010101010;
+
     const std::array<Feistelblock, N_ROUNDS> keys = {
         0b11101101,
         0b01110101,
@@ -33,24 +39,23 @@ int main()
         0b00111101
     };
 
-    std::cout << "Input:      " << l << r << std::endl;
+    std::cout << "Input:      " << message << std::endl;
 
-    auto c = Feistel(l, r, keys);
-    l = c.first;
-    r = c.second;
+    Block ciphertext = Feistel(message, keys);
+    std::cout << "Ciphertext: " << ciphertext << std::endl;
 
-    std::cout << "Ciphertext: " << l << r << std::endl;
+    Block decrypted = Feistel(ciphertext, keys, true);
+    std::cout << "Decrypted:  " << decrypted << std::endl;
 
-    c = Feistel(l, r, keys, true);
-    l = c.first;
-    r = c.second;
-
-    std::cout << "Decrypted:  " << l << r << std::endl;
     return 0;
 }
 
-std::pair<Feistelblock, Feistelblock> Feistel(Feistelblock l, Feistelblock r, const std::array<Feistelblock, 8>& keys, bool reverseKeyOrder)
+Block Feistel(const Block& data, const std::array<Feistelblock, 8>& keys, bool reverseKeyOrder)
 {
+    const auto splitData = FeistelSplit(data);
+    Feistelblock l = splitData.first;
+    Feistelblock r = splitData.second;
+
     Feistelblock tmp;
 
     for (std::size_t i = 0; i < N_ROUNDS; i++)
@@ -68,7 +73,7 @@ std::pair<Feistelblock, Feistelblock> Feistel(Feistelblock l, Feistelblock r, co
         l = tmp;
     }
 
-    return std::make_pair(r, l);
+    return FeistelCombine(r, l);
 }
 
 Feistelblock F(Feistelblock m, const Feistelblock& key)
@@ -80,4 +85,19 @@ Feistelblock F(Feistelblock m, const Feistelblock& key)
 
     // Xor with key
     return m ^ key;
+}
+
+std::pair<Feistelblock, Feistelblock> FeistelSplit(const Block& block)
+{
+    const std::string bits = block.to_string();
+
+    Feistelblock l(bits.substr(0, bits.size() / 2));
+    Feistelblock r(bits.substr(bits.size() / 2));
+
+    return std::make_pair(l, r);
+}
+
+Block FeistelCombine(const Feistelblock& l, const Feistelblock& r)
+{
+    return Block(l.to_string() + r.to_string());
 }
