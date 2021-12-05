@@ -4,11 +4,11 @@
 #include <bitset>
 
 #define BLOCK_SIZE 128
-#define FEISTELBLOCK_SIZE (BLOCK_SIZE / 2)
+#define HALFBLOCK_SIZE (BLOCK_SIZE / 2)
 #define N_ROUNDS 128
 
 typedef std::bitset<BLOCK_SIZE> Block;
-typedef std::bitset<FEISTELBLOCK_SIZE> Feistelblock;
+typedef std::bitset<HALFBLOCK_SIZE> Halfblock;
 typedef std::array<Block, N_ROUNDS> Keyset;
 
 // Will convert a string to a data block
@@ -17,11 +17,11 @@ Block StringToBits(const std::string& s);
 // Will convert a data block to a string
 std::string BitsToString(const Block& bits);
 
-// Split a data block into two feistel blocks (into L and R)
-std::pair<Feistelblock, Feistelblock> FeistelSplit(const Block& block);
+// Split a data block into two half blocks (into L and R)
+std::pair<Halfblock, Halfblock> FeistelSplit(const Block& block);
 
-// Combine two feistel blocks (L and R) into a regular data block
-Block FeistelCombine(const Feistelblock& l, const Feistelblock& r);
+// Combine two half blocks (L and R) into a regular data block
+Block FeistelCombine(const Halfblock& l, const Halfblock& r);
 
 // Will generate a keyset from a seed-key
 Keyset GenerateRoundkeys(const Block& seedKey);
@@ -30,16 +30,16 @@ Keyset GenerateRoundkeys(const Block& seedKey);
 Block Feistel(const Block& data, const Keyset& keys, bool reverseKeyOrder = false);
 
 // Will expand a halfblock to a fullblock
-Block ExpansionFunction(const Feistelblock& block);
+Block ExpansionFunction(const Halfblock& block);
 
 // Will compress a fullblock to a halfblock
-Feistelblock CompressionFunction(const Block& block);
+Halfblock CompressionFunction(const Block& block);
 
 // Substitutes four bits by static random others
 std::string SBox(const std::string& in);
 
 // Arbitrary cipher function
-Feistelblock F(Feistelblock m, const Block& key);
+Halfblock F(Halfblock m, const Block& key);
 
 template<std::size_t T>
 std::bitset<T> Shiftl(const std::bitset<T>& bits, std::size_t amount);
@@ -68,7 +68,7 @@ int main()
         if (cipher1[i] != cipher2[i])
             numDiff++;
     std::cout << std::endl;
-    std::cout << "Total difference in C1 and C2: " << numDiff << std::endl;
+    std::cout << "Total difference between C1 and C2: " << numDiff << std::endl;
 
     return 0;
 }
@@ -106,10 +106,10 @@ std::string DebugPrint(const std::string& asciiMessage)
 Block Feistel(const Block& data, const Keyset& keys, bool reverseKeyOrder)
 {
     const auto splitData = FeistelSplit(data);
-    Feistelblock l = splitData.first;
-    Feistelblock r = splitData.second;
+    Halfblock l = splitData.first;
+    Halfblock r = splitData.second;
 
-    Feistelblock tmp;
+    Halfblock tmp;
 
     for (std::size_t i = 0; i < N_ROUNDS; i++)
     {
@@ -129,7 +129,7 @@ Block Feistel(const Block& data, const Keyset& keys, bool reverseKeyOrder)
     return FeistelCombine(r, l);
 }
 
-Feistelblock F(Feistelblock m, const Block& key)
+Halfblock F(Halfblock m, const Block& key)
 {
     // Made-up F function
 
@@ -157,7 +157,7 @@ Feistelblock F(Feistelblock m, const Block& key)
     return CompressionFunction(m_expanded);
 }
 
-Block ExpansionFunction(const Feistelblock& block)
+Block ExpansionFunction(const Halfblock& block)
 {
     std::stringstream ss;
     const std::string bits = block.to_string();
@@ -177,7 +177,7 @@ Block ExpansionFunction(const Feistelblock& block)
     return Block(ss.str());
 }
 
-Feistelblock CompressionFunction(const Block& block)
+Halfblock CompressionFunction(const Block& block)
 {
     std::stringstream ss;
     const std::string bits = block.to_string();
@@ -205,7 +205,7 @@ Feistelblock CompressionFunction(const Block& block)
         else /*if (sub == "1111")*/ ss << "01";
     }
 
-    return Feistelblock(ss.str());
+    return Halfblock(ss.str());
 }
 
 std::string SBox(const std::string& in)
@@ -256,17 +256,17 @@ std::string BitsToString(const Block& bits)
     return ss.str();
 }
 
-std::pair<Feistelblock, Feistelblock> FeistelSplit(const Block& block)
+std::pair<Halfblock, Halfblock> FeistelSplit(const Block& block)
 {
     const std::string bits = block.to_string();
 
-    Feistelblock l(bits.substr(0, bits.size() / 2));
-    Feistelblock r(bits.substr(bits.size() / 2));
+    Halfblock l(bits.substr(0, bits.size() / 2));
+    Halfblock r(bits.substr(bits.size() / 2));
 
     return std::make_pair(l, r);
 }
 
-Block FeistelCombine(const Feistelblock& l, const Feistelblock& r)
+Block FeistelCombine(const Halfblock& l, const Halfblock& r)
 {
     return Block(l.to_string() + r.to_string());
 }
