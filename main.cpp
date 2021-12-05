@@ -5,7 +5,7 @@
 
 #define BLOCK_SIZE 128
 #define FEISTELBLOCK_SIZE (BLOCK_SIZE / 2)
-#define N_ROUNDS 64
+#define N_ROUNDS 128
 
 typedef std::bitset<BLOCK_SIZE> Block;
 typedef std::bitset<FEISTELBLOCK_SIZE> Feistelblock;
@@ -29,6 +29,9 @@ Keyset GenerateRoundkeys(const Feistelblock& seedKey);
 // Feistel-cipher
 Block Feistel(const Block& data, const Keyset& keys, bool reverseKeyOrder = false);
 
+// Substitutes four bits by static random others
+std::string SBox(const std::string& in);
+
 // Arbitrary cipher function
 Feistelblock F(Feistelblock m, const Feistelblock& key);
 
@@ -38,6 +41,8 @@ std::bitset<T> Shiftl(const std::bitset<T>& bits, std::size_t amount);
 template<std::size_t T>
 std::bitset<T> Shiftr(const std::bitset<T>& bits, std::size_t amount);
 
+std::string DebugPrint(const std::string& asciiMessage);
+
 int Mod(int numerator, int denominator)
 {
     return (denominator + (numerator % denominator)) % denominator;
@@ -46,12 +51,28 @@ int Mod(int numerator, int denominator)
 
 int main()
 {
-    const std::string asciiMessage = "Guten Abend!";
+    const std::string cipher1 = DebugPrint("Hello, World :3");
+    
+    std::cout << std::endl;
 
+    const std::string cipher2 = DebugPrint("Hello, world :3");
+
+    std::size_t numDiff = 0;
+    for (std::size_t i = 0; i < cipher1.size(); i++)
+        if (cipher1[i] != cipher2[i])
+            numDiff++;
+    std::cout << std::endl;
+    std::cout << "Total difference in C1 and C2: " << numDiff << std::endl;
+
+    return 0;
+}
+
+std::string DebugPrint(const std::string& asciiMessage)
+{
     Block message = StringToBits(asciiMessage);
 
     const Feistelblock seedKey(StringToBits("Ich bin ein PASSWORT-SCHLÜSSEL!").to_string()); // StringToBits returns a bitset that's too large. We have to trim it to fit the smaller FeistelBlock bitset.
-    const Keyset roundkeys = GenerateRoundkeys(seedKey);
+    Keyset roundkeys = GenerateRoundkeys(seedKey);
 
     //std::cout << "Keys: " << std::endl;
     //for (std::size_t i = 0; i < roundkeys.size(); i++)
@@ -73,7 +94,7 @@ int main()
     const std::string asciiDecrypted = BitsToString(decrypted);
     std::cout << "Decrypted ascii: " << asciiDecrypted << std::endl;
 
-    return 0;
+    return ciphertext.to_string();
 }
 
 Block Feistel(const Block& data, const Keyset& keys, bool reverseKeyOrder)
@@ -106,13 +127,44 @@ Feistelblock F(Feistelblock m, const Feistelblock& key)
 {
     // Made-up F function
 
-    // Shift to left by 3 for every 1 in the key
-    for (std::size_t i = 0; i < key.size(); i++)
-        if (key[i])
-            m <<= 3;
+    // Shift to left by 1
+    m = Shiftl(m, 1);
 
     // Xor with key
-    return m ^ key;
+    m ^= key;
+
+    // Non-linearly apply subsitution boxes
+    std::stringstream ss;
+    const std::string m_str = m.to_string();
+
+    for (std::size_t i = 0; i < m_str.size(); i += 4)
+    {
+        ss << SBox(m_str.substr(i, 4));
+    }
+
+    m = Feistelblock(ss.str());
+
+    return m;
+}
+
+std::string SBox(const std::string& in)
+{
+    if (in == "0000") return "1100";
+    else if (in == "0001") return "1000";
+    else if (in == "0010") return "0001";
+    else if (in == "0011") return "0111";
+    else if (in == "0100") return "1011";
+    else if (in == "0101") return "0011";
+    else if (in == "0110") return "1101";
+    else if (in == "0111") return "1111";
+    else if (in == "1000") return "0000";
+    else if (in == "1001") return "1010";
+    else if (in == "1010") return "0100";
+    else if (in == "1011") return "1001";
+    else if (in == "1100") return "0010";
+    else if (in == "1101") return "1110";
+    else if (in == "1110") return "0101";
+    else /*if (in == "1111")*/ return "0110";
 }
 
 Block StringToBits(const std::string& s)
@@ -137,7 +189,7 @@ std::string BitsToString(const Block& bits)
 
     for (std::size_t i = 0; i < BLOCK_SIZE; i += 8)
     {
-        ss << (char)std::bitset<8>(bitstring.substr(i, i+8)).to_ulong();
+        ss << (char)std::bitset<8>(bitstring.substr(i, 8)).to_ulong();
     }
 
     return ss.str();
