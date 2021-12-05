@@ -76,3 +76,43 @@ inline Block PasswordToKey(const std::string& in)
 
     return b;
 }
+
+//! Turns a data block into a hex-string
+inline std::string BitsToHexstring(const Block& b)
+{
+    std::stringstream ss;
+    const std::string charset = "0123456789abcdef";
+    const std::string bstr = b.to_string();
+    
+    for (std::size_t i = 0; i < bstr.size(); i += 4)
+        ss << charset[std::bitset<4>(bstr.substr(i, 4)).to_ulong()];
+
+    return ss.str();
+}
+
+//! Turns a hex string into a data block
+inline Block HexstringToBits(const std::string& hexstring)
+{
+    std::stringstream ss;
+
+    for (std::size_t i = 0; i < hexstring.size(); i ++)
+    {
+        const char c = hexstring[i];
+
+        // Get value
+        std::size_t value;
+        if ((c >= '0') && (c <= '9'))
+            // Is it a number?
+            value = (c - '0') + 0;
+        else if ((c >= 'a') && (c <= 'f'))
+            // Else, it is a lowercase letter
+            value = (c - 'a') + 10;
+        else
+            throw std::logic_error("non-hex string detected in HexstringToBits()");
+
+        // Append to our bits
+        ss << std::bitset<4>(value);
+    }
+
+    return Block(ss.str());
+}
