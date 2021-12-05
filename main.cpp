@@ -23,6 +23,9 @@ std::pair<Halfblock, Halfblock> FeistelSplit(const Block& block);
 // Combine two half blocks (L and R) into a regular data block
 Block FeistelCombine(const Halfblock& l, const Halfblock& r);
 
+// Creates a key of size key-size from a password of arbitrary length.
+Block PasswordToKey(const std::string& in);
+
 // Will generate a keyset from a seed-key
 Keyset GenerateRoundkeys(const Block& seedKey);
 
@@ -77,7 +80,7 @@ std::string DebugPrint(const std::string& asciiMessage)
 {
     Block message = StringToBits(asciiMessage);
 
-    const Block seedKey = StringToBits("Ich bin ein PASSWORT-SCHLÜSSEL!");
+    const Block seedKey = PasswordToKey("Ich bin ein PASSWORT-SCHLÜSSEL!");
     Keyset roundkeys = GenerateRoundkeys(seedKey);
 
     //std::cout << "Keys: " << std::endl;
@@ -308,4 +311,15 @@ std::bitset<T> Shiftr(const std::bitset<T>& bits, std::size_t amount)
         ss << bitss[Mod((i - amount), bitss.size())];
 
     return std::bitset<T>(ss.str());
+}
+
+Block PasswordToKey(const std::string& in)
+{
+    Block b;
+
+    // Segment the password in segments of key-size, and xor them together.
+    for (std::size_t i = 0; i < in.size(); i += BLOCK_SIZE / 8)
+        b ^= StringToBits(in.substr(i, BLOCK_SIZE / 8));
+
+    return b;
 }
