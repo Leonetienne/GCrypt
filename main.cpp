@@ -1,15 +1,17 @@
 #include <iostream>
 #include <sstream>
 #include <array>
+#include <bitset>
 
-#define BLOCK_SIZE 8
+#define BLOCK_SIZE 16
+#define FEISTELBLOCK_SIZE (BLOCK_SIZE / 2)
 #define N_ROUNDS 8
 
-std::string F(std::string m, const std::string& key);
-std::string Xor(const std::string& a, const std::string& b);
-std::string Shiftl(const std::string& s, std::size_t amount);
-std::string Shiftr(const std::string& s, std::size_t amount);
-std::pair<std::string, std::string> Feistel(std::string l, std::string r, const std::array<std::string, 8>& keys, bool reverseKeyOrder = false);
+typedef std::bitset<BLOCK_SIZE> Block;
+typedef std::bitset<FEISTELBLOCK_SIZE> Feistelblock;
+
+Feistelblock F(Feistelblock m, const Feistelblock& key);
+std::pair<Feistelblock, Feistelblock> Feistel(Feistelblock l, Feistelblock r, const std::array<Feistelblock, 8>& keys, bool reverseKeyOrder = false);
 
 int Mod(int numerator, int denominator)
 {
@@ -18,17 +20,17 @@ int Mod(int numerator, int denominator)
 
 int main()
 {
-    std::string l = "10101010";
-    std::string r = "10101010";
-    const std::array<std::string, 8> keys = {
-        "11101101",
-        "01110101",
-        "10111101",
-        "00010110",
-        "00000011",
-        "10110011",
-        "11011101",
-        "00111101"
+    Feistelblock l = 0b10101010;
+    Feistelblock r = 0b10101010;
+    const std::array<Feistelblock, N_ROUNDS> keys = {
+        0b11101101,
+        0b01110101,
+        0b10111101,
+        0b00010110,
+        0b00000011,
+        0b10110011,
+        0b11011101,
+        0b00111101
     };
 
     std::cout << "Input:      " << l << r << std::endl;
@@ -44,13 +46,12 @@ int main()
     r = c.second;
 
     std::cout << "Decrypted:  " << l << r << std::endl;
-
     return 0;
 }
 
-std::pair<std::string, std::string> Feistel(std::string l, std::string r, const std::array<std::string, 8>& keys, bool reverseKeyOrder)
+std::pair<Feistelblock, Feistelblock> Feistel(Feistelblock l, Feistelblock r, const std::array<Feistelblock, 8>& keys, bool reverseKeyOrder)
 {
-    std::string tmp;
+    Feistelblock tmp;
 
     for (std::size_t i = 0; i < N_ROUNDS; i++)
     {
@@ -63,55 +64,20 @@ std::pair<std::string, std::string> Feistel(std::string l, std::string r, const 
 
         // Do a feistel round
         tmp = r;
-        r = Xor(l, F(r, keys[keyIndex]));
+        r = l ^ F(r, keys[keyIndex]);
         l = tmp;
     }
 
     return std::make_pair(r, l);
 }
 
-std::string F(std::string m, const std::string& key)
+Feistelblock F(Feistelblock m, const Feistelblock& key)
 {
     // Made-up F function
 
     // Shift 5 to the left
-    m = Shiftl(m, 5);
+    m <<= 5;
 
     // Xor with key
-    return Xor(m, key);
-}
-
-std::string Shiftl(const std::string& s, std::size_t amount)
-{
-    std::stringstream ss;
-
-    for (std::size_t i = 0; i < s.size(); i++)
-        ss << s[Mod((i + amount), s.size())];
-
-    return ss.str();
-}
-
-std::string Shiftr(const std::string& s, std::size_t amount)
-{
-    std::stringstream ss;
-
-    for (std::size_t i = 0; i < s.size(); i++)
-        ss << s[Mod((i - amount), s.size())];
-
-    return ss.str();
-}
-
-std::string Xor(const std::string& a, const std::string& b)
-{
-    std::stringstream ss;
-
-    for (std::size_t i = 0; i < BLOCK_SIZE; i++)
-    {
-        if (a[i] xor b[i])
-            ss << '1';
-        else
-            ss << '0';
-    }
-
-    return ss.str();
+    return m ^ key;
 }
