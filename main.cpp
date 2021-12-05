@@ -9,7 +9,7 @@
 
 typedef std::bitset<BLOCK_SIZE> Block;
 typedef std::bitset<FEISTELBLOCK_SIZE> Feistelblock;
-typedef std::array<Feistelblock, N_ROUNDS> Keyset;
+typedef std::array<Block, N_ROUNDS> Keyset;
 
 // Will convert a string to a data block
 Block StringToBits(const std::string& s);
@@ -24,16 +24,22 @@ std::pair<Feistelblock, Feistelblock> FeistelSplit(const Block& block);
 Block FeistelCombine(const Feistelblock& l, const Feistelblock& r);
 
 // Will generate a keyset from a seed-key
-Keyset GenerateRoundkeys(const Feistelblock& seedKey);
+Keyset GenerateRoundkeys(const Block& seedKey);
 
 // Feistel-cipher
 Block Feistel(const Block& data, const Keyset& keys, bool reverseKeyOrder = false);
+
+// Will expand a halfblock to a fullblock
+Block ExpansionFunction(const Feistelblock& block);
+
+// Will compress a fullblock to a halfblock
+Feistelblock CompressionFunction(const Block& block);
 
 // Substitutes four bits by static random others
 std::string SBox(const std::string& in);
 
 // Arbitrary cipher function
-Feistelblock F(Feistelblock m, const Feistelblock& key);
+Feistelblock F(Feistelblock m, const Block& key);
 
 template<std::size_t T>
 std::bitset<T> Shiftl(const std::bitset<T>& bits, std::size_t amount);
@@ -71,14 +77,14 @@ std::string DebugPrint(const std::string& asciiMessage)
 {
     Block message = StringToBits(asciiMessage);
 
-    const Feistelblock seedKey(StringToBits("Ich bin ein PASSWORT-SCHLÜSSEL!").to_string()); // StringToBits returns a bitset that's too large. We have to trim it to fit the smaller FeistelBlock bitset.
+    const Block seedKey = StringToBits("Ich bin ein PASSWORT-SCHLÜSSEL!");
     Keyset roundkeys = GenerateRoundkeys(seedKey);
 
     //std::cout << "Keys: " << std::endl;
     //for (std::size_t i = 0; i < roundkeys.size(); i++)
     //    std::cout << roundkeys[i] << std::endl;
     //std::cout << "---" << std::endl;
-    //return 0;
+    //exit(0);
 
 
     std::cout << "Message ascii:   " << asciiMessage << std::endl;
@@ -123,47 +129,102 @@ Block Feistel(const Block& data, const Keyset& keys, bool reverseKeyOrder)
     return FeistelCombine(r, l);
 }
 
-Feistelblock F(Feistelblock m, const Feistelblock& key)
+Feistelblock F(Feistelblock m, const Block& key)
 {
     // Made-up F function
 
+    // Expand to full bitwidht
+    Block m_expanded = ExpansionFunction(m);
+
     // Shift to left by 1
-    m = Shiftl(m, 1);
+    m_expanded = Shiftl(m_expanded, 1);
 
     // Xor with key
-    m ^= key;
+    m_expanded ^= key;
 
     // Non-linearly apply subsitution boxes
     std::stringstream ss;
-    const std::string m_str = m.to_string();
+    const std::string m_str = m_expanded.to_string();
 
     for (std::size_t i = 0; i < m_str.size(); i += 4)
     {
         ss << SBox(m_str.substr(i, 4));
     }
 
-    m = Feistelblock(ss.str());
+    m_expanded = Block(ss.str());
 
-    return m;
+    // Return the compressed version
+    return CompressionFunction(m_expanded);
+}
+
+Block ExpansionFunction(const Feistelblock& block)
+{
+    std::stringstream ss;
+    const std::string bits = block.to_string();
+
+    // We have to double the bits!
+    for (std::size_t i = 0; i < bits.size(); i += 2)
+    {
+        const std::string sub = bits.substr(i, 2);
+
+             if (sub == "00")     ss << "1101";
+        else if (sub == "01")     ss << "1000";
+        else if (sub == "10")     ss << "0010";
+        else /*if (sub == "11")*/ ss << "0111";
+
+    }
+
+    return Block(ss.str());
+}
+
+Feistelblock CompressionFunction(const Block& block)
+{
+    std::stringstream ss;
+    const std::string bits = block.to_string();
+
+    // We have to double the bits!
+    for (std::size_t i = 0; i < bits.size(); i += 4)
+    {
+        const std::string sub = bits.substr(i, 4);
+
+             if (sub == "0000")     ss << "10";
+        else if (sub == "0001")     ss << "01";
+        else if (sub == "0010")     ss << "10";
+        else if (sub == "0011")     ss << "10";
+        else if (sub == "0100")     ss << "11";
+        else if (sub == "0101")     ss << "01";
+        else if (sub == "0110")     ss << "00";
+        else if (sub == "0111")     ss << "11";
+        else if (sub == "1000")     ss << "01";
+        else if (sub == "1001")     ss << "00";
+        else if (sub == "1010")     ss << "11";
+        else if (sub == "1011")     ss << "00";
+        else if (sub == "1100")     ss << "11";
+        else if (sub == "1101")     ss << "10";
+        else if (sub == "1110")     ss << "00";
+        else /*if (sub == "1111")*/ ss << "01";
+    }
+
+    return Feistelblock(ss.str());
 }
 
 std::string SBox(const std::string& in)
 {
-    if (in == "0000") return "1100";
-    else if (in == "0001") return "1000";
-    else if (in == "0010") return "0001";
-    else if (in == "0011") return "0111";
-    else if (in == "0100") return "1011";
-    else if (in == "0101") return "0011";
-    else if (in == "0110") return "1101";
-    else if (in == "0111") return "1111";
-    else if (in == "1000") return "0000";
-    else if (in == "1001") return "1010";
-    else if (in == "1010") return "0100";
-    else if (in == "1011") return "1001";
-    else if (in == "1100") return "0010";
-    else if (in == "1101") return "1110";
-    else if (in == "1110") return "0101";
+         if (in == "0000")     return "1100";
+    else if (in == "0001")     return "1000";
+    else if (in == "0010")     return "0001";
+    else if (in == "0011")     return "0111";
+    else if (in == "0100")     return "1011";
+    else if (in == "0101")     return "0011";
+    else if (in == "0110")     return "1101";
+    else if (in == "0111")     return "1111";
+    else if (in == "1000")     return "0000";
+    else if (in == "1001")     return "1010";
+    else if (in == "1010")     return "0100";
+    else if (in == "1011")     return "1001";
+    else if (in == "1100")     return "0010";
+    else if (in == "1101")     return "1110";
+    else if (in == "1110")     return "0101";
     else /*if (in == "1111")*/ return "0110";
 }
 
@@ -210,7 +271,7 @@ Block FeistelCombine(const Feistelblock& l, const Feistelblock& r)
     return Block(l.to_string() + r.to_string());
 }
 
-Keyset GenerateRoundkeys(const Feistelblock& seedKey)
+Keyset GenerateRoundkeys(const Block& seedKey)
 {
     Keyset keys;
 
