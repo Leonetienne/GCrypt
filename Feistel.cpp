@@ -21,17 +21,17 @@ void Feistel::SetKey(const Block& key)
     return;
 }
 
-Block Feistel::Encipher(const Block& data)
+Block Feistel::Encipher(const Block& data) const
 {
     return Run(data, false);
 }
 
-Block Feistel::Decipher(const Block& data)
+Block Feistel::Decipher(const Block& data) const
 {
     return Run(data, true);
 }
 
-Block Feistel::Run(const Block& data, bool reverseKeys)
+Block Feistel::Run(const Block& data, bool reverseKeys) const
 {
     const auto splitData = FeistelSplit(data);
     Halfblock l = splitData.first;
@@ -173,6 +173,8 @@ std::string Feistel::SBox(const std::string& in)
 
 void Feistel::GenerateRoundKeys(const Block& seedKey)
 {
+    // Generate round keys via output feedback modus (OFM) method
+
     // Clear initial key memory
     ZeroKeyMemory();
     roundKeys = Keyset();
@@ -190,7 +192,7 @@ void Feistel::GenerateRoundKeys(const Block& seedKey)
 }
 
 // These pragmas only work for MSVC, as far as i know. Beware!!!
-#pragma optimize( "", off )
+#pragma optimize("", off )
 void Feistel::ZeroKeyMemory()
 {
     for (Block& key : roundKeys)
@@ -198,4 +200,4 @@ void Feistel::ZeroKeyMemory()
 
     return;
 }
-#pragma optimize( "", on )
+#pragma optimize("", on )

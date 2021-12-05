@@ -146,12 +146,15 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Feistel.cpp" />
+    <ClCompile Include="FeistelMan.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Feistel.h" />
+    <ClInclude Include="FeistelMan.h" />
+    <ClInclude Include="Flexblock.h" />
     <ClInclude Include="Halfblock.h" />
     <ClInclude Include="Keyset.h" />
     <ClInclude Include="Util.h" />

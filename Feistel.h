@@ -8,7 +8,11 @@
 class Feistel
 {
 public:
-	Feistel(const Block& key);
+	explicit Feistel(const Block& key);
+
+	Feistel(const Feistel& other) = delete;
+	Feistel(Feistel&& other) noexcept = delete;
+
 	~Feistel();
 
 	//! Will set the seed-key for this feistel network.
@@ -16,14 +20,14 @@ public:
 	void SetKey(const Block& key);
 
 	//! Will encipher a data block via the set seed-key
-	Block Encipher(const Block& data);
+	Block Encipher(const Block& data) const;
 
 	//! Will decipher a data block via the set seed-key
-	Block Decipher(const Block& data);
+	Block Decipher(const Block& data) const;
 
 private:
 	//! Will run the feistel rounds, with either regular key order or reversed key order
-	Block Run(const Block& data, bool reverseKeys);
+	Block Run(const Block& data, bool reverseKeys) const;
 
 	//! Arbitrary cipher function
 	static Halfblock F(Halfblock m, const Block& key);
