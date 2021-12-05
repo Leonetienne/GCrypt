@@ -3,6 +3,8 @@
 #include "Block.h"
 #include "Halfblock.h"
 
+/** Class to perform a feistel block chipher
+*/
 class Feistel
 {
 public:
