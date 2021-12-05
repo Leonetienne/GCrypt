@@ -50,7 +50,7 @@ std::bitset<T> Shiftl(const std::bitset<T>& bits, std::size_t amount);
 template<std::size_t T>
 std::bitset<T> Shiftr(const std::bitset<T>& bits, std::size_t amount);
 
-std::string DebugPrint(const std::string& asciiMessage);
+std::string DiffusionCheck(const std::string& asciiMessage);
 
 int Mod(int numerator, int denominator)
 {
@@ -60,11 +60,11 @@ int Mod(int numerator, int denominator)
 
 int main()
 {
-    const std::string cipher1 = DebugPrint("Hello, World :3");
+    const std::string cipher1 = DiffusionCheck("Hello, World :3");
     
     std::cout << std::endl;
 
-    const std::string cipher2 = DebugPrint("Hello, world :3");
+    const std::string cipher2 = DiffusionCheck("Hello, world :3");
 
     std::size_t numDiff = 0;
     for (std::size_t i = 0; i < cipher1.size(); i++)
@@ -76,7 +76,7 @@ int main()
     return 0;
 }
 
-std::string DebugPrint(const std::string& asciiMessage)
+std::string DiffusionCheck(const std::string& asciiMessage)
 {
     Block message = StringToBits(asciiMessage);
 
