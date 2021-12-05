@@ -32,6 +32,18 @@ Block Feistel(const Block& data, const Keyset& keys, bool reverseKeyOrder = fals
 // Arbitrary cipher function
 Feistelblock F(Feistelblock m, const Feistelblock& key);
 
+template<std::size_t T>
+std::bitset<T> Shiftl(const std::bitset<T>& bits, std::size_t amount);
+
+template<std::size_t T>
+std::bitset<T> Shiftr(const std::bitset<T>& bits, std::size_t amount);
+
+int Mod(int numerator, int denominator)
+{
+    return (denominator + (numerator % denominator)) % denominator;
+}
+
+
 int main()
 {
     const std::string asciiMessage = "Guten Abend!";
@@ -45,6 +57,8 @@ int main()
     //for (std::size_t i = 0; i < roundkeys.size(); i++)
     //    std::cout << roundkeys[i] << std::endl;
     //std::cout << "---" << std::endl;
+    //return 0;
+
 
     std::cout << "Message ascii:   " << asciiMessage << std::endl;
 
@@ -147,12 +161,38 @@ Block FeistelCombine(const Feistelblock& l, const Feistelblock& r)
 Keyset GenerateRoundkeys(const Feistelblock& seedKey)
 {
     Keyset keys;
-    
+
     keys[0] = seedKey;
-    for (std::size_t i = 1; i < keys.size(); i++)
+    keys[1] = (Shiftl(seedKey, 32) ^ keys[0]);
+
+    for (std::size_t i = 2; i < keys.size(); i++)
     {
-        keys[i] = std::hash<Feistelblock>{}(keys[i-1]);
+        keys[i] = Shiftl(keys[i-1], i + 32) ^ keys[i-2];
     }
 
     return keys;
+}
+
+template <std::size_t T>
+std::bitset<T> Shiftl(const std::bitset<T>& bits, std::size_t amount)
+{
+    std::stringstream ss;
+    const std::string bitss = bits.to_string();
+
+    for (std::size_t i = 0; i < bitss.size(); i++)
+        ss << bitss[Mod((i + amount), bitss.size())];
+
+    return std::bitset<T>(ss.str());
+}
+
+template <std::size_t T>
+std::bitset<T> Shiftr(const std::bitset<T>& bits, std::size_t amount)
+{
+    std::stringstream ss;
+    const std::string bitss = bits.to_string();
+
+    for (std::size_t i = 0; i < bitss.size(); i++)
+        ss << bitss[Mod((i - amount), bitss.size())];
+
+    return std::bitset<T>(ss.str());
 }
