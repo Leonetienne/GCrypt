@@ -3,14 +3,18 @@
 #include <array>
 #include <bitset>
 
-#define BLOCK_SIZE 16
+#define BLOCK_SIZE 128
 #define FEISTELBLOCK_SIZE (BLOCK_SIZE / 2)
 #define N_ROUNDS 8
 
 typedef std::bitset<BLOCK_SIZE> Block;
 typedef std::bitset<FEISTELBLOCK_SIZE> Feistelblock;
 
+// Will convert a string to a data block
+Block StringToBits(const std::string& s);
 
+// Will convert a data block to a string
+std::string BitsToString(const Block& bits);
 
 // Split a data block into two feistel blocks (into L and R)
 std::pair<Feistelblock, Feistelblock> FeistelSplit(const Block& block);
@@ -26,7 +30,9 @@ Feistelblock F(Feistelblock m, const Feistelblock& key);
 
 int main()
 {
-    Block message = 0b1010101010101010;
+    const std::string asciiMessage = "Hello, World! :3";
+
+    Block message = StringToBits(asciiMessage);
 
     const std::array<Feistelblock, N_ROUNDS> keys = {
         0b11101101,
@@ -39,13 +45,18 @@ int main()
         0b00111101
     };
 
-    std::cout << "Input:      " << message << std::endl;
+    std::cout << "Message ascii:   " << asciiMessage << std::endl;
+
+    std::cout << "Message:         " << message << std::endl;
 
     Block ciphertext = Feistel(message, keys);
-    std::cout << "Ciphertext: " << ciphertext << std::endl;
+    std::cout << "Ciphertext:      " << ciphertext << std::endl;
 
     Block decrypted = Feistel(ciphertext, keys, true);
-    std::cout << "Decrypted:  " << decrypted << std::endl;
+    std::cout << "Decrypted:       " << decrypted << std::endl;
+
+    const std::string asciiDecrypted = BitsToString(decrypted);
+    std::cout << "Decrypted ascii: " << asciiDecrypted << std::endl;
 
     return 0;
 }
@@ -85,6 +96,34 @@ Feistelblock F(Feistelblock m, const Feistelblock& key)
 
     // Xor with key
     return m ^ key;
+}
+
+Block StringToBits(const std::string& s)
+{
+    std::stringstream ss;
+
+    for (std::size_t i = 0; i < s.size(); i++)
+        ss << std::bitset<8>(s[i]);
+
+    // Pad rest with zeores
+    for (std::size_t i = s.size() * 8; i < BLOCK_SIZE; i++)
+        ss << '0';
+
+    return Block(ss.str());
+}
+
+std::string BitsToString(const Block& bits)
+{
+    std::stringstream ss;
+
+    const std::string bitstring = bits.to_string();
+
+    for (std::size_t i = 0; i < BLOCK_SIZE; i += 8)
+    {
+        ss << (char)std::bitset<8>(bitstring.substr(i, i+8)).to_ulong();
+    }
+
+    return ss.str();
 }
 
 std::pair<Feistelblock, Feistelblock> FeistelSplit(const Block& block)
