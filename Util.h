@@ -36,6 +36,32 @@ inline std::bitset<T> Shiftr(const std::bitset<T>& bits, std::size_t amount)
     return std::bitset<T>(ss.str());
 }
 
+inline std::string PadStringToLength(const std::string& str, const std::size_t len, const char pad, const bool padLeft = true)
+{
+    // Fast-reject: Already above padded length
+    if (str.length() >= len)
+        return str;
+
+    std::stringstream ss;
+
+    // Pad left:
+    if (padLeft)
+    {
+        for (std::size_t i = 0; i < len - str.size(); i++)
+            ss << pad;
+        ss << str;
+    }
+    // Pad right:
+    else
+    {
+        ss << str;
+        for (std::size_t i = 0; i < len - str.size(); i++)
+            ss << pad;
+    }
+
+    return ss.str();
+}
+
 //! Will convert a string to a fixed data block
 inline Block StringToBitblock(const std::string& s)
 {
@@ -45,10 +71,7 @@ inline Block StringToBitblock(const std::string& s)
         ss << std::bitset<8>(s[i]);
 
     // Pad rest with zeores
-    for (std::size_t i = s.size() * 8; i < BLOCK_SIZE; i++)
-        ss << '0';
-
-    return Block(ss.str());
+    return Block(PadStringToLength(ss.str(), 128, '0', false));
 }
 
 //! Will convert a string to a flexible data block
