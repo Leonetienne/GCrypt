@@ -5,10 +5,11 @@
 
 #define BLOCK_SIZE 128
 #define FEISTELBLOCK_SIZE (BLOCK_SIZE / 2)
-#define N_ROUNDS 8
+#define N_ROUNDS 64
 
 typedef std::bitset<BLOCK_SIZE> Block;
 typedef std::bitset<FEISTELBLOCK_SIZE> Feistelblock;
+typedef std::array<Feistelblock, N_ROUNDS> Keyset;
 
 // Will convert a string to a data block
 Block StringToBits(const std::string& s);
@@ -22,37 +23,37 @@ std::pair<Feistelblock, Feistelblock> FeistelSplit(const Block& block);
 // Combine two feistel blocks (L and R) into a regular data block
 Block FeistelCombine(const Feistelblock& l, const Feistelblock& r);
 
+// Will generate a keyset from a seed-key
+Keyset GenerateRoundkeys(const Feistelblock& seedKey);
+
 // Feistel-cipher
-Block Feistel(const Block& data, const std::array<Feistelblock, 8>& keys, bool reverseKeyOrder = false);
+Block Feistel(const Block& data, const Keyset& keys, bool reverseKeyOrder = false);
 
 // Arbitrary cipher function
 Feistelblock F(Feistelblock m, const Feistelblock& key);
 
 int main()
 {
-    const std::string asciiMessage = "Hello, World! :3";
+    const std::string asciiMessage = "Guten Abend!";
 
     Block message = StringToBits(asciiMessage);
 
-    const std::array<Feistelblock, N_ROUNDS> keys = {
-        0b11101101,
-        0b01110101,
-        0b10111101,
-        0b00010110,
-        0b00000011,
-        0b10110011,
-        0b11011101,
-        0b00111101
-    };
+    const Feistelblock seedKey(StringToBits("Ich bin ein PASSWORT-SCHLÜSSEL!").to_string()); // StringToBits returns a bitset that's too large. We have to trim it to fit the smaller FeistelBlock bitset.
+    const Keyset roundkeys = GenerateRoundkeys(seedKey);
+
+    //std::cout << "Keys: " << std::endl;
+    //for (std::size_t i = 0; i < roundkeys.size(); i++)
+    //    std::cout << roundkeys[i] << std::endl;
+    //std::cout << "---" << std::endl;
 
     std::cout << "Message ascii:   " << asciiMessage << std::endl;
 
     std::cout << "Message:         " << message << std::endl;
 
-    Block ciphertext = Feistel(message, keys);
+    Block ciphertext = Feistel(message, roundkeys);
     std::cout << "Ciphertext:      " << ciphertext << std::endl;
 
-    Block decrypted = Feistel(ciphertext, keys, true);
+    Block decrypted = Feistel(ciphertext, roundkeys, true);
     std::cout << "Decrypted:       " << decrypted << std::endl;
 
     const std::string asciiDecrypted = BitsToString(decrypted);
@@ -61,7 +62,7 @@ int main()
     return 0;
 }
 
-Block Feistel(const Block& data, const std::array<Feistelblock, 8>& keys, bool reverseKeyOrder)
+Block Feistel(const Block& data, const Keyset& keys, bool reverseKeyOrder)
 {
     const auto splitData = FeistelSplit(data);
     Feistelblock l = splitData.first;
@@ -91,8 +92,10 @@ Feistelblock F(Feistelblock m, const Feistelblock& key)
 {
     // Made-up F function
 
-    // Shift 5 to the left
-    m <<= 5;
+    // Shift to left by 3 for every 1 in the key
+    for (std::size_t i = 0; i < key.size(); i++)
+        if (key[i])
+            m <<= 3;
 
     // Xor with key
     return m ^ key;
@@ -139,4 +142,17 @@ std::pair<Feistelblock, Feistelblock> FeistelSplit(const Block& block)
 Block FeistelCombine(const Feistelblock& l, const Feistelblock& r)
 {
     return Block(l.to_string() + r.to_string());
+}
+
+Keyset GenerateRoundkeys(const Feistelblock& seedKey)
+{
+    Keyset keys;
+    
+    keys[0] = seedKey;
+    for (std::size_t i = 1; i < keys.size(); i++)
+    {
+        keys[i] = std::hash<Feistelblock>{}(keys[i-1]);
+    }
+
+    return keys;
 }
