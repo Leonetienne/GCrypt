@@ -2,6 +2,7 @@
 #include <bitset>
 #include <sstream>
 #include "Block.h"
+#include "Flexblock.h"
 
 //! Mod-operator that works with negative values
 inline int Mod(int numerator, int denominator)
@@ -35,8 +36,8 @@ inline std::bitset<T> Shiftr(const std::bitset<T>& bits, std::size_t amount)
     return std::bitset<T>(ss.str());
 }
 
-//! Will convert a string to a data block
-inline Block StringToBits(const std::string& s)
+//! Will convert a string to a fixed data block
+inline Block StringToBitblock(const std::string& s)
 {
     std::stringstream ss;
 
@@ -50,8 +51,19 @@ inline Block StringToBits(const std::string& s)
     return Block(ss.str());
 }
 
-//! Will convert a data block to a string
-inline std::string BitsToString(const Block& bits)
+//! Will convert a string to a flexible data block
+inline Flexblock StringToBits(const std::string& s)
+{
+    std::stringstream ss;
+
+    for (std::size_t i = 0; i < s.size(); i++)
+        ss << std::bitset<8>(s[i]);
+
+    return Flexblock(ss.str());
+}
+
+//! Will convert a fixed data block to a string
+inline std::string BitblockToString(const Block& bits)
 {
     std::stringstream ss;
 
@@ -65,20 +77,23 @@ inline std::string BitsToString(const Block& bits)
     return ss.str();
 }
 
-//! Creates a key of size key-size from a password of arbitrary length.
-inline Block PasswordToKey(const std::string& in)
+//! Will convert a flexible data block to a string
+inline std::string BitsToString(const Flexblock& bits)
 {
-    Block b;
+    std::stringstream ss;
 
-    // Segment the password in segments of key-size, and xor them together.
-    for (std::size_t i = 0; i < in.size(); i += BLOCK_SIZE / 8)
-        b ^= StringToBits(in.substr(i, BLOCK_SIZE / 8));
+    const std::string bitstring = bits;
 
-    return b;
+    for (std::size_t i = 0; i < bits.size(); i += 8)
+    {
+        ss << (char)std::bitset<8>(bitstring.substr(i, 8)).to_ulong();
+    }
+
+    return ss.str();
 }
 
-//! Turns a data block into a hex-string
-inline std::string BitsToHexstring(const Block& b)
+//! Turns a fixed data block into a hex-string
+inline std::string BitblockToHexstring(const Block& b)
 {
     std::stringstream ss;
     const std::string charset = "0123456789abcdef";
@@ -90,8 +105,22 @@ inline std::string BitsToHexstring(const Block& b)
     return ss.str();
 }
 
-//! Turns a hex string into a data block
-inline Block HexstringToBits(const std::string& hexstring)
+//! Turns a flexible data block into a hex-string
+inline std::string BitsToHexstring(const Flexblock& b)
+{
+    std::stringstream ss;
+    const std::string charset = "0123456789abcdef";
+    const std::string bstr = b;
+
+    for (std::size_t i = 0; i < bstr.size(); i += 4)
+        ss << charset[std::bitset<4>(bstr.substr(i, 4)).to_ulong()];
+
+    return ss.str();
+}
+
+
+//! Turns a hex string into a fixed data block
+inline Block HexstringToBitblock(const std::string& hexstring)
 {
     std::stringstream ss;
 
@@ -115,4 +144,43 @@ inline Block HexstringToBits(const std::string& hexstring)
     }
 
     return Block(ss.str());
+}
+
+//! Turns a hex string into a flexible data block
+inline Flexblock HexstringToBits(const std::string& hexstring)
+{
+    std::stringstream ss;
+
+    for (std::size_t i = 0; i < hexstring.size(); i++)
+    {
+        const char c = hexstring[i];
+
+        // Get value
+        std::size_t value;
+        if ((c >= '0') && (c <= '9'))
+            // Is it a number?
+            value = (c - '0') + 0;
+        else if ((c >= 'a') && (c <= 'f'))
+            // Else, it is a lowercase letter
+            value = (c - 'a') + 10;
+        else
+            throw std::logic_error("non-hex string detected in HexstringToBits()");
+
+        // Append to our bits
+        ss << std::bitset<4>(value);
+    }
+
+    return ss.str();
+}
+
+//! Creates a key of size key-size from a password of arbitrary length.
+inline Block PasswordToKey(const std::string& in)
+{
+    Block b;
+
+    // Segment the password in segments of key-size, and xor them together.
+    for (std::size_t i = 0; i < in.size(); i += BLOCK_SIZE / 8)
+        b ^= StringToBitblock(in.substr(i, BLOCK_SIZE / 8));
+
+    return b;
 }
