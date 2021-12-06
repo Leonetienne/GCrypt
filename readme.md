@@ -12,7 +12,8 @@ This way this provides relatively good diffusion.
 * It's slow
 * It's probably super insecure
 * It leaves your keys sprinkled in ram
-* But the syntax is pythonlike easy🙇
+* But the syntax is pythonlike easy🙇  
+
 It's pretty ghetto, you know?
 
 ## What are the actual advantages?
