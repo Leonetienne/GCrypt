@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{2b2cf665-f5e6-44db-961f-fc81c88a356d}</ProjectGuid>
-    <RootNamespace>Feistel</RootNamespace>
+    <RootNamespace>GhettoCrypt</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>GhettoCrypt</ProjectName>
   </PropertyGroup>
