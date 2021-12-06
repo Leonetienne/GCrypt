@@ -1,4 +1,4 @@
-#include "GhettoCipherWrapper.h"
+#include "GhettoCryptWrapper.h"
 #include "Cipher.h"
 #include "Util.h"
 

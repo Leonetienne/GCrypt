@@ -25,6 +25,38 @@ It's pretty ghetto, you know?
 * For data obfuscation
 * If your only other option would be no encryption at all
 
+## How do i use this?
+##### Working with strings
+```c++
+using namespace GhettoCipher;
+
+// Get some string
+const std::string input = "I am a super secret message!";
+std::cout << input << std::endl;
+
+// Encrypt
+const std::string encrypted = GhettoCryptWrapper::EncryptString(input, "password1");
+std::cout << encrypted << std::endl;
+
+// Decrypt
+const std::string decrypted = GhettoCryptWrapper::DecryptString(encrypted, "password1");
+std::cout << decrypted << std::endl;
+```
+
+##### Working with files
+```c++
+using namespace GhettoCipher;
+
+// Encrypt
+GhettoCryptWrapper::EncryptFile("main.cpp", "main.cpp.crypt", "password1");
+
+// Decrypt
+GhettoCryptWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", "password1");
+```
+
+If you want to do more complex stuff use the cipher-class [`GhettoCipher::Cipher`](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/Cipher.h) aswell as the conversion methods in [Util.h](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/Util.h). This way you can cipher on bitlevel. Examples on how to do this are in [GhettoCryptWrapper.cpp](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/GhettoCipherWrapper.cpp).
+Without saying, this is more advanced and not as-easy as the methods supplied in the wrapper.
+
 ### I am not kidding, don't use this for critical stuff! Homebrew ciphers are most often shit!
 Especially mine!🦯
 
