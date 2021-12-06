@@ -26,6 +26,9 @@ It's pretty ghetto, you know?
 * For data obfuscation
 * If your only other option would be no encryption at all
 
+### I am not kidding, don't use this for critical stuff! Homebrew ciphers are most often shit!
+Especially mine!🦯
+
 ## How do i use this?
 ##### Working with strings
 ```c++
@@ -43,9 +46,6 @@ std::cout << encrypted << std::endl;
 const std::string decrypted = GhettoCryptWrapper::DecryptString(encrypted, "password1");
 std::cout << decrypted << std::endl;
 ```
-
-### I am not kidding, don't use this for critical stuff! Homebrew ciphers are most often shit!
-Especially mine!🦯
 
 ##### Working with files
 ```c++
