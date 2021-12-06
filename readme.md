@@ -11,27 +11,27 @@ This way this provides relatively good diffusion.
 * It has a very easy syntax
 * It's slow
 * It's probably super insecure
-* It leaves your keys sprinkled in ram
-* Short 128-bit keys🤦‍♂️
+* It leaves your keys sprinkled in ram✨
+* Short 128-bit keys<sup>\*</sup>🤦‍♂️
 * But the syntax is pythonlike easy🙇  
 
 It's pretty ghetto, you know?
 
 ## What are the actual advantages?
-* It's two files to import into the project
+* It's two files to import into your project
 * 1 Line to use
 * 100% cross plattform
 
-## What could i use it for?
+## What could I use it for?
 * For data obfuscation
 * If your only other option would be no encryption at all
 
 ### I am not kidding, don't use this for critical stuff! Homebrew ciphers are most often shit!
 Especially mine!🦯
 
-## How do i use this?
+## How do I use this?
 ##### Installation
-Download the `.h` and `.cpp` files in [INCLUDE/](https://github.com/Leonetienne/GhettoCrypt/tree/master/INCLUDE) and add them to your projects files. *Single-header-magic*.
+Download the `.h` and `.cpp` file in [INCLUDE/](https://github.com/Leonetienne/GhettoCrypt/tree/master/INCLUDE) and add them to your projects files. *Single-header-magic*.
 
 ##### Working with strings
 ```c++
@@ -65,6 +65,8 @@ If you want to do more complex stuff, use the cipher-class [`GhettoCipher::Ciphe
 This way you could, for example, decrypt an ecrypted file directly into memory. Or use a full-length key instead of a password.
 Without saying, this is more advanced and not as-easy as the methods supplied in the wrapper.
 
+---
+* <sup>\*</sup> A key is always of size BLOCK_SIZE. The default block size is 128 (bit), but you can easily change it in [Config.h](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/Config.h) or wherever it'll be put in the INCLUDE/*.cpp. `BLOCK_SIZE` is also the minimal output length!
 
 ## LICENSE
 ```
