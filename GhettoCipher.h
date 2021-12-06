@@ -4,16 +4,16 @@
 
 /** Class to apply a block cipher to messages of arbitrary length in a distributed manner
 */
-class FeistelMan
+class GhettoCipher
 {
 public:
-	explicit FeistelMan(const Block& key);
-	explicit FeistelMan(const std::string& password);
+	explicit GhettoCipher(const Block& key);
+	explicit GhettoCipher(const std::string& password);
 
-	FeistelMan(const FeistelMan& other) = delete;
-	FeistelMan(FeistelMan&& other) noexcept = delete;
+	GhettoCipher(const GhettoCipher& other) = delete;
+	GhettoCipher(GhettoCipher&& other) noexcept = delete;
 	
-	~FeistelMan();
+	~GhettoCipher();
 
 	//! Will set the key
 	void SetKey(const Block& key);
@@ -22,10 +22,10 @@ public:
 	void SetPassword(const std::string& password);
 
 	//! Will encipher a flexblock of data
-	Flexblock Encipher(const Flexblock& data, bool printReports = false) const;
+	Flexblock Encipher(const Flexblock& data, bool printProgress = false) const;
 
 	//! Will decipher a flexblock of data
-	Flexblock Decipher(const Flexblock& data, bool printReports = false) const;
+	Flexblock Decipher(const Flexblock& data, bool printProgress = false) const;
 
 private:
 	Block key;

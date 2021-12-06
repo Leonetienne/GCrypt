@@ -140,14 +140,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Feistel.cpp" />
-    <ClCompile Include="FeistelMan.cpp" />
+    <ClCompile Include="GhettoCipher.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Feistel.h" />
-    <ClInclude Include="FeistelMan.h" />
+    <ClInclude Include="GhettoCipher.h" />
     <ClInclude Include="Flexblock.h" />
     <ClInclude Include="Halfblock.h" />
     <ClInclude Include="Keyset.h" />

@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include "Util.h"
-#include "FeistelMan.h"
+#include "GhettoCipher.h"
 
 int main()
 {
@@ -11,7 +11,7 @@ int main()
 
 
 	// Prepare cipher
-	FeistelMan feistel("Password yo");
+	GhettoCipher feistel("Password yo");
 
 
 	// Encrypt

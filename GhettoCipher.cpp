@@ -1,8 +1,8 @@
-#include "FeistelMan.h"
+#include "GhettoCipher.h"
 #include "Util.h"
 #include <iostream>
 
-FeistelMan::FeistelMan(const Block& key)
+GhettoCipher::GhettoCipher(const Block& key)
 	:
 	key { key }
 {
@@ -10,14 +10,14 @@ FeistelMan::FeistelMan(const Block& key)
 	return;
 }
 
-FeistelMan::FeistelMan(const std::string& password)
+GhettoCipher::GhettoCipher(const std::string& password)
 {
 	key = PasswordToKey(password);
 
 	return;
 }
 
-FeistelMan::~FeistelMan()
+GhettoCipher::~GhettoCipher()
 {
 	// Clear key memory
 	ZeroKeyMemory();
@@ -25,7 +25,7 @@ FeistelMan::~FeistelMan()
 	return;
 }
 
-void FeistelMan::SetKey(const Block& key)
+void GhettoCipher::SetKey(const Block& key)
 {
 	ZeroKeyMemory();
 
@@ -33,7 +33,7 @@ void FeistelMan::SetKey(const Block& key)
 	return;
 }
 
-void FeistelMan::SetPassword(const std::string& password)
+void GhettoCipher::SetPassword(const std::string& password)
 {
 	ZeroKeyMemory();
 
@@ -41,7 +41,7 @@ void FeistelMan::SetPassword(const std::string& password)
 	return;
 }
 
-Flexblock FeistelMan::Encipher(const Flexblock& data, bool printReports) const
+Flexblock GhettoCipher::Encipher(const Flexblock& data, bool printProgress) const
 {
 	// Split cleartext into blocks
 	std::vector<Block> blocks;
@@ -57,7 +57,7 @@ Flexblock FeistelMan::Encipher(const Flexblock& data, bool printReports) const
 	for (std::size_t i = 0; i < blocks.size(); i++)
 	{
 		// Print reports if desired. If we have > 1000 blocks, print one report every 100 blocks. Otherwise for every 10th block.
-		if ((i % ((blocks.size() > 1000)? 100 : 10) == 0) && (printReports))
+		if ((i % ((blocks.size() > 1000)? 100 : 10) == 0) && (printProgress))
 			std::cout << "Encrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100 / blocks.size()) << "\%)" << std::endl;
 	
 		const Block& lastBlock = (i>0) ? blocks[i-1] : emptyBlock;
@@ -73,7 +73,7 @@ Flexblock FeistelMan::Encipher(const Flexblock& data, bool printReports) const
 	return ss.str();
 }
 
-Flexblock FeistelMan::Decipher(const Flexblock& data, bool printReports) const
+Flexblock GhettoCipher::Decipher(const Flexblock& data, bool printProgress) const
 {
 	// Split ciphertext into blocks
 	std::vector<Block> blocks;
@@ -92,7 +92,7 @@ Flexblock FeistelMan::Decipher(const Flexblock& data, bool printReports) const
 	for (std::size_t i = 0; i < blocks.size(); i++)
 	{
 		// Print reports if desired. If we have > 1000 blocks, print one report every 100 blocks. Otherwise for every 10th block.
-		if ((i % ((blocks.size() > 1000) ? 100 : 10) == 0) && (printReports))
+		if ((i % ((blocks.size() > 1000) ? 100 : 10) == 0) && (printProgress))
 			std::cout << "Decrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100/ blocks.size()) << "\%)" << std::endl;
 
 		Block tmpCopy = blocks[i];
@@ -112,11 +112,11 @@ Flexblock FeistelMan::Decipher(const Flexblock& data, bool printReports) const
 }
 
 #pragma optimize("", off )
-void FeistelMan::ZeroKeyMemory()
+void GhettoCipher::ZeroKeyMemory()
 {
 	key.reset();
 	return;
 }
 #pragma optimize("", on )
 
-const Block FeistelMan::emptyBlock;
+const Block GhettoCipher::emptyBlock;

@@ -21,7 +21,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="FeistelMan.cpp">
+    <ClCompile Include="GhettoCipher.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,10 +44,10 @@
     <ClInclude Include="Util.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="FeistelMan.h">
+    <ClInclude Include="Flexblock.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="Flexblock.h">
+    <ClInclude Include="GhettoCipher.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
