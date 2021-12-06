@@ -58,7 +58,7 @@ GhettoCipher::Flexblock GhettoCipher::Cipher::Encipher(const Flexblock& data, bo
 	{
 		// Print reports if desired. If we have > 1000 blocks, print one report every 100 blocks. Otherwise for every 10th block.
 		if ((i % ((blocks.size() > 1000)? 100 : 10) == 0) && (printProgress))
-			std::cout << "Encrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100 / blocks.size()) << "\%)" << std::endl;
+			std::cout << "Encrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100 / blocks.size()) << "%)" << std::endl;
 	
 		const Block& lastBlock = (i>0) ? blocks[i-1] : emptyBlock;
 		blocks[i] = feistel.Encipher(blocks[i] ^ lastBlock);
@@ -93,7 +93,7 @@ GhettoCipher::Flexblock GhettoCipher::Cipher::Decipher(const Flexblock& data, bo
 	{
 		// Print reports if desired. If we have > 1000 blocks, print one report every 100 blocks. Otherwise for every 10th block.
 		if ((i % ((blocks.size() > 1000) ? 100 : 10) == 0) && (printProgress))
-			std::cout << "Decrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100/ blocks.size()) << "\%)" << std::endl;
+			std::cout << "Decrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100/ blocks.size()) << "%)" << std::endl;
 
 		Block tmpCopy = blocks[i];
 
