@@ -21,7 +21,7 @@ It's pretty ghetto, you know?
 * 1 Line to use
 * 100% cross plattform
 
-## When could i use it?
+## What could i use it for?
 * For data obfuscation
 * If your only other option would be no encryption at all
 
