@@ -44,6 +44,9 @@ const std::string decrypted = GhettoCryptWrapper::DecryptString(encrypted, "pass
 std::cout << decrypted << std::endl;
 ```
 
+### I am not kidding, don't use this for critical stuff! Homebrew ciphers are most often shit!
+Especially mine!🦯
+
 ##### Working with files
 ```c++
 using namespace GhettoCipher;
@@ -59,8 +62,6 @@ If you want to do more complex stuff, use the cipher-class [`GhettoCipher::Ciphe
 This way you could, for example, decrypt an ecrypted file directly into memory. Or use a full-length key instead of a password.
 Without saying, this is more advanced and not as-easy as the methods supplied in the wrapper.
 
-### I am not kidding, don't use this for critical stuff! Homebrew ciphers are most often shit!
-Especially mine!🦯
 
 ## LICENSE
 ```
