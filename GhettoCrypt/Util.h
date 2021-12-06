@@ -199,7 +199,9 @@ namespace GhettoCipher
         return ss.str();
     }
 
-    //! Creates a key of size key-size from a password of arbitrary length.
+    //! Creates a key of size BLOCK_SIZE from a password of arbitrary length.
+    //! Using passwords larger (in bits) than BLOCK_SIZE is not generally recommended.
+    //! Note that if your password is shorter (in bits) than BLOCK_SIZE, the rest of the key will be padded with 0x0. Further round-keys will be extrapolated though.
     inline Block PasswordToKey(const std::string& in)
     {
         Block b;

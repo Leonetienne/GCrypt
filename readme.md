@@ -12,7 +12,7 @@ This way this provides relatively good diffusion.
 * It's slow
 * It's probably super insecure
 * It leaves your keys sprinkled in ram✨
-* Short 128-bit keys<sup>\*</sup>🤦‍♂️
+* 512-bit keys <sup>\*</sup>
 * But the syntax is pythonlike easy🙇  
 
 It's pretty ghetto, you know?
@@ -66,7 +66,7 @@ This way you could, for example, decrypt an ecrypted file directly into memory. 
 Without saying, this is more advanced and not as-easy as the methods supplied in the wrapper.
 
 ---
-* <sup>\*</sup> A key is always of size BLOCK_SIZE. The default block size is 128 (bit), but you can easily change it in [Config.h](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/Config.h) or wherever it'll be put in the INCLUDE/*.cpp. `BLOCK_SIZE` is also the minimal output length!
+* <sup>\*</sup> A key is always of size BLOCK_SIZE. The default block size is 512 (bit), but you can easily change it in [Config.h](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/Config.h) or wherever it'll be put in the INCLUDE/*.cpp. `BLOCK_SIZE` is also the minimal output length!
 
 ## LICENSE
 ```
