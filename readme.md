@@ -30,6 +30,9 @@ It's pretty ghetto, you know?
 Especially mine!🦯
 
 ## How do i use this?
+##### Installation
+Download the `.h` and `.cpp` files in [INCLUDE/](https://github.com/Leonetienne/GhettoCrypt/tree/master/INCLUDE) and add them to your projects files. *Single-header-magic*.
+
 ##### Working with strings
 ```c++
 using namespace GhettoCipher;
