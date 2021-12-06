@@ -191,7 +191,7 @@ void GhettoCipher::Feistel::GenerateRoundKeys(const Block& seedKey)
     return;
 }
 
-// These pragmas only work for MSVC, as far as i know. Beware!!!
+// These pragmas only work for MSVC and g++, as far as i know. Beware!!!
 #if defined _WIN32 || defined _WIN64
 #pragma optimize("", off )
 #elif defined __GNUG__

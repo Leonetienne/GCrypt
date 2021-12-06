@@ -112,6 +112,7 @@ GhettoCipher::Flexblock GhettoCipher::Cipher::Decipher(const Flexblock& data, bo
 	return ss.str();
 }
 
+// These pragmas only work for MSVC and g++, as far as i know. Beware!!!
 #if defined _WIN32 || defined _WIN64
 #pragma optimize("", off )
 #elif defined __GNUG__

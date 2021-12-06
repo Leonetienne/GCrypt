@@ -28,11 +28,6 @@
 
 #pragma once
 
-/*** ./../GhettoCrypt/Version.h ***/
-
-#pragma once
-#define GHETTOCRYPT_VERSION 0.1
-
 /*** ./../GhettoCrypt/GhettoCryptWrapper.h ***/
 
 #pragma once
@@ -80,6 +75,11 @@ namespace GhettoCipher
 	typedef std::string Flexblock;
 }
 
+/*** ./../GhettoCrypt/Version.h ***/
+
+#pragma once
+#define GHETTOCRYPT_VERSION 0.1
+
 /*** ./../GhettoCrypt/Config.h ***/
 
 #pragma once
@@ -88,17 +88,6 @@ namespace GhettoCipher
 {
 	constexpr int BLOCK_SIZE = 512;
 	constexpr int N_ROUNDS = 64;
-}
-
-/*** ./../GhettoCrypt/Halfblock.h ***/
-
-#pragma once
-#include <bitset>
-
-namespace GhettoCipher
-{
-	constexpr int HALFBLOCK_SIZE = (BLOCK_SIZE / 2);
-	typedef std::bitset<HALFBLOCK_SIZE> Halfblock;
 }
 
 /*** ./../GhettoCrypt/Block.h ***/
@@ -370,6 +359,17 @@ namespace GhettoCipher
 
         return;
     }
+}
+
+/*** ./../GhettoCrypt/Halfblock.h ***/
+
+#pragma once
+#include <bitset>
+
+namespace GhettoCipher
+{
+	constexpr int HALFBLOCK_SIZE = (BLOCK_SIZE / 2);
+	typedef std::bitset<HALFBLOCK_SIZE> Halfblock;
 }
 
 /*** ./../GhettoCrypt/Keyset.h ***/
