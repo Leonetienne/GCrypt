@@ -206,7 +206,9 @@ namespace GhettoCipher
 
         // Segment the password in segments of key-size, and xor them together.
         for (std::size_t i = 0; i < in.size(); i += BLOCK_SIZE / 8)
-            b ^= StringToBitblock(in.substr(i, BLOCK_SIZE / 8));
+            b ^= StringToBitblock(
+                PadStringToLength(in.substr(i, BLOCK_SIZE / 8), BLOCK_SIZE / 8, 0, false)
+            );
 
         return b;
     }
