@@ -1,6 +1,7 @@
+#include <iostream>
+#include <vector>
 #include "Cipher.h"
 #include "Util.h"
-#include <iostream>
 
 GhettoCipher::Cipher::Cipher(const Block& key)
 	:
