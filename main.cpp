@@ -1,38 +1,44 @@
 #pragma once
 #include <iostream>
 #include "Util.h"
-#include "GhettoCipher.h"
+#include "GhettoCipherWrapper.h"
+
+void ExampleString()
+{
+	std::cout << "Example on how to encrypt & decrypt a string:" << std::endl;
+
+	// Get some string
+	const std::string input = "I am a super secret message!";
+	std::cout << input << std::endl;
+
+	// Encrypt
+	const std::string encrypted = GhettoCipherWrapper::EncryptString(input, "password1");
+	std::cout << encrypted << std::endl;
+
+	// Decrypt
+	const std::string decrypted = GhettoCipherWrapper::DecryptString(encrypted, "password1");
+	std::cout << decrypted << std::endl;
+
+	return;
+}
+
+void ExampleFiles()
+{
+	std::cout << "Example on how to encrypt & decrypt any file:" << std::endl;
+
+	// Encrypt
+	GhettoCipherWrapper::EncryptFile("main.cpp", "main.cpp.crypt", "password1");
+
+	// Decrypt
+	GhettoCipherWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", "password1");
+
+	return;
+}
 
 int main()
 {
-	// Load file to be encrypted
-	const Flexblock file = ReadFileToBits("images.jpg");
-	std::cout << "Finished reading..." << std::endl;
-
-
-	// Prepare cipher
-	GhettoCipher feistel("Password yo");
-
-
-	// Encrypt
-	const Flexblock ciphertext = feistel.Encipher(file, true);
-	//const std::string cipherHex = BitsToHexstring(ciphertext);
-	std::cout << "Finished encrypting..." << std::endl;
-
-	// Save encrypted file
-	WriteBitsToFile("encrypted.jpg", ciphertext);
-	std::cout << "Finished writing..." << std::endl;
-
-
-	// Decrypt
-	//const Flexblock cleartextBits = feistel.Decipher(HexstringToBits(cipherHex));
-	const Flexblock cleartextBits = feistel.Decipher(ciphertext, true);
-	std::cout << "Finished decrypting..." << std::endl;
-
-	
-	// Save decrypted file
-	WriteBitsToFile("decrypted.jpg", cleartextBits);
-	std::cout << "Finished writing..." << std::endl;
+	ExampleString();
+	ExampleFiles();
 
 	return 0;
 }
