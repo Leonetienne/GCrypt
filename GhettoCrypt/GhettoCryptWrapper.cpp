@@ -38,7 +38,7 @@ std::string GhettoCipher::GhettoCryptWrapper::DecryptString(const std::string& c
 	return cleartext;
 }
 
-bool GhettoCipher::GhettoCryptWrapper::EncryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password)
+bool GhettoCipher::GhettoCryptWrapper::EncryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport)
 {
 	try
 	{
@@ -49,7 +49,7 @@ bool GhettoCipher::GhettoCryptWrapper::EncryptFile(const std::string& filename_i
 		Cipher cipher(password);
 
 		// Encrypt our cleartext bits
-		const Flexblock ciphertext_bits = cipher.Encipher(cleartext_bits);
+		const Flexblock ciphertext_bits = cipher.Encipher(cleartext_bits, printProgressReport);
 
 		// Write our ciphertext bits to file
 		WriteBitsToFile(filename_out, ciphertext_bits);
@@ -62,7 +62,7 @@ bool GhettoCipher::GhettoCryptWrapper::EncryptFile(const std::string& filename_i
 	}
 }
 
-bool GhettoCipher::GhettoCryptWrapper::DecryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password)
+bool GhettoCipher::GhettoCryptWrapper::DecryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport)
 {
 	try
 	{
@@ -73,7 +73,7 @@ bool GhettoCipher::GhettoCryptWrapper::DecryptFile(const std::string& filename_i
 		Cipher cipher(password);
 
 		// Decrypt the ciphertext bits
-		const Flexblock cleartext_bits = cipher.Decipher(ciphertext_bits);
+		const Flexblock cleartext_bits = cipher.Decipher(ciphertext_bits, printProgressReport);
 
 		// Write our cleartext bits to file
 		WriteBitsToFile(filename_out, cleartext_bits);

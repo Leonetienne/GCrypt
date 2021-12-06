@@ -18,13 +18,13 @@ namespace GhettoCipher
 		//! Returns false if anything goes wrong (like, file-access).
 		//! @filename_in The file to be read.
 		//! @filename_out The file the encrypted version should be saved in.
-		static bool EncryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password);
+		static bool EncryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport = false);
 
 		//! Will decrypt a file.
 		//! Returns false if anything goes wrong (like, file-access).
 		//! @filename_in The file to be read.
 		//! @filename_out The file the decrypted version should be saved in.
-		static bool DecryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password);
+		static bool DecryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport = false);
 
 	private:
 		// No instanciation! >:(
