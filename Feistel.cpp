@@ -2,40 +2,40 @@
 #include "Util.h"
 #include "Config.h"
 
-Feistel::Feistel(const Block& key)
+GhettoCipher::Feistel::Feistel(const Block& key)
 {
     SetKey(key);
     return;
 }
 
-Feistel::~Feistel()
+GhettoCipher::Feistel::~Feistel()
 {
     ZeroKeyMemory();
 
     return;
 }
 
-void Feistel::SetKey(const Block& key)
+void GhettoCipher::Feistel::SetKey(const Block& key)
 {
     GenerateRoundKeys(key);
     return;
 }
 
-Block Feistel::Encipher(const Block& data) const
+GhettoCipher::Block GhettoCipher::Feistel::Encipher(const Block& data) const
 {
     return Run(data, false);
 }
 
-Block Feistel::Decipher(const Block& data) const
+GhettoCipher::Block GhettoCipher::Feistel::Decipher(const Block& data) const
 {
     return Run(data, true);
 }
 
-Block Feistel::Run(const Block& data, bool reverseKeys) const
+GhettoCipher::Block GhettoCipher::Feistel::Run(const Block& data, bool reverseKeys) const
 {
     const auto splitData = FeistelSplit(data);
-    Halfblock l = splitData.first;
-    Halfblock r = splitData.second;
+    GhettoCipher::Halfblock l = splitData.first;
+    GhettoCipher::Halfblock r = splitData.second;
 
     Halfblock tmp;
 
@@ -57,7 +57,7 @@ Block Feistel::Run(const Block& data, bool reverseKeys) const
     return FeistelCombine(r, l);
 }
 
-Halfblock Feistel::F(Halfblock m, const Block& key)
+GhettoCipher::Halfblock GhettoCipher::Feistel::F(Halfblock m, const Block& key)
 {
     // Made-up F function
 
@@ -85,7 +85,7 @@ Halfblock Feistel::F(Halfblock m, const Block& key)
     return CompressionFunction(m_expanded);
 }
 
-std::pair<Halfblock, Halfblock> Feistel::FeistelSplit(const Block& block)
+std::pair<GhettoCipher::Halfblock, GhettoCipher::Halfblock> GhettoCipher::Feistel::FeistelSplit(const Block& block)
 {
     const std::string bits = block.to_string();
 
@@ -95,12 +95,12 @@ std::pair<Halfblock, Halfblock> Feistel::FeistelSplit(const Block& block)
     return std::make_pair(l, r);
 }
 
-Block Feistel::FeistelCombine(const Halfblock& l, const Halfblock& r)
+GhettoCipher::Block GhettoCipher::Feistel::FeistelCombine(const Halfblock& l, const Halfblock& r)
 {
     return Block(l.to_string() + r.to_string());
 }
 
-Block Feistel::ExpansionFunction(const Halfblock& block)
+GhettoCipher::Block GhettoCipher::Feistel::ExpansionFunction(const Halfblock& block)
 {
     std::stringstream ss;
     const std::string bits = block.to_string();
@@ -120,7 +120,7 @@ Block Feistel::ExpansionFunction(const Halfblock& block)
     return Block(ss.str());
 }
 
-Halfblock Feistel::CompressionFunction(const Block& block)
+GhettoCipher::Halfblock GhettoCipher::Feistel::CompressionFunction(const Block& block)
 {
     std::stringstream ss;
     const std::string bits = block.to_string();
@@ -151,7 +151,7 @@ Halfblock Feistel::CompressionFunction(const Block& block)
     return Halfblock(ss.str());
 }
 
-std::string Feistel::SBox(const std::string& in)
+std::string GhettoCipher::Feistel::SBox(const std::string& in)
 {
          if (in == "0000")     return "1100";
     else if (in == "0001")     return "1000";
@@ -171,7 +171,7 @@ std::string Feistel::SBox(const std::string& in)
     else /*if (in == "1111")*/ return "0110";
 }
 
-void Feistel::GenerateRoundKeys(const Block& seedKey)
+void GhettoCipher::Feistel::GenerateRoundKeys(const Block& seedKey)
 {
     // Generate round keys via output feedback modus (OFM) method
 
@@ -193,7 +193,7 @@ void Feistel::GenerateRoundKeys(const Block& seedKey)
 
 // These pragmas only work for MSVC, as far as i know. Beware!!!
 #pragma optimize("", off )
-void Feistel::ZeroKeyMemory()
+void GhettoCipher::Feistel::ZeroKeyMemory()
 {
     for (Block& key : roundKeys)
         key.reset();

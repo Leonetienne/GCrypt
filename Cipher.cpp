@@ -1,8 +1,8 @@
-#include "GhettoCipher.h"
+#include "Cipher.h"
 #include "Util.h"
 #include <iostream>
 
-GhettoCipher::GhettoCipher(const Block& key)
+GhettoCipher::Cipher::Cipher(const Block& key)
 	:
 	key { key }
 {
@@ -10,14 +10,14 @@ GhettoCipher::GhettoCipher(const Block& key)
 	return;
 }
 
-GhettoCipher::GhettoCipher(const std::string& password)
+GhettoCipher::Cipher::Cipher(const std::string& password)
 {
 	key = PasswordToKey(password);
 
 	return;
 }
 
-GhettoCipher::~GhettoCipher()
+GhettoCipher::Cipher::~Cipher()
 {
 	// Clear key memory
 	ZeroKeyMemory();
@@ -25,7 +25,7 @@ GhettoCipher::~GhettoCipher()
 	return;
 }
 
-void GhettoCipher::SetKey(const Block& key)
+void GhettoCipher::Cipher::SetKey(const Block& key)
 {
 	ZeroKeyMemory();
 
@@ -33,7 +33,7 @@ void GhettoCipher::SetKey(const Block& key)
 	return;
 }
 
-void GhettoCipher::SetPassword(const std::string& password)
+void GhettoCipher::Cipher::SetPassword(const std::string& password)
 {
 	ZeroKeyMemory();
 
@@ -41,7 +41,7 @@ void GhettoCipher::SetPassword(const std::string& password)
 	return;
 }
 
-Flexblock GhettoCipher::Encipher(const Flexblock& data, bool printProgress) const
+GhettoCipher::Flexblock GhettoCipher::Cipher::Encipher(const Flexblock& data, bool printProgress) const
 {
 	// Split cleartext into blocks
 	std::vector<Block> blocks;
@@ -73,7 +73,7 @@ Flexblock GhettoCipher::Encipher(const Flexblock& data, bool printProgress) cons
 	return ss.str();
 }
 
-Flexblock GhettoCipher::Decipher(const Flexblock& data, bool printProgress) const
+GhettoCipher::Flexblock GhettoCipher::Cipher::Decipher(const Flexblock& data, bool printProgress) const
 {
 	// Split ciphertext into blocks
 	std::vector<Block> blocks;
@@ -112,11 +112,11 @@ Flexblock GhettoCipher::Decipher(const Flexblock& data, bool printProgress) cons
 }
 
 #pragma optimize("", off )
-void GhettoCipher::ZeroKeyMemory()
+void GhettoCipher::Cipher::ZeroKeyMemory()
 {
 	key.reset();
 	return;
 }
 #pragma optimize("", on )
 
-const Block GhettoCipher::emptyBlock;
+const GhettoCipher::Block GhettoCipher::Cipher::emptyBlock;

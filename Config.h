@@ -1,4 +1,7 @@
 #pragma once
 
-#define BLOCK_SIZE 128
-#define N_ROUNDS 64
+namespace GhettoCipher
+{
+	constexpr int BLOCK_SIZE = 128;
+	constexpr int N_ROUNDS = 64;
+}

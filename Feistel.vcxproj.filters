@@ -21,10 +21,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="GhettoCipher.cpp">
+    <ClCompile Include="GhettoCipherWrapper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="GhettoCipherWrapper.cpp">
+    <ClCompile Include="Cipher.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,10 +50,13 @@
     <ClInclude Include="Flexblock.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GhettoCipher.h">
+    <ClInclude Include="GhettoCipherWrapper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GhettoCipherWrapper.h">
+    <ClInclude Include="Version.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Cipher.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

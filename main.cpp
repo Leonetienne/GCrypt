@@ -3,6 +3,8 @@
 #include "Util.h"
 #include "GhettoCipherWrapper.h"
 
+using namespace GhettoCipher;
+
 void ExampleString()
 {
 	std::cout << "Example on how to encrypt & decrypt a string:" << std::endl;
@@ -12,11 +14,11 @@ void ExampleString()
 	std::cout << input << std::endl;
 
 	// Encrypt
-	const std::string encrypted = GhettoCipherWrapper::EncryptString(input, "password1");
+	const std::string encrypted = GhettoCryptWrapper::EncryptString(input, "password1");
 	std::cout << encrypted << std::endl;
 
 	// Decrypt
-	const std::string decrypted = GhettoCipherWrapper::DecryptString(encrypted, "password1");
+	const std::string decrypted = GhettoCryptWrapper::DecryptString(encrypted, "password1");
 	std::cout << decrypted << std::endl;
 
 	return;
@@ -27,10 +29,10 @@ void ExampleFiles()
 	std::cout << "Example on how to encrypt & decrypt any file:" << std::endl;
 
 	// Encrypt
-	GhettoCipherWrapper::EncryptFile("main.cpp", "main.cpp.crypt", "password1");
+	GhettoCryptWrapper::EncryptFile("main.cpp", "main.cpp.crypt", "password1");
 
 	// Decrypt
-	GhettoCipherWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", "password1");
+	GhettoCryptWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", "password1");
 
 	return;
 }

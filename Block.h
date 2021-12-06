@@ -2,4 +2,7 @@
 #include <bitset>
 #include "Config.h"
 
-typedef std::bitset<BLOCK_SIZE> Block;
+namespace GhettoCipher
+{
+	typedef std::bitset<BLOCK_SIZE> Block;
+}
