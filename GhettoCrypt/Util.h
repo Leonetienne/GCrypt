@@ -39,6 +39,7 @@ namespace GhettoCipher
         return std::bitset<T>(ss.str());
     }
 
+    //! Will pad a string to a set length with a certain character
     inline std::string PadStringToLength(const std::string& str, const std::size_t len, const char pad, const bool padLeft = true)
     {
         // Fast-reject: Already above padded length
@@ -65,7 +66,7 @@ namespace GhettoCipher
         return ss.str();
     }
 
-    //! Will convert a string to a fixed data block
+    //! Will convert a string to a fixed-size data block
     inline Block StringToBitblock(const std::string& s)
     {
         std::stringstream ss;
@@ -88,7 +89,7 @@ namespace GhettoCipher
         return Flexblock(ss.str());
     }
 
-    //! Will convert a fixed data block to a string
+    //! Will convert a fixed-size data block to a string
     inline std::string BitblockToString(const Block& bits)
     {
         std::stringstream ss;
@@ -118,7 +119,7 @@ namespace GhettoCipher
         return ss.str();
     }
 
-    //! Turns a fixed data block into a hex-string
+    //! Turns a fixed-size data block into a hex-string
     inline std::string BitblockToHexstring(const Block& b)
     {
         std::stringstream ss;
@@ -145,7 +146,7 @@ namespace GhettoCipher
     }
 
 
-    //! Turns a hex string into a fixed data block
+    //! Turns a hex string into a fixed-size data block
     inline Block HexstringToBitblock(const std::string& hexstring)
     {
         std::stringstream ss;
