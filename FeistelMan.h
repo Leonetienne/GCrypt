@@ -22,10 +22,10 @@ public:
 	void SetPassword(const std::string& password);
 
 	//! Will encipher a flexblock of data
-	Flexblock Encipher(const Flexblock& data) const;
+	Flexblock Encipher(const Flexblock& data, bool printReports = false) const;
 
 	//! Will decipher a flexblock of data
-	Flexblock Decipher(const Flexblock& data) const;
+	Flexblock Decipher(const Flexblock& data, bool printReports = false) const;
 
 private:
 	Block key;

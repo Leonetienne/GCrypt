@@ -1,6 +1,7 @@
 #pragma once
 #include <bitset>
 #include <sstream>
+#include <fstream>
 #include "Block.h"
 #include "Flexblock.h"
 
@@ -206,4 +207,46 @@ inline Block PasswordToKey(const std::string& in)
         b ^= StringToBitblock(in.substr(i, BLOCK_SIZE / 8));
 
     return b;
+}
+
+//! Will read a file into a flexblock
+inline Flexblock ReadFileToBits(const std::string& filepath)
+{
+    // Read file
+    std::ifstream ifs(filepath, std::ios::binary);
+    
+    if (!ifs.good())
+        throw std::runtime_error("Unable to open ifilestream!");
+
+    std::stringstream ss;
+    std::copy(
+        std::istreambuf_iterator<char>(ifs),
+        std::istreambuf_iterator<char>(),
+        std::ostreambuf_iterator<char>(ss)
+    );
+
+    ifs.close();
+
+    const std::string bytes = ss.str();
+
+    // Convert bytes to bits
+    return StringToBits(bytes);
+}
+
+//! Will save bits to a binary file
+inline void WriteBitsToFile(const std::string& filepath, const Flexblock& bits)
+{
+    // Convert bits to bytes
+    const std::string bytes = BitsToString(bits);
+
+    // Write bits to file
+    std::ofstream ofs(filepath, std::ios::binary);
+
+    if (!ofs.good())
+        throw std::runtime_error("Unable to open ofilestream!");
+
+    ofs.write(bytes.data(), bytes.length());
+    ofs.close();
+
+    return;
 }

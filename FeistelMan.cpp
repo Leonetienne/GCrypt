@@ -41,7 +41,7 @@ void FeistelMan::SetPassword(const std::string& password)
 	return;
 }
 
-Flexblock FeistelMan::Encipher(const Flexblock& data) const
+Flexblock FeistelMan::Encipher(const Flexblock& data, bool printReports) const
 {
 	// Split cleartext into blocks
 	std::vector<Block> blocks;
@@ -56,6 +56,10 @@ Flexblock FeistelMan::Encipher(const Flexblock& data) const
 
 	for (std::size_t i = 0; i < blocks.size(); i++)
 	{
+		// Print reports if desired. If we have > 1000 blocks, print one report every 100 blocks. Otherwise for every 10th block.
+		if ((i % ((blocks.size() > 1000)? 100 : 10) == 0) && (printReports))
+			std::cout << "Encrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100 / blocks.size()) << "\%)" << std::endl;
+	
 		const Block& lastBlock = (i>0) ? blocks[i-1] : emptyBlock;
 		blocks[i] = feistel.Encipher(blocks[i] ^ lastBlock);
 	}
@@ -69,7 +73,7 @@ Flexblock FeistelMan::Encipher(const Flexblock& data) const
 	return ss.str();
 }
 
-Flexblock FeistelMan::Decipher(const Flexblock& data) const
+Flexblock FeistelMan::Decipher(const Flexblock& data, bool printReports) const
 {
 	// Split ciphertext into blocks
 	std::vector<Block> blocks;
@@ -87,6 +91,10 @@ Flexblock FeistelMan::Decipher(const Flexblock& data) const
 	
 	for (std::size_t i = 0; i < blocks.size(); i++)
 	{
+		// Print reports if desired. If we have > 1000 blocks, print one report every 100 blocks. Otherwise for every 10th block.
+		if ((i % ((blocks.size() > 1000) ? 100 : 10) == 0) && (printReports))
+			std::cout << "Decrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100/ blocks.size()) << "\%)" << std::endl;
+
 		Block tmpCopy = blocks[i];
 
 		blocks[i] = feistel.Decipher(blocks[i]) ^ lastBlock;
