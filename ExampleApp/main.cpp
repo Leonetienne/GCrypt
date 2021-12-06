@@ -39,7 +39,7 @@ void ExampleFiles()
 int main()
 {
 	ExampleString();
-	ExampleFiles();
+	//ExampleFiles();
 
 	return 0;
 }
