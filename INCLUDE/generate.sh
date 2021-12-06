@@ -1,5 +1,5 @@
 # Compile single-header
-deggl -i ../Feistel/*.cpp --out GhettoCipher --loc
+deggl -i ../GhettoCrypt/*.cpp --out GhettoCipher --loc --license-file ../LICENSE
 
 # Verify that this builds cleanly via g++
 echo "Verifying build..."
