@@ -114,6 +114,9 @@ GhettoCipher::Flexblock GhettoCipher::Cipher::Decipher(const Flexblock& data, bo
 
 #if defined _WIN32 || defined _WIN64
 #pragma optimize("", off )
+#elif defined __GNUG__
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
 #endif
 void GhettoCipher::Cipher::ZeroKeyMemory()
 {
@@ -122,6 +125,8 @@ void GhettoCipher::Cipher::ZeroKeyMemory()
 }
 #if defined _WIN32 || defined _WIN64
 #pragma optimize("", on )
+#elif defined __GNUG__
+#pragma GCC pop_options
 #endif
 
 const GhettoCipher::Block GhettoCipher::Cipher::emptyBlock;

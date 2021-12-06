@@ -194,6 +194,9 @@ void GhettoCipher::Feistel::GenerateRoundKeys(const Block& seedKey)
 // These pragmas only work for MSVC, as far as i know. Beware!!!
 #if defined _WIN32 || defined _WIN64
 #pragma optimize("", off )
+#elif defined __GNUG__
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
 #endif
 void GhettoCipher::Feistel::ZeroKeyMemory()
 {
@@ -204,4 +207,6 @@ void GhettoCipher::Feistel::ZeroKeyMemory()
 }
 #if defined _WIN32 || defined _WIN64
 #pragma optimize("", on )
+#elif defined __GNUG__
+#pragma GCC pop_options
 #endif
