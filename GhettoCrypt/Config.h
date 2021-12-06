@@ -1,7 +1,8 @@
 #pragma once
+#include <cstdint>
 
 namespace GhettoCipher
 {
-	constexpr int BLOCK_SIZE = 512;
-	constexpr int N_ROUNDS = 64;
+	constexpr std::size_t BLOCK_SIZE = 512;
+	constexpr std::size_t N_ROUNDS = 64;
 }

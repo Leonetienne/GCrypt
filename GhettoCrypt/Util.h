@@ -8,27 +8,27 @@
 namespace GhettoCipher
 {
     //! Mod-operator that works with negative values
-    inline int Mod(int numerator, int denominator)
+    inline int Mod(const int numerator, const int denominator)
     {
         return (denominator + (numerator % denominator)) % denominator;
     }
 
     //! Will perform a wrapping left-bitshift on a bitset
     template <std::size_t T>
-    inline std::bitset<T> Shiftl(const std::bitset<T>& bits, std::size_t amount)
+    inline std::bitset<T> Shiftl(const std::bitset<T>& bits, const std::size_t amount)
     {
         std::stringstream ss;
         const std::string bitss = bits.to_string();
 
         for (std::size_t i = 0; i < bitss.size(); i++)
-            ss << bitss[Mod((i + amount), bitss.size())];
+            ss << bitss[Mod((int)(i + amount), (int)bitss.size())];
 
         return std::bitset<T>(ss.str());
     }
 
     //! Will perform a wrapping right-bitshift on a bitset
     template <std::size_t T>
-    inline std::bitset<T> Shiftr(const std::bitset<T>& bits, std::size_t amount)
+    inline std::bitset<T> Shiftr(const std::bitset<T>& bits, const  std::size_t amount)
     {
         std::stringstream ss;
         const std::string bitss = bits.to_string();
@@ -159,10 +159,10 @@ namespace GhettoCipher
             std::size_t value;
             if ((c >= '0') && (c <= '9'))
                 // Is it a number?
-                value = (c - '0') + 0;
+                value = ((std::size_t)c - '0') + 0;
             else if ((c >= 'a') && (c <= 'f'))
                 // Else, it is a lowercase letter
-                value = (c - 'a') + 10;
+                value = ((std::size_t)c - 'a') + 10;
             else
                 throw std::logic_error("non-hex string detected in HexstringToBits()");
 
@@ -186,10 +186,10 @@ namespace GhettoCipher
             std::size_t value;
             if ((c >= '0') && (c <= '9'))
                 // Is it a number?
-                value = (c - '0') + 0;
+                value = ((std::size_t)c - '0') + 0;
             else if ((c >= 'a') && (c <= 'f'))
                 // Else, it is a lowercase letter
-                value = (c - 'a') + 10;
+                value = ((std::size_t)c - 'a') + 10;
             else
                 throw std::logic_error("non-hex string detected in HexstringToBits()");
 
