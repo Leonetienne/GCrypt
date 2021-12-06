@@ -18,10 +18,10 @@
     <ClCompile Include="Feistel.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="GhettoCipherWrapper.cpp">
+    <ClCompile Include="Cipher.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="Cipher.cpp">
+    <ClCompile Include="GhettoCryptWrapper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,13 +47,13 @@
     <ClInclude Include="Flexblock.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GhettoCipherWrapper.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="Version.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Cipher.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="GhettoCryptWrapper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

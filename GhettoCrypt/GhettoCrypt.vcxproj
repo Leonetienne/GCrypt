@@ -141,14 +141,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Feistel.cpp" />
-    <ClCompile Include="GhettoCipherWrapper.cpp" />
+    <ClCompile Include="GhettoCryptWrapper.cpp" />
     <ClCompile Include="Cipher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Feistel.h" />
-    <ClInclude Include="GhettoCipherWrapper.h" />
+    <ClInclude Include="GhettoCryptWrapper.h" />
     <ClInclude Include="Cipher.h" />
     <ClInclude Include="Flexblock.h" />
     <ClInclude Include="Halfblock.h" />

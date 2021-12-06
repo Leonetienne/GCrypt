@@ -12,6 +12,7 @@ This way this provides relatively good diffusion.
 * It's slow
 * It's probably super insecure
 * It leaves your keys sprinkled in ram
+* Short 128-bit keys🤦‍♂️
 * But the syntax is pythonlike easy🙇  
 
 It's pretty ghetto, you know?
@@ -54,7 +55,8 @@ GhettoCryptWrapper::EncryptFile("main.cpp", "main.cpp.crypt", "password1");
 GhettoCryptWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", "password1");
 ```
 
-If you want to do more complex stuff use the cipher-class [`GhettoCipher::Cipher`](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/Cipher.h) aswell as the conversion methods in [Util.h](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/Util.h). This way you can cipher on bitlevel. Examples on how to do this are in [GhettoCryptWrapper.cpp](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/GhettoCipherWrapper.cpp).
+If you want to do more complex stuff, use the cipher-class [`GhettoCipher::Cipher`](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/Cipher.h) aswell as the conversion methods in [Util.h](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/Util.h). This way you can cipher on bitlevel. Examples on how to do this are in [GhettoCryptWrapper.cpp](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/GhettoCipherWrapper.cpp).
+This way you could, for example, decrypt an ecrypted file directly into memory. Or use a full-length key instead of a password.
 Without saying, this is more advanced and not as-easy as the methods supplied in the wrapper.
 
 ### I am not kidding, don't use this for critical stuff! Homebrew ciphers are most often shit!
