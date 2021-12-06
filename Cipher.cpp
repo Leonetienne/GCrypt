@@ -111,12 +111,16 @@ GhettoCipher::Flexblock GhettoCipher::Cipher::Decipher(const Flexblock& data, bo
 	return ss.str();
 }
 
+#if defined _WIN32 || defined _WIN64
 #pragma optimize("", off )
+#endif
 void GhettoCipher::Cipher::ZeroKeyMemory()
 {
 	key.reset();
 	return;
 }
+#if defined _WIN32 || defined _WIN64
 #pragma optimize("", on )
+#endif
 
 const GhettoCipher::Block GhettoCipher::Cipher::emptyBlock;
