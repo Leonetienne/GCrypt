@@ -75,6 +75,11 @@ namespace GhettoCipher
 	typedef std::string Flexblock;
 }
 
+/*** ./../GhettoCrypt/Version.h ***/
+
+#pragma once
+#define GHETTOCRYPT_VERSION 0.1
+
 /*** ./../GhettoCrypt/Config.h ***/
 
 #pragma once

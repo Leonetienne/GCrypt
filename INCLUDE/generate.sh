@@ -1,5 +1,5 @@
 # Compile single-header
-deggl -i ../GhettoCrypt/*.cpp --out GhettoCrypt --loc --license-file ../LICENSE
+deggl -i ../GhettoCrypt/*.cpp ../GhettoCrypt/Version.h --out GhettoCrypt --loc --license-file ../LICENSE
 
 
 # Verify that this builds cleanly via g++
