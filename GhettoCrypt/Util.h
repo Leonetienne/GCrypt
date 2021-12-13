@@ -2,6 +2,7 @@
 #include <bitset>
 #include <sstream>
 #include <fstream>
+#include "SecureBitset.h"
 #include "Block.h"
 #include "Flexblock.h"
 
@@ -15,7 +16,7 @@ namespace GhettoCipher
 
     //! Will perform a wrapping left-bitshift on a bitset
     template <std::size_t T>
-    inline std::bitset<T> Shiftl(const std::bitset<T>& bits, const std::size_t amount)
+    inline SecureBitset<T> Shiftl(const SecureBitset<T>& bits, const std::size_t amount)
     {
         std::stringstream ss;
         const std::string bitss = bits.to_string();
@@ -23,12 +24,12 @@ namespace GhettoCipher
         for (std::size_t i = 0; i < bitss.size(); i++)
             ss << bitss[Mod((int)(i + amount), (int)bitss.size())];
 
-        return std::bitset<T>(ss.str());
+        return SecureBitset<T>(ss.str());
     }
 
     //! Will perform a wrapping right-bitshift on a bitset
     template <std::size_t T>
-    inline std::bitset<T> Shiftr(const std::bitset<T>& bits, const  std::size_t amount)
+    inline SecureBitset<T> Shiftr(const SecureBitset<T>& bits, const  std::size_t amount)
     {
         std::stringstream ss;
         const std::string bitss = bits.to_string();
@@ -36,7 +37,7 @@ namespace GhettoCipher
         for (std::size_t i = 0; i < bitss.size(); i++)
             ss << bitss[Mod((i - amount), bitss.size())];
 
-        return std::bitset<T>(ss.str());
+        return SecureBitset<T>(ss.str());
     }
 
     //! Will pad a string to a set length with a certain character

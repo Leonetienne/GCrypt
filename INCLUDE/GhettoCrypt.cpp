@@ -289,7 +289,7 @@ GhettoCipher::Halfblock GhettoCipher::Feistel::CompressionFunction(const Block& 
     std::stringstream ss;
     const std::string bits = block.to_string();
 
-    // We have to double the bits!
+    // We have to half the bits!
     for (std::size_t i = 0; i < bits.size(); i += 4)
     {
         const std::string sub = bits.substr(i, 4);
@@ -355,13 +355,6 @@ void GhettoCipher::Feistel::GenerateRoundKeys(const Block& seedKey)
     return;
 }
 
-// These pragmas only work for MSVC and g++, as far as i know. Beware!!!
-#if defined _WIN32 || defined _WIN64
-#pragma optimize("", off )
-#elif defined __GNUG__
-#pragma GCC push_options
-#pragma GCC optimize ("O0")
-#endif
 void GhettoCipher::Feistel::ZeroKeyMemory()
 {
     for (Block& key : roundKeys)
@@ -369,11 +362,6 @@ void GhettoCipher::Feistel::ZeroKeyMemory()
 
     return;
 }
-#if defined _WIN32 || defined _WIN64
-#pragma optimize("", on )
-#elif defined __GNUG__
-#pragma GCC pop_options
-#endif
 
 
 /*** ./../GhettoCrypt/GhettoCryptWrapper.cpp ***/

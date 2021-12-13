@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <GhettoCryptWrapper.h>
+#include <SecureBitset.h>
 
 using namespace GhettoCipher;
 

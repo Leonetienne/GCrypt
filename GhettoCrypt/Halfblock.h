@@ -1,10 +1,10 @@
 #pragma once
-#include <bitset>
+#include "SecureBitset.h"
 #include <cstdint>
 #include "Config.h"
 
 namespace GhettoCipher
 {
 	constexpr std::size_t HALFBLOCK_SIZE = (BLOCK_SIZE / 2);
-	typedef std::bitset<HALFBLOCK_SIZE> Halfblock;
+	typedef SecureBitset<HALFBLOCK_SIZE> Halfblock;
 }

@@ -56,5 +56,8 @@
     <ClInclude Include="GhettoCryptWrapper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SecureBitset.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

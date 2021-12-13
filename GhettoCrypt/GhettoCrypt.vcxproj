@@ -141,8 +141,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Feistel.cpp" />
-    <ClCompile Include="GhettoCryptWrapper.cpp" />
     <ClCompile Include="Cipher.cpp" />
+    <ClCompile Include="GhettoCryptWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
@@ -153,6 +153,7 @@
     <ClInclude Include="Flexblock.h" />
     <ClInclude Include="Halfblock.h" />
     <ClInclude Include="Keyset.h" />
+    <ClInclude Include="SecureBitset.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="Version.h" />
   </ItemGroup>
