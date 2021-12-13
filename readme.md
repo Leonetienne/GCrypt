@@ -26,12 +26,12 @@ It's pretty ghetto, you know?
 * For data obfuscation
 * If your only other option would be no encryption at all
 
-### I am not kidding, don't use this for critical stuff! Homebrew ciphers are most often shit!
-Especially mine!🦯
+### I am not kidding, don't use this for critical stuff! Homebrew ciphers tend to be shit!
+Especially mine!🗡️
 
 ## How do I use this?
 ##### Installation
-Download the `.h` and `.cpp` file in [INCLUDE/](https://github.com/Leonetienne/GhettoCrypt/tree/master/INCLUDE) and add them to your projects files. *Single-header-magic*.
+Download the `.h` and `.cpp` file from [INCLUDE/](https://github.com/Leonetienne/GhettoCrypt/tree/master/INCLUDE) and add them to your projects files. *Single-header-magic*.
 
 ##### Working with strings
 ```c++
