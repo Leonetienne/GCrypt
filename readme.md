@@ -8,7 +8,7 @@ To provide at least some security this is using some DES-inspired tactics like *
 This way this provides relatively good diffusion.
 
 ## Features
-* It has a very easy syntax
+* It has very easy syntax
 * It's slow
 * It's probably super insecure
 * It leaves your keys sprinkled in ram✨
