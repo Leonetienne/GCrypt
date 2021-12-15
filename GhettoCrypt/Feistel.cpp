@@ -1,3 +1,4 @@
+#include <unordered_map>
 #include "Feistel.h"
 #include "Util.h"
 #include "Config.h"
@@ -105,16 +106,17 @@ GhettoCipher::Block GhettoCipher::Feistel::ExpansionFunction(const Halfblock& bl
     std::stringstream ss;
     const std::string bits = block.to_string();
 
+    std::unordered_map<std::string, std::string> expansionMap;
+    expansionMap["00"] = "1101";
+    expansionMap["01"] = "1000";
+    expansionMap["10"] = "0010";
+    expansionMap["11"] = "0111";
+
     // We have to double the bits!
     for (std::size_t i = 0; i < bits.size(); i += 2)
     {
         const std::string sub = bits.substr(i, 2);
-
-             if (sub == "00") ss << "1101";
-        else if (sub == "01") ss << "1000";
-        else if (sub == "10") ss << "0010";
-        else if (sub == "11") ss << "0111";
-
+        ss << expansionMap[sub];
     }
 
     return Block(ss.str());
@@ -125,27 +127,29 @@ GhettoCipher::Halfblock GhettoCipher::Feistel::CompressionFunction(const Block& 
     std::stringstream ss;
     const std::string bits = block.to_string();
 
+    std::unordered_map<std::string, std::string> compressionMap;
+    compressionMap["0000"] = "10";
+    compressionMap["0001"] = "01";
+    compressionMap["0010"] = "10";
+    compressionMap["0011"] = "10";
+    compressionMap["0100"] = "11";
+    compressionMap["0101"] = "01";
+    compressionMap["0110"] = "00";
+    compressionMap["0111"] = "11";
+    compressionMap["1000"] = "01";
+    compressionMap["1001"] = "00";
+    compressionMap["1010"] = "11";
+    compressionMap["1011"] = "00";
+    compressionMap["1100"] = "11";
+    compressionMap["1101"] = "10";
+    compressionMap["1110"] = "00";
+    compressionMap["1111"] = "01";
+
     // We have to half the bits!
     for (std::size_t i = 0; i < bits.size(); i += 4)
     {
         const std::string sub = bits.substr(i, 4);
-
-             if (sub == "0000") ss << "10";
-        else if (sub == "0001") ss << "01";
-        else if (sub == "0010") ss << "10";
-        else if (sub == "0011") ss << "10";
-        else if (sub == "0100") ss << "11";
-        else if (sub == "0101") ss << "01";
-        else if (sub == "0110") ss << "00";
-        else if (sub == "0111") ss << "11";
-        else if (sub == "1000") ss << "01";
-        else if (sub == "1001") ss << "00";
-        else if (sub == "1010") ss << "11";
-        else if (sub == "1011") ss << "00";
-        else if (sub == "1100") ss << "11";
-        else if (sub == "1101") ss << "10";
-        else if (sub == "1110") ss << "00";
-        else if (sub == "1111") ss << "01";
+        ss << compressionMap[sub];
     }
 
     return Halfblock(ss.str());
@@ -153,22 +157,30 @@ GhettoCipher::Halfblock GhettoCipher::Feistel::CompressionFunction(const Block& 
 
 std::string GhettoCipher::Feistel::SBox(const std::string& in)
 {
-         if (in == "0000")     return "1100";
-    else if (in == "0001")     return "1000";
-    else if (in == "0010")     return "0001";
-    else if (in == "0011")     return "0111";
-    else if (in == "0100")     return "1011";
-    else if (in == "0101")     return "0011";
-    else if (in == "0110")     return "1101";
-    else if (in == "0111")     return "1111";
-    else if (in == "1000")     return "0000";
-    else if (in == "1001")     return "1010";
-    else if (in == "1010")     return "0100";
-    else if (in == "1011")     return "1001";
-    else if (in == "1100")     return "0010";
-    else if (in == "1101")     return "1110";
-    else if (in == "1110")     return "0101";
-    else /*if (in == "1111")*/ return "0110";
+    static std::unordered_map<std::string, std::string> subMap;
+    static bool mapInitialized = false;
+    if (!mapInitialized)
+    {
+        subMap["0000"] = "1100";
+        subMap["0001"] = "1000";
+        subMap["0010"] = "0001";
+        subMap["0011"] = "0111";
+        subMap["0100"] = "1011";
+        subMap["0101"] = "0011";
+        subMap["0110"] = "1101";
+        subMap["0111"] = "1111";
+        subMap["1000"] = "0000";
+        subMap["1001"] = "1010";
+        subMap["1010"] = "0100";
+        subMap["1011"] = "1001";
+        subMap["1100"] = "0010";
+        subMap["1101"] = "1110";
+        subMap["1110"] = "0101";
+        subMap["1111"] = "0110";
+        mapInitialized = true;
+    }
+
+    return subMap[in];
 }
 
 void GhettoCipher::Feistel::GenerateRoundKeys(const Block& seedKey)
