@@ -8,7 +8,50 @@
 #include "../GhettoCrypt/Flexblock.h"
 #include "../GhettoCrypt/Block.h"
 
+#if defined _WIN32 || defined _WIN64
+#include <Windows.h>
+#elif defined __GNUG__
+#include <termios.h>
+#include <unistd.h>
+#endif
+
 using namespace GhettoCipher;
+
+//! Will prompt a user password from stdin, hiding the input
+std::string PasswordPrompt()
+{
+    // Disable stdin-echo
+    #if defined _WIN32 || defined _WIN64
+    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD mode = 0;
+    GetConsoleMode(hStdin, &mode);
+    SetConsoleMode(hStdin, mode & (~ENABLE_ECHO_INPUT));
+
+    #elif defined __GNUG__
+    termios oldt;
+    tcgetattr(STDIN_FILENO, &oldt);
+    termios newt = oldt;
+    newt.c_lflag &= ~ECHO;
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+    #endif
+
+    // Prompt stdin
+    std::string key;
+    std::cin >> key;
+
+    // Restore previous config
+    #if defined _WIN32 || defined _WIN64
+    SetConsoleMode(hStdin, mode);
+
+    #elif defined __GNUG__
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+
+    #endif
+
+    // Return input
+    return key;
+}
 
 Block GetEncryptionKey()
 {
@@ -18,11 +61,7 @@ Block GetEncryptionKey()
 
     // Case: Ask for key
     else if (CommandlineInterface::Get().HasParam("--keyask"))
-    {
-        std::string key;
-        std::cin >> key;
-        return StringToBitblock(key);
-    }
+        return StringToBitblock(PasswordPrompt());
 
     // Case: Read key from file
     else if (CommandlineInterface::Get().HasParam("--keyfile"))
