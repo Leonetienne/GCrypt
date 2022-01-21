@@ -30,13 +30,13 @@ It's pretty ghetto, you know?
 Especially mine!🗡️
 
 ## How do I use this?
-##### I don't care about the library. Just let use it from the command line!
+### I don't care about the library. Just let me use it from the command line!
 There is a CLI version availabile [here](https://github.com/Leonetienne/GhettoCrypt/tree/master/GhettoCryptCLI).
 
-##### Installation as a library
+### Installation as a library
 Download the `.h` and `.cpp` file from [INCLUDE/](https://github.com/Leonetienne/GhettoCrypt/tree/master/INCLUDE) and add them to your projects files. *Single-header-magic*.
 
-##### Working with strings
+### Working with strings
 ```c++
 using namespace GhettoCipher;
 
@@ -53,7 +53,7 @@ const std::string decrypted = GhettoCryptWrapper::DecryptString(encrypted, "pass
 std::cout << decrypted << std::endl;
 ```
 
-##### Working with files
+### Working with files
 ```c++
 using namespace GhettoCipher;
 
