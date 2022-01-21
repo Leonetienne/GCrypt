@@ -123,7 +123,7 @@ const Flexblock GetInputText(bool encryptionMode)
         return ReadFileToBits(CommandlineInterface::Get()["--infile"].GetString());
 
     // Unreachable
-    throw std::runtime_error("This code should not have been reached. Most likely, the cli argument parser failed making sure at least one key method was supplied.");
+    throw std::runtime_error("This code should not have been reached. Most likely, the cli argument parser failed making sure at least one input method was supplied.");
 }
 
 const std::string GetOutfileName(const bool isEncryptionMode)

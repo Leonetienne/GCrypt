@@ -14,7 +14,7 @@ void CommandlineInterface::Init(int argc, const char* const* argv)
 		<< "Copyright (c) 2022 Leon Etienne" << std::endl
 		<< "Ghettocrypt v" << GHETTOCRYPT_VERSION << std::endl
 		<< "Ghettocrypt CLI v" << GHETTOCRYPTCLI_VERSION << std::endl
-		<< "THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS TO ENCRYPT SENSITIVE DATA! READ THE README FILE ACCESSIBLE AT \"https://github.com/Leonetienne/GhettoCrypt/blob/master/readme.md\"";
+		<< "THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS TO ENCRYPT SENSITIVE DATA! READ THE README FILES ACCESSIBLE AT \"https://github.com/Leonetienne/GhettoCrypt/blob/master/readme.md\" AND \"https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCryptCLI/readme.md\"";
 	nupp.SetBriefDescription(ss.str());
 	ss.str("");
 	nupp.SetCatchHelp("true");

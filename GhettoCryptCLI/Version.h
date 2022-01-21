@@ -1,2 +1,2 @@
 #pragma once
-#define GHETTOCRYPTCLI_VERSION 0.1
+#define GHETTOCRYPTCLI_VERSION 0.11
