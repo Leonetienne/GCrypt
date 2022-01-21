@@ -30,7 +30,7 @@ It's pretty ghetto, you know?
 Especially mine!🗡️
 
 ## How do I use this?
-### I don't care about the library. Just let me use it from the command line!
+### *"I don't care about the library. Just let me use it from the command line!"*
 There is a CLI version availabile [here](https://github.com/Leonetienne/GhettoCrypt/tree/master/GhettoCryptCLI).
 
 ### Installation as a library
