@@ -48,64 +48,64 @@ THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS T
 ###  Examples
 Please note that commonly used arguments are supplied in their short form (`-e` in place of `--encrypt`).
 
-### I want to encrypt text!
+#### I want to encrypt text!
 ```sh
 $ gecrypt -e --keyask --intext "hello, world!"
 ```
 
-### Now decrypt it
+#### Now decrypt it
 ```sh
 $ gecrypt -d --keyask --intext "efbebc429c8370bf84f00b0d8ccbaf7858b3b87d71ff58cb1cfefa8fb0c68094c0865565873aa8a5254ede59be46e81a4d4917e679b18cb290dbd6669cb6207a"
 ```
 I won't be pasting in complete ciphertexts anymore here. I will abbreviatre them as `efbebc...b6207a`. This way it just looks tidier.
 
-### Passing the key as an argument
+#### Passing the key as an argument
 ```sh
 $ gecrypt -e --key "secretpassword" --intext "hello, world!"
 ```
 > :warning: Some operating systems will log cli arguments! THIS WOULD BE THE ENTIRE KEY!
 
-### Using keyfiles
+#### Using keyfiles
 ```sh
 $ gecrypt -e --keyfile "dog.jpg" --intext "hello, world!"
 ```
 > :warning: Some operating systems will log cli arguments! One might find your keyfile!
 
-### Encrypting files
+#### Encrypting files
 ```sh
 $ gecrypt -e --keyask --infile "cat.jpg"
 ```
 File `cat.jpg.crypt` will be created.
 
-### Encrypting files to a target file name
+#### Encrypting files to a target file name
 ```sh
 $ gecrypt -e --keyask --infile "cat.jpg" -o "encrypted_cat.jpg"
 ```
 File `encrypted_cat.jpg` will be created.
 
-### Decrypting files
+#### Decrypting files
 ```sh
 $ gecrypt -d --keyask --infile "cat.jpg.crypt"
 ```
 File `cat.jpg.crypt.plain` will be created. It's contents match `cat.jpg`  
 > :warning: Since this is a block cipher, decrypted files may be tailpadded with a few nullbytes.
 
-### Decrypting files to a target file name
+#### Decrypting files to a target file name
 ```sh
 $ gecrypt -d --keyask --infile "cat.jpg.crypt" -o "decrypted_cat.jpg"
 ```
 File `decrypted_cat.jpg` will be created. You can now open it again.
 
-### Encrypting large files takes time. How's the progress?
+#### Encrypting large files takes time. How's the progress?
 ```sh
 $ gecrypt -e --keyask --infile "cat.jpg" --progress
 ```
 Something along the lines of `Encrypting... (Block 200 / 1148 - 17.4216%)` will be regularly, but not too often, printed to stdout.
 
-### What version am i running?
+#### What version am i running?
 Depending on wether you want to know the GhettoCrypt version or the CLI's version, use either `--version` or `--cli-version`. It will print out a floating point number.
 
-### I want to stream the output of file en/decryption.
+#### I want to stream the output of file en/decryption.
 You can dump the binary result to stdout. In this example, we'll stream it into a jpg file,
 but you could stream it to whatever you'd like.
 ```sh
