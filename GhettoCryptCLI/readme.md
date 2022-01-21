@@ -1,4 +1,4 @@
-# GhettoCrypt CLI
+# Ghettocrypt CLI
 Easy text and file encryption via the command line using Ghetto Crypt.
 Again, please only use this as an obfuscator or if the only other option would be no encryption at all.
 Do you want to quickly and securely encrypt stuff via the command line? Use openssl-cli with the aes cipher. It's a bit more wordy but much faster and more secure.
