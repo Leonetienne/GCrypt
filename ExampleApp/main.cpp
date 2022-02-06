@@ -2,6 +2,8 @@
 #include <iostream>
 #include <GhettoCryptWrapper.h>
 #include <SecureBitset.h>
+#include <Util.h>
+#include <InitializationVector.h>
 
 using namespace GhettoCipher;
 
@@ -39,7 +41,7 @@ void ExampleFiles()
 
 int main()
 {
-	ExampleString();
+	//ExampleString();
 	//ExampleFiles();
 
 	return 0;
