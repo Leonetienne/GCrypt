@@ -41,7 +41,7 @@ void ExampleFiles()
 
 int main()
 {
-	//ExampleString();
+	ExampleString();
 	//ExampleFiles();
 
 	return 0;

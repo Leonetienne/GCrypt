@@ -2,19 +2,22 @@
 #include <vector>
 #include "Cipher.h"
 #include "Util.h"
+#include "InitializationVector.h"
 
 GhettoCipher::Cipher::Cipher(const Block& key)
 	:
-	key { key }
+	key { key },
+	initializationVector(InitializationVector(key))
 {
 
 	return;
 }
 
 GhettoCipher::Cipher::Cipher(const std::string& password)
+	:
+	key { PasswordToKey(password) },
+	initializationVector(InitializationVector(key))
 {
-	key = PasswordToKey(password);
-
 	return;
 }
 
@@ -61,7 +64,7 @@ GhettoCipher::Flexblock GhettoCipher::Cipher::Encipher(const Flexblock& data, bo
 		if ((i % ((blocks.size() > 1000)? 100 : 10) == 0) && (printProgress))
 			std::cout << "Encrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100 / blocks.size()) << "%)" << std::endl;
 	
-		const Block& lastBlock = (i>0) ? blocks[i-1] : emptyBlock;
+		const Block& lastBlock = (i>0) ? blocks[i-1] : initializationVector;
 		blocks[i] = feistel.Encipher(blocks[i] ^ lastBlock);
 	}
 
@@ -88,7 +91,7 @@ GhettoCipher::Flexblock GhettoCipher::Cipher::Decipher(const Flexblock& data, bo
 	Feistel feistel(key);
 
 	// We can't do this in-loop for decryption, because we are decrypting the blocks in-place.
-	Block lastBlock = emptyBlock;
+	Block lastBlock = initializationVector;
 	
 	for (std::size_t i = 0; i < blocks.size(); i++)
 	{
@@ -129,5 +132,3 @@ void GhettoCipher::Cipher::ZeroKeyMemory()
 #elif defined __GNUG__
 #pragma GCC pop_options
 #endif
-
-const GhettoCipher::Block GhettoCipher::Cipher::emptyBlock;

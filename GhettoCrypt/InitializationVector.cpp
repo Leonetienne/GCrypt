@@ -19,7 +19,7 @@ InitializationVector::InitializationVector(const Block& seed)
 	for (std::size_t i = 0; i < BLOCK_SIZE; i++)
 		ss << (mt() % 2 ? '1' : '0');
 	
-	// And create a bitset
+	// And create a block
 	iv = Block(ss.str());
 }
 
