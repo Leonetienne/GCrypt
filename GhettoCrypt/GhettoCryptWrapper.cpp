@@ -1,7 +1,6 @@
 #include "GhettoCryptWrapper.h"
 #include "Cipher.h"
 #include "Util.h"
-#include <iostream>
 
 std::string GhettoCipher::GhettoCryptWrapper::EncryptString(const std::string& cleartext, const std::string& password)
 {

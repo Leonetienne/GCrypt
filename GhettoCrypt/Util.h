@@ -2,11 +2,11 @@
 #include <bitset>
 #include <sstream>
 #include <fstream>
+#include <cstring>
 #include "SecureBitset.h"
 #include "Block.h"
 #include "Flexblock.h"
 #include "InitializationVector.h"
-#include <cstring>
 
 namespace GhettoCipher
 {
