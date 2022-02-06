@@ -28,10 +28,41 @@
 
 #pragma once
 
-/*** ./../GhettoCrypt/Version.h ***/
+/*** ./../GhettoCrypt/GhettoCryptWrapper.h ***/
 
 #pragma once
-#define GHETTOCRYPT_VERSION 0.13
+#include <string>
+
+namespace GhettoCipher
+{
+	/** This class is a wrapper to make working with the GhettoCipher super easy with a python-like syntax
+	*/
+	class GhettoCryptWrapper
+	{
+	public:
+		//! Will encrypt a string and return it hexadecimally encoded.
+		static std::string EncryptString(const std::string& cleartext, const std::string& password);
+
+		//! Will decrypt a hexadecimally encoded string.
+		static std::string DecryptString(const std::string& ciphertext, const std::string& password);
+
+		//! Will encrypt a file.
+		//! Returns false if anything goes wrong (like, file-access).
+		//! @filename_in The file to be read.
+		//! @filename_out The file the encrypted version should be saved in.
+		static bool EncryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport = false);
+
+		//! Will decrypt a file.
+		//! Returns false if anything goes wrong (like, file-access).
+		//! @filename_in The file to be read.
+		//! @filename_out The file the decrypted version should be saved in.
+		static bool DecryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport = false);
+
+	private:
+		// No instanciation! >:(
+		GhettoCryptWrapper();
+	};
+}
 
 /*** ./../GhettoCrypt/Flexblock.h ***/
 
@@ -47,13 +78,21 @@ namespace GhettoCipher
 /*** ./../GhettoCrypt/Config.h ***/
 
 #pragma once
-#include <cstdint>
+#include <cstddef>
 
 namespace GhettoCipher
 {
+	// MUST BE A POWER OF 2 > 4
 	constexpr std::size_t BLOCK_SIZE = 512;
+
+	// MUST BE > 2
 	constexpr std::size_t N_ROUNDS = 64;
 }
+
+/*** ./../GhettoCrypt/Version.h ***/
+
+#pragma once
+#define GHETTOCRYPT_VERSION 0.21
 
 /*** ./../GhettoCrypt/SecureBitset.h ***/
 
@@ -382,6 +421,17 @@ inline std::istream& operator>>(std::istream& ifs, const SecureBitset<T>& bs)
 }
 }
 
+/*** ./../GhettoCrypt/Halfblock.h ***/
+
+#pragma once
+#include <cstdint>
+
+namespace GhettoCipher
+{
+	constexpr std::size_t HALFBLOCK_SIZE = (BLOCK_SIZE / 2);
+	typedef SecureBitset<HALFBLOCK_SIZE> Halfblock;
+}
+
 /*** ./../GhettoCrypt/Block.h ***/
 
 #pragma once
@@ -391,12 +441,33 @@ namespace GhettoCipher
 	typedef SecureBitset<BLOCK_SIZE> Block;
 }
 
+/*** ./../GhettoCrypt/InitializationVector.h ***/
+
+#pragma once
+
+namespace GhettoCipher
+{
+	/** Will create a sudo-random Block based on a seed
+	*/
+	class InitializationVector
+	{
+	public:
+		InitializationVector(const GhettoCipher::Block& seed);
+
+		operator GhettoCipher::Block() const;
+
+	private:
+		GhettoCipher::Block iv;
+	};
+}
+
 /*** ./../GhettoCrypt/Util.h ***/
 
 #pragma once
 #include <bitset>
 #include <sstream>
 #include <fstream>
+#include <cstring>
 
 namespace GhettoCipher
 {
@@ -482,8 +553,8 @@ namespace GhettoCipher
         return Flexblock(ss.str());
     }
 
-    //! Will convert a fixed-size data block to a string
-    inline std::string BitblockToString(const Block& bits)
+    //! Will convert a fixed-size data block to a bytestring
+    inline std::string BitblockToBytes(const Block& bits)
     {
         std::stringstream ss;
 
@@ -496,9 +567,22 @@ namespace GhettoCipher
 
         return ss.str();
     }
+    
+    //! Will convert a fixed-size data block to a string
+    //! The difference to BitblockToBytes() is, that it strips excess nullbytes
+    inline std::string BitblockToString(const Block& bits)
+    {
+        // Decode to bytes
+        std::string text = BitblockToBytes(bits);
 
-    //! Will convert a flexible data block to a string
-    inline std::string BitsToString(const Flexblock& bits)
+        // Dümp excess nullbytes
+        text.resize(strlen(text.data()));
+
+        return text;
+    }
+
+    //! Will convert a flexible data block to a bytestring
+    inline std::string BitsToBytes(const Flexblock& bits)
     {
         std::stringstream ss;
 
@@ -510,6 +594,19 @@ namespace GhettoCipher
         }
 
         return ss.str();
+    }
+
+    //! Will convert a flexible data block to a string
+    //! //! The difference to BitsToBytes() is, that it strips excess nullbytes
+    inline std::string BitsToString(const Flexblock& bits)
+    {
+        // Decode to bytes
+        std::string text = BitsToBytes(bits);
+
+        // Dümp excess nullbytes
+        text.resize(strlen(text.data()));
+
+        return text;
     }
 
     //! Turns a fixed-size data block into a hex-string
@@ -594,8 +691,10 @@ namespace GhettoCipher
     }
 
     //! Creates a key of size BLOCK_SIZE from a password of arbitrary length.
-    //! Using passwords larger (in bits) than BLOCK_SIZE is not generally recommended.
-    //! Note that if your password is shorter (in bits) than BLOCK_SIZE, the rest of the key will be padded with 0x0. Further round-keys will be extrapolated though.
+    //! Using passwords larger (in bits) than BLOCK_SIZE is generally not recommended.
+    //! Note that if your password is shorter (in bits) than BLOCK_SIZE, the rest of the key will be padded with 0 (see next line!).
+    //! To provide a better initial key, (and to get rid of padding zeroes), the raw result (b) will be xor'd with an initialization vector based on b.
+    //! : return b ^ iv(b)
     inline Block PasswordToKey(const std::string& in)
     {
         Block b;
@@ -606,7 +705,7 @@ namespace GhettoCipher
                 PadStringToLength(in.substr(i, BLOCK_SIZE / 8), BLOCK_SIZE / 8, 0, false)
             );
 
-        return b;
+        return b ^ InitializationVector(b);
     }
 
     //! Will read a file into a flexblock
@@ -637,7 +736,7 @@ namespace GhettoCipher
     inline void WriteBitsToFile(const std::string& filepath, const Flexblock& bits)
     {
         // Convert bits to bytes
-        const std::string bytes = BitsToString(bits);
+        const std::string bytes = BitsToBytes(bits);
 
         // Write bits to file
         std::ofstream ofs(filepath, std::ios::binary);
@@ -652,42 +751,6 @@ namespace GhettoCipher
     }
 }
 
-/*** ./../GhettoCrypt/GhettoCryptWrapper.h ***/
-
-#pragma once
-#include <string>
-
-namespace GhettoCipher
-{
-	/** This class is a wrapper to make working with the GhettoCipher super easy with a python-like syntax
-	*/
-	class GhettoCryptWrapper
-	{
-	public:
-		//! Will encrypt a string and return it hexadecimally encoded.
-		static std::string EncryptString(const std::string& cleartext, const std::string& password);
-
-		//! Will decrypt a hexadecimally encoded string.
-		static std::string DecryptString(const std::string& ciphertext, const std::string& password);
-
-		//! Will encrypt a file.
-		//! Returns false if anything goes wrong (like, file-access).
-		//! @filename_in The file to be read.
-		//! @filename_out The file the encrypted version should be saved in.
-		static bool EncryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport = false);
-
-		//! Will decrypt a file.
-		//! Returns false if anything goes wrong (like, file-access).
-		//! @filename_in The file to be read.
-		//! @filename_out The file the decrypted version should be saved in.
-		static bool DecryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport = false);
-
-	private:
-		// No instanciation! >:(
-		GhettoCryptWrapper();
-	};
-}
-
 /*** ./../GhettoCrypt/Keyset.h ***/
 
 #pragma once
@@ -696,17 +759,6 @@ namespace GhettoCipher
 namespace GhettoCipher
 {
 	typedef std::array<Block, N_ROUNDS> Keyset;
-}
-
-/*** ./../GhettoCrypt/Halfblock.h ***/
-
-#pragma once
-#include <cstdint>
-
-namespace GhettoCipher
-{
-	constexpr std::size_t HALFBLOCK_SIZE = (BLOCK_SIZE / 2);
-	typedef SecureBitset<HALFBLOCK_SIZE> Halfblock;
 }
 
 /*** ./../GhettoCrypt/Feistel.h ***/
@@ -732,14 +784,14 @@ namespace GhettoCipher
 		void SetKey(const Block& key);
 
 		//! Will encipher a data block via the set seed-key
-		Block Encipher(const Block& data) const;
+		Block Encipher(const Block& data);
 
 		//! Will decipher a data block via the set seed-key
-		Block Decipher(const Block& data) const;
+		Block Decipher(const Block& data);
 
 	private:
 		//! Will run the feistel rounds, with either regular key order or reversed key order
-		Block Run(const Block& data, bool reverseKeys) const;
+		Block Run(const Block& data, bool reverseKeys);
 
 		//! Arbitrary cipher function
 		static Halfblock F(Halfblock m, const Block& key);
@@ -807,6 +859,6 @@ namespace GhettoCipher
 		void ZeroKeyMemory();
 
 		// Initial value for cipher block chaining
-		static const Block emptyBlock;
+		Block initializationVector;
 	};
 }
