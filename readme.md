@@ -4,7 +4,7 @@
 
 ## What the hell is this?
 An educational project on implementing a block cipher using a feistel network.  
-To provide at least some security this is using some DES-inspired tactics like *cipher block chaining* and *output feedback modus*.
+To provide at least some security this is using some DES-inspired modes of operation like *cipher block chaining*.
 This way this provides relatively good diffusion.
 
 ## Features

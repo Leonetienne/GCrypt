@@ -22,14 +22,14 @@ namespace GhettoCipher
 		void SetKey(const Block& key);
 
 		//! Will encipher a data block via the set seed-key
-		Block Encipher(const Block& data) const;
+		Block Encipher(const Block& data);
 
 		//! Will decipher a data block via the set seed-key
-		Block Decipher(const Block& data) const;
+		Block Decipher(const Block& data);
 
 	private:
 		//! Will run the feistel rounds, with either regular key order or reversed key order
-		Block Run(const Block& data, bool reverseKeys) const;
+		Block Run(const Block& data, bool reverseKeys);
 
 		//! Arbitrary cipher function
 		static Halfblock F(Halfblock m, const Block& key);

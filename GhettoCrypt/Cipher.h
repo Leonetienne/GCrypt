@@ -36,6 +36,6 @@ namespace GhettoCipher
 		void ZeroKeyMemory();
 
 		// Initial value for cipher block chaining
-		const Block initializationVector;
+		Block initializationVector;
 	};
 }

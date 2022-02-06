@@ -157,6 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EncryptEqualsDecrypt.cpp" />
+    <ClCompile Include="GCWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GhettoCrypt\GhettoCrypt.vcxproj">

@@ -5,6 +5,7 @@
 #include "SecureBitset.h"
 #include "Block.h"
 #include "Flexblock.h"
+#include "InitializationVector.h"
 
 namespace GhettoCipher
 {
@@ -90,8 +91,8 @@ namespace GhettoCipher
         return Flexblock(ss.str());
     }
 
-    //! Will convert a fixed-size data block to a string
-    inline std::string BitblockToString(const Block& bits)
+    //! Will convert a fixed-size data block to a bytestring
+    inline std::string BitblockToBytes(const Block& bits)
     {
         std::stringstream ss;
 
@@ -102,7 +103,15 @@ namespace GhettoCipher
             ss << (char)std::bitset<8>(bitstring.substr(i, 8)).to_ulong();
         }
 
-        std::string text = ss.str();
+        return ss.str();
+    }
+    
+    //! Will convert a fixed-size data block to a string
+    //! The difference to BitblockToBytes() is, that it strips excess nullbytes
+    inline std::string BitblockToString(const Block& bits)
+    {
+        // Decode to bytes
+        std::string text = BitblockToBytes(bits);
 
         // Dümp excess nullbytes
         text.resize(strlen(text.data()));
@@ -110,8 +119,8 @@ namespace GhettoCipher
         return text;
     }
 
-    //! Will convert a flexible data block to a string
-    inline std::string BitsToString(const Flexblock& bits)
+    //! Will convert a flexible data block to a bytestring
+    inline std::string BitsToBytes(const Flexblock& bits)
     {
         std::stringstream ss;
 
@@ -122,7 +131,15 @@ namespace GhettoCipher
             ss << (char)std::bitset<8>(bitstring.substr(i, 8)).to_ulong();
         }
 
-        std::string text = ss.str();
+        return ss.str();
+    }
+
+    //! Will convert a flexible data block to a string
+    //! //! The difference to BitsToBytes() is, that it strips excess nullbytes
+    inline std::string BitsToString(const Flexblock& bits)
+    {
+        // Decode to bytes
+        std::string text = BitsToBytes(bits);
 
         // Dümp excess nullbytes
         text.resize(strlen(text.data()));
@@ -212,8 +229,10 @@ namespace GhettoCipher
     }
 
     //! Creates a key of size BLOCK_SIZE from a password of arbitrary length.
-    //! Using passwords larger (in bits) than BLOCK_SIZE is not generally recommended.
-    //! Note that if your password is shorter (in bits) than BLOCK_SIZE, the rest of the key will be padded with 0x0. Further round-keys will be extrapolated though.
+    //! Using passwords larger (in bits) than BLOCK_SIZE is generally not recommended.
+    //! Note that if your password is shorter (in bits) than BLOCK_SIZE, the rest of the key will be padded with 0 (see next line!).
+    //! To provide a better initial key, (and to get rid of padding zeroes), the raw result (b) will be xor'd with an initialization vector based on b.
+    //! : return b ^ iv(b)
     inline Block PasswordToKey(const std::string& in)
     {
         Block b;
@@ -224,7 +243,7 @@ namespace GhettoCipher
                 PadStringToLength(in.substr(i, BLOCK_SIZE / 8), BLOCK_SIZE / 8, 0, false)
             );
 
-        return b;
+        return b ^ InitializationVector(b);
     }
 
     //! Will read a file into a flexblock
@@ -255,7 +274,7 @@ namespace GhettoCipher
     inline void WriteBitsToFile(const std::string& filepath, const Flexblock& bits)
     {
         // Convert bits to bytes
-        const std::string bytes = BitsToString(bits);
+        const std::string bytes = BitsToBytes(bits);
 
         // Write bits to file
         std::ofstream ofs(filepath, std::ios::binary);

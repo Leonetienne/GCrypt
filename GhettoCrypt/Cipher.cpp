@@ -65,7 +65,7 @@ GhettoCipher::Flexblock GhettoCipher::Cipher::Encipher(const Flexblock& data, bo
 			std::cout << "Encrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100 / blocks.size()) << "%)" << std::endl;
 	
 		const Block& lastBlock = (i>0) ? blocks[i-1] : initializationVector;
-		blocks[i] = feistel.Encipher(blocks[i] ^ lastBlock);
+		blocks[i] = feistel.Encipher(blocks[i] ^ lastBlock); // Xor last cipher block with new clear text block before E()
 	}
 
 	// Concatenate ciphertext blocks back into a flexblock
@@ -101,7 +101,7 @@ GhettoCipher::Flexblock GhettoCipher::Cipher::Decipher(const Flexblock& data, bo
 
 		Block tmpCopy = blocks[i];
 
-		blocks[i] = feistel.Decipher(blocks[i]) ^ lastBlock;
+		blocks[i] = feistel.Decipher(blocks[i]) ^ lastBlock; // Decipher cipher block [i] and then xor it with the last cipher block [i-1] we've had
 
 		lastBlock = std::move(tmpCopy);
 	}

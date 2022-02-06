@@ -1,11 +1,13 @@
 #include "GhettoCryptWrapper.h"
 #include "Cipher.h"
 #include "Util.h"
+#include <iostream>
 
 std::string GhettoCipher::GhettoCryptWrapper::EncryptString(const std::string& cleartext, const std::string& password)
 {
 	// Instanciate our cipher and supply a key
-	Cipher cipher(password);
+	const Block key = PasswordToKey(password);
+	Cipher cipher(key);
 
 	// Recode the ascii-string to bits
 	const Flexblock cleartext_bits = StringToBits(cleartext);
@@ -23,7 +25,8 @@ std::string GhettoCipher::GhettoCryptWrapper::EncryptString(const std::string& c
 std::string GhettoCipher::GhettoCryptWrapper::DecryptString(const std::string& ciphertext, const std::string& password)
 {
 	// Instanciate our cipher and supply a key
-	Cipher cipher(password);
+	const Block key = PasswordToKey(password);
+	Cipher cipher(key);
 
 	// Recode the hex-string to bits
 	const Flexblock ciphertext_bits = HexstringToBits(ciphertext);
@@ -46,7 +49,8 @@ bool GhettoCipher::GhettoCryptWrapper::EncryptFile(const std::string& filename_i
 		const Flexblock cleartext_bits = ReadFileToBits(filename_in);
 
 		// Instanciate our cipher and supply a key
-		Cipher cipher(password);
+		const Block key = PasswordToKey(password);
+		Cipher cipher(key);
 
 		// Encrypt our cleartext bits
 		const Flexblock ciphertext_bits = cipher.Encipher(cleartext_bits, printProgressReport);
@@ -70,7 +74,8 @@ bool GhettoCipher::GhettoCryptWrapper::DecryptFile(const std::string& filename_i
 		const Flexblock ciphertext_bits = ReadFileToBits(filename_in);
 
 		// Instanciate our cipher and supply a key
-		Cipher cipher(password);
+		const Block key = PasswordToKey(password);
+		Cipher cipher(key);
 
 		// Decrypt the ciphertext bits
 		const Flexblock cleartext_bits = cipher.Decipher(ciphertext_bits, printProgressReport);
