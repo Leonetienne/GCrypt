@@ -6,6 +6,7 @@
 #include "Block.h"
 #include "Flexblock.h"
 #include "InitializationVector.h"
+#include <cstring>
 
 namespace GhettoCipher
 {
