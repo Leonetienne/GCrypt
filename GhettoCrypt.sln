@@ -12,6 +12,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GhettoCryptCLI", "GhettoCry
 		{2B2CF665-F5E6-44DB-961F-FC81C88A356D} = {2B2CF665-F5E6-44DB-961F-FC81C88A356D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleTests", "SimpleTests\SimpleTests.vcxproj", "{9AE03058-3A1E-461E-A2C2-33C5C9D0F4CB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2B2CF665-F5E6-44DB-961F-FC81C88A356D} = {2B2CF665-F5E6-44DB-961F-FC81C88A356D}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -44,6 +49,14 @@ Global
 		{719B8ECB-BA7B-471A-9B61-9EACA2289175}.Release|x64.Build.0 = Release|x64
 		{719B8ECB-BA7B-471A-9B61-9EACA2289175}.Release|x86.ActiveCfg = Release|Win32
 		{719B8ECB-BA7B-471A-9B61-9EACA2289175}.Release|x86.Build.0 = Release|Win32
+		{9AE03058-3A1E-461E-A2C2-33C5C9D0F4CB}.Debug|x64.ActiveCfg = Debug|x64
+		{9AE03058-3A1E-461E-A2C2-33C5C9D0F4CB}.Debug|x64.Build.0 = Debug|x64
+		{9AE03058-3A1E-461E-A2C2-33C5C9D0F4CB}.Debug|x86.ActiveCfg = Debug|Win32
+		{9AE03058-3A1E-461E-A2C2-33C5C9D0F4CB}.Debug|x86.Build.0 = Debug|Win32
+		{9AE03058-3A1E-461E-A2C2-33C5C9D0F4CB}.Release|x64.ActiveCfg = Release|x64
+		{9AE03058-3A1E-461E-A2C2-33C5C9D0F4CB}.Release|x64.Build.0 = Release|x64
+		{9AE03058-3A1E-461E-A2C2-33C5C9D0F4CB}.Release|x86.ActiveCfg = Release|Win32
+		{9AE03058-3A1E-461E-A2C2-33C5C9D0F4CB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

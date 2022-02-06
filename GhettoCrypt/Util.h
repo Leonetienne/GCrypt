@@ -102,7 +102,12 @@ namespace GhettoCipher
             ss << (char)std::bitset<8>(bitstring.substr(i, 8)).to_ulong();
         }
 
-        return ss.str();
+        std::string text = ss.str();
+
+        // Dümp excess nullbytes
+        text.resize(strlen(text.data()));
+
+        return text;
     }
 
     //! Will convert a flexible data block to a string
@@ -117,7 +122,12 @@ namespace GhettoCipher
             ss << (char)std::bitset<8>(bitstring.substr(i, 8)).to_ulong();
         }
 
-        return ss.str();
+        std::string text = ss.str();
+
+        // Dümp excess nullbytes
+        text.resize(strlen(text.data()));
+
+        return text;
     }
 
     //! Turns a fixed-size data block into a hex-string

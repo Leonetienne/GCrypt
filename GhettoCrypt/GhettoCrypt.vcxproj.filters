@@ -24,6 +24,9 @@
     <ClCompile Include="GhettoCryptWrapper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="InitializationVector.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Feistel.h">
@@ -57,6 +60,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SecureBitset.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="InitializationVector.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
