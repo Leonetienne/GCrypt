@@ -1,5 +1,4 @@
 #include "InitializationVector.h"
-#include <iostream>
 #include "Feistel.h"
 
 GhettoCipher::InitializationVector::InitializationVector(const Block& seed)

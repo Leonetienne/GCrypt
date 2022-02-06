@@ -534,7 +534,6 @@ bool GhettoCipher::GhettoCryptWrapper::DecryptFile(const std::string& filename_i
 
 /*** ./../GhettoCrypt/InitializationVector.cpp ***/
 
-#include <iostream>
 
 GhettoCipher::InitializationVector::InitializationVector(const Block& seed)
 {
