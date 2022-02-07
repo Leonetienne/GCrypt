@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClCompile Include="EncryptEqualsDecrypt.cpp" />
     <ClCompile Include="GCWrapper.cpp" />
+    <ClCompile Include="Password2Key_CollisionResistance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GhettoCrypt\GhettoCrypt.vcxproj">

@@ -21,5 +21,8 @@
     <ClCompile Include="GCWrapper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Password2Key_CollisionResistance.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
