@@ -84,6 +84,7 @@ How does *GC* transform a password to a key?
 First up, we have to establish what requirements this transformation must fulfill:
 * A full key. Not just *len(passwd)\*8* bits and the rest zero-padded.
 * Even if *len(passwd)\*8 > KEY_SIZE*, every bit of the password should affect the key
+* Diffusion
 * Ideally good collision resistance
 
 Let's be honest, I'm not a cryptographer, I have no idea how collision resistant this is.
