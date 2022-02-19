@@ -173,7 +173,7 @@ int main(int argc, char** argv)
         // Dump to stdout?
         if (CommandlineInterface::Get().HasParam("--ostdout"))
         {
-            const std::string outstr = BitsToString(output);
+            const std::string outstr = BitsToBytes(output);
 
             // We have to print char-by-char to prevent a nullbyte terminating output.
             for (std::size_t i = 0; i < outstr.size(); i++)
