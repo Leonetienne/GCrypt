@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <sstream>
+#include <vector>
 #include "CommandlineInterface.h"
 #include "../GhettoCrypt/Util.h"
 #include "../GhettoCrypt/Config.h"
@@ -8,6 +10,10 @@
 #include "../GhettoCrypt/Flexblock.h"
 #include "../GhettoCrypt/Block.h"
 
+#include "Bases.h"
+#include "BaseConversion.h"
+
+// Required for hidden password input
 #if defined _WIN32 || defined _WIN64
 #include <Windows.h>
 #elif defined __GNUG__
@@ -16,6 +22,29 @@
 #endif
 
 using namespace GhettoCipher;
+
+namespace {
+    template <class T_CONTAINER>
+    inline std::string Hex2CustomBase(const std::string& hex, const T_CONTAINER& customSet, const std::string& seperator = "")
+    {
+        std::stringstream ss;
+
+        // Translate to custom set
+        const T_CONTAINER vec_base_custom =
+            Leonetienne::GeneralUtility::BaseConversion::BaseX_2_Y<std::string, T_CONTAINER>(hex, BASE_16, customSet);
+
+        // Convert to string
+        for (std::size_t i = 0; i < vec_base_custom.size(); i++)
+        {
+            ss << vec_base_custom[i];
+         
+            if (i != vec_base_custom.size() - 1)
+                ss << seperator;
+        }
+
+        return ss.str();
+    }
+}
 
 //! Will prompt a user password from stdin, hiding the input
 std::string PasswordPrompt()
@@ -190,10 +219,46 @@ int main(int argc, char** argv)
     else
     {
         // Output to stdout as a hexstring
-        if (shouldEncrypt)
-            std::cout << BitsToHexstring(output) << std::endl;
-        else
+        if (shouldEncrypt) {
+
+            const std::string hexString = BitsToHexstring(output);
+
+            std::string formattedCiphertext;
+
+            // Are we using iobase 2?
+            if (CommandlineInterface::Get().HasParam("--iobase-2"))
+                // Yes: convert hex to base 2
+                formattedCiphertext = Hex2CustomBase<std::string>(hexString, BASE_2);
+
+            // Are we using iobase 10?
+            else if (CommandlineInterface::Get().HasParam("--iobase-10"))
+                // Yes: convert hex to base 10
+                formattedCiphertext = Hex2CustomBase<std::string>(hexString, BASE_10);
+
+            // Are we using iobase 64?
+            else if (CommandlineInterface::Get().HasParam("--iobase-64"))
+                // Yes: convert hex to base 64
+                formattedCiphertext = Hex2CustomBase<std::string>(hexString, BASE_64);
+
+            // Are we using iobase uwu?
+            else if (CommandlineInterface::Get().HasParam("--iobase-uwu"))
+                // Yes: convert hex to base 64
+                formattedCiphertext = Hex2CustomBase<std::vector<std::string>>(hexString, BASE_UWU, " ");
+
+             // Are we using iobase emoji?
+            else if (CommandlineInterface::Get().HasParam("--iobase-emoji"))
+                // Yes: convert hex to base 64
+                formattedCiphertext = Hex2CustomBase<std::vector<std::string>>(hexString, BASE_EMOJI);
+
+            // Else, no special output format specified, use hex
+            else
+                formattedCiphertext = hexString;
+
+            std::cout << formattedCiphertext << std::endl;
+        }
+        else {
             std::cout << BitsToString(output) << std::endl;
+        }
     }
 
     return 0;

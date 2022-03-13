@@ -149,7 +149,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseConversion.h" />
     <ClInclude Include="CommandlineInterface.h" />
+    <ClInclude Include="ContainerUtility.h" />
     <ClInclude Include="Hazelnupp.h" />
     <ClInclude Include="Version.h" />
   </ItemGroup>
