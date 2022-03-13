@@ -26,6 +26,7 @@ mono_crash.*
 *tornado.*lck*
 
 # Build results
+*build*/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
