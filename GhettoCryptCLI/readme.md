@@ -142,6 +142,9 @@ $ gecrypt -d --keyask --infile "cat.jpg.crypt" --ostdout > "decrypted_cat.jpg"
 ```
 
 ## Esoteric data formats
+> :warning: Custom bases are super imperformant. 
+> Encrypting all text in main.cpp took about two seconds.
+> Outputting it in base-64 took just over ONE MINUTE, in base2 over SEVEN MINUTES. The general trend seems to be, the larger the base, the better it performs.
 #### Base *UwU*
 ```sh
 $ gecrypt -e --keyask --intext "hello, world!" --iobase-uwu
