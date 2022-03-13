@@ -148,7 +148,7 @@ $ gecrypt -d --keyask --infile "cat.jpg.crypt" --ostdout > "decrypted_cat.jpg"
 #### Base *UwU*
 ```sh
 $ gecrypt -e --keyask --intext "hello, world!" --iobase-uwu
-youuu :) devewopa kawaiisu devewopa (*^.^*) XDD snaff cutieee kawaii nappies XDD :o favowite whiiiich :p xDDD snaffle favowite favowite ruff Awww devewopa toesy-woesies smush :p xD Owww hewwo heeeey :) keeeewl toesy-woesies xDDD :p ^^ whiiiich snuff :o winks ^^ :o Owww masta :P haaaai haaaai cutsie best Awww awe :3 sniff XD (*^.^*) :) boop sewnpaiii :o uwu ^.^ me cutewr :) cutsie favowite i XDD XD toot devewopa toot smoochies (*^_^*) :o xDDD rawr ruff whiffskaws nyeed (*^.^*) hiiiii chomp
+:) sewnpaiii tastieee uhh?! nappies cutewr twe best cutieee :O tastieee senpaiiiw favowite toesy-woesies ^.^ :3 best chomp whiffle uwu Awww sewnpaiii comfy-womfy :p keewl Awww youuu nyeko :O tasties hiiiii heeeey (*^_^*) youuu toot uhh..? smush (*^_^*) *bites-lip* whiffle haaaay nyah! comfy-womfy :) cutsie Owww haaaay snaffle haaaai haaaai nyeko *sweats* :) uhh..? boop toot *bites-lip* <3 whiiiich whiffskaws ^.^ twe whiffskaws hiiiii *sweats* Owww dewicious i tasties :P awe hewwo boop rawr uwu dewicious eughh twe cutsie xD
 ```
 
 #### Base **UGH!**
