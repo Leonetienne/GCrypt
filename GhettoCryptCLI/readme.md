@@ -15,7 +15,7 @@ $ gecrypt --help
 CLI for the ghettocrypt cipher/obfuscator
 Copyright (c) 2022 Leon Etienne
 Ghettocrypt v0.21
-Ghettocrypt CLI v0.122
+Ghettocrypt CLI v0.123
 THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS TO ENCRYPT SENSITIVE DATA! READ THE README FILES ACCESSIBLE AT "https://github.com/Leonetienne/GhettoCrypt/blob/master/readme.md" AND "https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCryptCLI/readme.md"
 
 ==== AVAILABLE PARAMETERS ====
