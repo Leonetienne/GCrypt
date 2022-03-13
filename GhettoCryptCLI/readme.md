@@ -144,11 +144,11 @@ $ gecrypt -d --keyask --infile "cat.jpg.crypt" --ostdout > "decrypted_cat.jpg"
 ## Esoteric data formats
 > :warning: Custom bases are super imperformant. 
 > Encrypting all text in main.cpp took about two seconds.
-> Outputting it in base-64 took just over ONE MINUTE, in base2 over SEVEN MINUTES. The general trend seems to be, the larger the base, the better it performs.
+> Outputting it in base-64 took just over ONE MINUTE. In base-2 over SEVEN MINUTES. The general trend seems to be, the larger the base, the better it performs.
 #### Base *UwU*
 ```sh
 $ gecrypt -e --keyask --intext "hello, world!" --iobase-uwu
-haaaai i rawr :p xDDD xDDD XDDD rawr haaaay XD cutewr xD XDDD devewopa uwu UwU haaaai (*^.^*) XD soopa me heeeey devewopa senpaiiii xD ^.^ haaaai whiiiich masta heeeei heeeei nyeko ruff XDD ^_^ youuu xDD Owww senpaiiiw awe nyeko whiiiich Awww xD XDD hewwo UwU ^^ xD (*^_^*) masta soopa favowite whiiiich awe xDDD hewwo XD xDD hewwo UwU doopa :p (*^_^*) :o heeeey senpaiiii senpaiiii XD nyeko keeeewl me <3 cutieee <3 hiiiii UwU xD hiiiii <3 keewl soopa kawaii cutieee keewl twe heeeei XDDD hewwo hewwo
+youuu :) devewopa kawaiisu devewopa (*^.^*) XDD snaff cutieee kawaii nappies XDD :o favowite whiiiich :p xDDD snaffle favowite favowite ruff Awww devewopa toesy-woesies smush :p xD Owww hewwo heeeey :) keeeewl toesy-woesies xDDD :p ^^ whiiiich snuff :o winks ^^ :o Owww masta :P haaaai haaaai cutsie best Awww awe :3 sniff XD (*^.^*) :) boop sewnpaiii :o uwu ^.^ me cutewr :) cutsie favowite i XDD XD toot devewopa toot smoochies (*^_^*) :o xDDD rawr ruff whiffskaws nyeed (*^.^*) hiiiii chomp
 ```
 
 #### Base **UGH!**
