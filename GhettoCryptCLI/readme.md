@@ -1,5 +1,5 @@
 # Ghettocrypt CLI
-Easy text and file encryption via the command line using Ghetto Crypt.
+Easy text and file encryption via the command line using Ghetto Crypt. Now supporting *esoteric data formats*... :)  
 Again, please only use this as an obfuscator or if the only other option would be no encryption at all.
 Do you want to quickly and securely encrypt stuff via the command line? Use openssl-cli with the aes cipher. It's a bit more wordy but much faster and more secure.
 
@@ -14,35 +14,47 @@ All arguments and flags:
 $ gecrypt --help
 CLI for the ghettocrypt cipher/obfuscator
 Copyright (c) 2022 Leon Etienne
-Ghettocrypt v0.13
-Ghettocrypt CLI v0.1
-THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS TO ENCRYPT SENSITIVE DATA! READ THE README FILE ACCESSIBLE AT "https://github.com/Leonetienne/GhettoCrypt/blob/master/readme.md"
+Ghettocrypt v0.21
+Ghettocrypt CLI v0.122
+THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS TO ENCRYPT SENSITIVE DATA! READ THE README FILES ACCESSIBLE AT "https://github.com/Leonetienne/GhettoCrypt/blob/master/readme.md" AND "https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCryptCLI/readme.md"
 
 ==== AVAILABLE PARAMETERS ====
 
---encrypt   -e   VOID   incompatibilities=[--decrypt]   Use the encryption routine.
+--iobase-8   VOID   incompatibilities=[--iobase-2, --iobase-10, --iobase-64, --iobase-uwu, --iobase-ugh]   Interpret and format ciphertexts in base8
 
---keyask   -ka   VOID   incompatibilities=[--key, --keyfile]   Read the encryption key from stdin.
-
---version   -v   VOID   Will supply the version of ghettocrypt used.
-
---decrypt   -d   VOID   incompatibilities=[--encrypt]   Use decryption routine.
+--progress   -p   VOID   Print digestion progress to stdout. May be advisable for large files, as the cipher is rather slow.
 
 --cli-version   VOID   Will supply the version of ghettocrypt-cli used.
 
---intext   -it   STRING   incompatibilities=[--infile]   Encrypt this string. Dumps to stdout.
+--iobase-ugh   VOID   incompatibilities=[--iobase-2, --iobase-8, --iobase-10, --iobase-64, --iobase-uwu]   Interpret and format ciphertexts in base ugh
 
---key   -k   STRING   incompatibilities=[--keyfile, --keyask]   Use this value as a password to extrapolate the encryption key. WARNING: Arguments may be logged by the system!
+--iobase-uwu   VOID   incompatibilities=[--iobase-2, --iobase-8, --iobase-10, --iobase-64, --iobase-ugh]   Interpret and format ciphertexts in base uwu
 
---infile   -if   STRING   incompatibilities=[--intext]   Encrypt this file. Saves as {filename}.crypt, if not specified otherwise.
-
---ofile   -of   STRING   incompatibilities=[--ostdout]   Use this filename for output if --infile is specified. Gets ignored otherwise.
+--iobase-64   VOID   incompatibilities=[--iobase-2, --iobase-8, --iobase-10, --iobase-uwu, --iobase-ugh]   Interpret and format ciphertexts in base64
 
 --ostdout   VOID   incompatibilities=[--ofile]   Output of digested files will be dumped to stdout instead of a file.
 
+--encrypt   -e   VOID   incompatibilities=[--decrypt]   Use the encryption routine.
+
+--infile   -if   STRING   incompatibilities=[--intext]   Encrypt this file. Saves as {filename}.crypt, if not specified otherwise.
+
+--version   -v   VOID   Will supply the version of ghettocrypt used.
+
 --keyfile   -kf   STRING   incompatibilities=[--key, --keyask]   Read in the first {KEYSIZE}(=512) bits of this file and use that as an encryption key. WARNING: Arguments may be logged by the system!
 
---progress   -p   VOID   Print digestion progress to stdout. May be advisable for large files, as the cipher is rather slow.
+--iobase-10   VOID   incompatibilities=[--iobase-2, --iobase-8, --iobase-64, --iobase-uwu, --iobase-ugh]   Interpret and format ciphertexts in base10
+
+--iobase-2   VOID   incompatibilities=[--iobase-8, --iobase-10, --iobase-64, --iobase-uwu, --iobase-ugh]   Interpret and format ciphertexts in base2
+
+--decrypt   -d   VOID   incompatibilities=[--encrypt]   Use decryption routine.
+
+--intext   -it   STRING   incompatibilities=[--infile]   Encrypt this string. Dumps to stdout.
+
+--ofile   -of   STRING   incompatibilities=[--ostdout]   Use this filename for output if --infile is specified. Gets ignored otherwise.
+
+--keyask   -ka   VOID   incompatibilities=[--key, --keyfile]   Read the encryption key from stdin.
+
+--key   -k   STRING   incompatibilities=[--keyfile, --keyask]   Use this value as a password to extrapolate the encryption key. WARNING: Arguments may be logged by the system!
 ```
 
 ###  Examples
