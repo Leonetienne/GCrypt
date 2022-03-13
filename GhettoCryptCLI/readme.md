@@ -1,5 +1,5 @@
 # Ghettocrypt CLI
-Easy text and file encryption via the command line using Ghetto Crypt. Now supporting *esoteric data formats*... :)  
+Easy text and file encryption via the command line using Ghetto Crypt. Now supporting [*esoteric data formats*](#esoteric-data-formats)... :)  
 Again, please only use this as an obfuscator or if the only other option would be no encryption at all.
 Do you want to quickly and securely encrypt stuff via the command line? Use openssl-cli with the aes cipher. It's a bit more wordy but much faster and more secure.
 
@@ -71,6 +71,21 @@ $ gecrypt -d --keyask --intext "efbebc429c8370bf84f00b0d8ccbaf7858b3b87d71ff58cb
 ```
 I won't be pasting in complete ciphertexts anymore here. I will abbreviatre them as `efbebc...b6207a`. This way it just looks tidier.
 
+#### What about not using hex?
+```sh
+$ gecrypt -e --keyask --intext "hello, world!" --iobase-2
+111001001011100000011111000100010100110011100110000100100101001001110001001000101011110000000011011100001010111010001000110111110110011011100000001100110001001000100111011000101010010001011011111011001000011111100100101001011110011101110001010011000101011001111010000001001100101110000101101101101001110100100001101010111101010000100111101110000110011101100101101011000011101001000011010010011001111010001001101000101001100101010000100010111101101100010000000001001110010001001011001001011011010111001101000100
+
+$ gecrypt -e --keyask --intext "hello, world!" --iobase-8
+71134037042463460445116110536003341272106766334014611047305221337310374451363561230531720114560555516441527520475606354553035103223172115051452042755420011621131133271504
+
+$ gecrypt -e --keyask --intext "hello, world!" --iobase-10
+2994749439449970047518881970731547473115480925772565399786126223459744370490386223437520234266936877059618216185983047971748564015130703048737306773910340
+
+$ gecrypt -e --keyask --intext "hello, world!" --iobase-64
+Co/WjpV5nPrCaz0QMdrXAXzzOH5HODRsBNL22KZowmGMcTLwfmsQpzt7Ik+ViR5vOhUXowFQeR5x2vbcj1X5ae
+```
+
 #### Passing the key as an argument
 ```sh
 $ gecrypt -e --key "secretpassword" --intext "hello, world!"
@@ -122,6 +137,19 @@ You can dump the binary result to stdout. In this example, we'll stream it into 
 but you could stream it to whatever you'd like.
 ```sh
 $ gecrypt -d --keyask --infile "cat.jpg.crypt" --ostdout > "decrypted_cat.jpg"
+```
+
+## Esoteric data formats
+#### Base *UwU*
+```sh
+$ gecrypt -e --keyask --intext "hello, world!" --iobase-uwu
+haaaai i rawr :p xDDD xDDD XDDD rawr haaaay XD cutewr xD XDDD devewopa uwu UwU haaaai (*^.^*) XD soopa me heeeey devewopa senpaiiii xD ^.^ haaaai whiiiich masta heeeei heeeei nyeko ruff XDD ^_^ youuu xDD Owww senpaiiiw awe nyeko whiiiich Awww xD XDD hewwo UwU ^^ xD (*^_^*) masta soopa favowite whiiiich awe xDDD hewwo XD xDD hewwo UwU doopa :p (*^_^*) :o heeeey senpaiiii senpaiiii XD nyeko keeeewl me <3 cutieee <3 hiiiii UwU xD hiiiii <3 keewl soopa kawaii cutieee keewl twe heeeei XDDD hewwo hewwo
+```
+
+#### Base **UGH!**
+```sh
+$ gecrypt -e --keyask --intext "hello, world!" --iobase-ugh
+Grr... Wha-? Aah! Aah! Uh-huh... Aah! Grr... Aah! Aah! Uh-huh... Ah... Ugh Grr... Ugh Pft! Nu-uh... Gah! Bah! Huh...? Ah... Uh-huh... Wha-? Pft! Nu-uh... Ugh Wha-? Psh! Agh! Ah... Aah! Nu-uh... Psh! Pft! Nu-uh... Psh! Shh! Gah! Ah... Pft! Gah! Shh! Bah! Gah! Uh-huh... Gah! Duh! Aah! Uh-huh... Er- Nu-uh... Gah! Wha-? Pft! Er- Shh! Ah... Huh...? Er- Wha-? Uh-huh... Ah... Shh! Ugh Bah! Wha-? Uaah! Ah... Nu-uh... Uh-huh... Ugh Pft! Pft! Gah! Shh! Shh! Wha-? Bah! Ugh Grr... Aah! Pft! Nu-uh... Ah... Aah! Agh! Er- Psh! Uaah! Nu-uh... Ugh Wha-? Uh-huh... Shh! Pft! Aah! Agh! Grr... Agh! Agh! Grr... Pft! Wha-? Wha-? Uh-huh... Aah! Ugh Aah! Pft! Gah! Bah! Huh...? Ugh Bah! Uaah! Gah! Bah! Duh! Duh! Uh-huh... Grr... Ah... Grr... Ugh Ah... Pft!
 ```
 
 ## LICENSE
