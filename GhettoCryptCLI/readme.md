@@ -71,7 +71,6 @@ efbebc429c8370bf84f00b0d8ccbaf7858b3b87d71ff58cb1cfefa8fb0c68094c0865565873aa8a5
 $ gecrypt -d --keyask --intext "efbebc429c8370bf84f00b0d8ccbaf7858b3b87d71ff58cb1cfefa8fb0c68094c0865565873aa8a5254ede59be46e81a4d4917e679b18cb290dbd6669cb6207a"
 hello, world!
 ```
-I won't be pasting in complete ciphertexts anymore here. I will abbreviatre them as `efbebc...b6207a`. This way it just looks tidier.
 
 #### What about not using hex?
 ```sh
@@ -87,6 +86,7 @@ $ gecrypt -e --keyask --intext "hello, world!" --iobase-10
 $ gecrypt -e --keyask --intext "hello, world!" --iobase-64
 Co/WjpV5nPrCaz0QMdrXAXzzOH5HODRsBNL22KZowmGMcTLwfmsQpzt7Ik+ViR5vOhUXowFQeR5x2vbcj1X5ae
 ```
+I won't be pasting in stdout results anymore. It would become too cluttered.
 
 #### Passing the key as an argument
 ```sh
