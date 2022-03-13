@@ -73,6 +73,10 @@ hello, world!
 ```
 
 #### What about not using hex?
+> :warning: Custom bases are super imperformant. 
+> Encrypting all text in main.cpp took about two seconds.
+> Outputting it in base-64 took just over ONE MINUTE. In base-2 over SEVEN MINUTES. The general trend seems to be, the larger the base, the better it performs.
+
 ```sh
 $ gecrypt -e --keyask --intext "hello, world!" --iobase-2
 111001001011100000011111000100010100110011100110000100100101001001110001001000101011110000000011011100001010111010001000110111110110011011100000001100110001001000100111011000101010010001011011111011001000011111100100101001011110011101110001010011000101011001111010000001001100101110000101101101101001110100100001101010111101010000100111101110000110011101100101101011000011101001000011010010011001111010001001101000101001100101010000100010111101101100010000000001001110010001001011001001011011010111001101000100
@@ -142,9 +146,6 @@ $ gecrypt -d --keyask --infile "cat.jpg.crypt" --ostdout > "decrypted_cat.jpg"
 ```
 
 ## Esoteric data formats
-> :warning: Custom bases are super imperformant. 
-> Encrypting all text in main.cpp took about two seconds.
-> Outputting it in base-64 took just over ONE MINUTE. In base-2 over SEVEN MINUTES. The general trend seems to be, the larger the base, the better it performs.
 #### Base *UwU*
 ```sh
 $ gecrypt -e --keyask --intext "hello, world!" --iobase-uwu
