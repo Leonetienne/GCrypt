@@ -142,6 +142,7 @@
     <ClCompile Include="CommandlineInterface.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Hazelnupp.cpp" />
+    <ClCompile Include="StringTools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GhettoCrypt\GhettoCrypt.vcxproj">
@@ -150,9 +151,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseConversion.h" />
+    <ClInclude Include="Bases.h" />
     <ClInclude Include="CommandlineInterface.h" />
     <ClInclude Include="ContainerUtility.h" />
     <ClInclude Include="Hazelnupp.h" />
+    <ClInclude Include="StringTools.h" />
     <ClInclude Include="Version.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

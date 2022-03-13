@@ -12,6 +12,7 @@
 
 #include "Bases.h"
 #include "BaseConversion.h"
+#include "StringTools.h"
 
 // Required for hidden password input
 #if defined _WIN32 || defined _WIN64
@@ -24,14 +25,13 @@
 using namespace GhettoCipher;
 
 namespace {
-    template <class T_CONTAINER>
-    inline std::string Hex2CustomBase(const std::string& hex, const T_CONTAINER& customSet, const std::string& seperator = "")
+    inline std::string Bin2CustomBase(const std::string& bin, const std::vector<std::string>& customSet, const std::string& seperator = "")
     {
         std::stringstream ss;
 
         // Translate to custom set
-        const T_CONTAINER vec_base_custom =
-            Leonetienne::GeneralUtility::BaseConversion::BaseX_2_Y<std::string, T_CONTAINER>(hex, BASE_16, customSet);
+        const std::vector<std::string> vec_base_custom =
+            Leonetienne::GeneralUtility::BaseConversion::BaseX_2_Y<std::string, std::vector<std::string>>(bin, "01", customSet);
 
         // Convert to string
         for (std::size_t i = 0; i < vec_base_custom.size(); i++)
@@ -43,6 +43,32 @@ namespace {
         }
 
         return ss.str();
+    }
+
+    inline std::string CustomBase2Bin(const std::string& in, const std::vector<std::string>& customSet, const std::string& seperator = "")
+    {
+        // Split input into symbols
+        const std::vector<std::string> in_symbols = StringTools::Split(in, seperator);
+
+        // Translate to binary
+        std::string binary =
+            Leonetienne::GeneralUtility::BaseConversion::BaseX_2_Y<std::vector<std::string>, std::string>(in_symbols, customSet, std::string("01"));
+        
+        // Apply padding to be a multiple of BLOCK_SIZE
+        // Count how many bits we need
+        std::size_t required_size = 0;
+        while (required_size < binary.length())
+            required_size += BLOCK_SIZE;
+
+        // Create a string of that many zeroes
+        std::string padding = "";
+        for (std::size_t i = binary.length(); i < required_size; i++)
+            padding += "0";
+
+        // Prepend it to our bitstring
+        binary = padding + binary;
+
+        return binary;
     }
 }
 
@@ -142,9 +168,46 @@ const Flexblock GetInputText(bool encryptionMode)
         // Encryption mode: We want to return the text as-is, as bits
         if (encryptionMode)
             return StringToBits(CommandlineInterface::Get()["--intext"].GetString());
-        // Decryption mode: We need to first convert hexstring to bitstring
+
+        // Decryption mode: We need to first convert our input to a bitstring
         else
-            return HexstringToBits(CommandlineInterface::Get()["--intext"].GetString());
+        {
+            const std::string userInput = CommandlineInterface::Get()["--intext"].GetString();
+
+            // Are we using iobase 2?
+            if (CommandlineInterface::Get().HasParam("--iobase-2"))
+                // Yes: convert to binary from base 2
+                return CustomBase2Bin(userInput, BASE_2);
+
+            // Are we using iobase 8?
+            else if (CommandlineInterface::Get().HasParam("--iobase-8"))
+                // Yes: convert to binary from base 8
+                return CustomBase2Bin(userInput, BASE_8);
+
+            // Are we using iobase 10?
+            else if (CommandlineInterface::Get().HasParam("--iobase-10"))
+                // Yes: convert to binary from base 10
+                return CustomBase2Bin(userInput, BASE_10);
+
+            // Are we using iobase 64?
+            else if (CommandlineInterface::Get().HasParam("--iobase-64"))
+                // Yes: convert to binary from base 64
+                return CustomBase2Bin(userInput, BASE_64);
+
+            // Are we using iobase uwu?
+            else if (CommandlineInterface::Get().HasParam("--iobase-uwu"))
+                // Yes: convert to binary from base uwu
+                return CustomBase2Bin(userInput, BASE_UWU, " ");
+
+            // Are we using iobase emoji?
+            else if (CommandlineInterface::Get().HasParam("--iobase-ugh"))
+                // Yes: convert to binary from base ugh
+                return CustomBase2Bin(userInput, BASE_UGH, " ");
+
+            // Else, no special output format specified, use hex
+            else
+                return HexstringToBits(userInput);
+        }
 
 
     // Case: Read from file
@@ -218,45 +281,50 @@ int main(int argc, char** argv)
     // Else: we are just dealing with a string
     else
     {
-        // Output to stdout as a hexstring
         if (shouldEncrypt) {
-
-            const std::string hexString = BitsToHexstring(output);
-
+            // We are decrypting:
+            // Output to stdout as a formatted bytestring
             std::string formattedCiphertext;
 
             // Are we using iobase 2?
             if (CommandlineInterface::Get().HasParam("--iobase-2"))
                 // Yes: convert hex to base 2
-                formattedCiphertext = Hex2CustomBase<std::string>(hexString, BASE_2);
+                formattedCiphertext = Bin2CustomBase(output, BASE_2);
+
+            // Are we using iobase 8?
+            else if (CommandlineInterface::Get().HasParam("--iobase-8"))
+                // Yes: convert binary to base 8
+                formattedCiphertext = Bin2CustomBase(output, BASE_8);
 
             // Are we using iobase 10?
             else if (CommandlineInterface::Get().HasParam("--iobase-10"))
-                // Yes: convert hex to base 10
-                formattedCiphertext = Hex2CustomBase<std::string>(hexString, BASE_10);
+                // Yes: convert binary to base 10
+                formattedCiphertext = Bin2CustomBase(output, BASE_10);
 
             // Are we using iobase 64?
             else if (CommandlineInterface::Get().HasParam("--iobase-64"))
-                // Yes: convert hex to base 64
-                formattedCiphertext = Hex2CustomBase<std::string>(hexString, BASE_64);
+                // Yes: convert binary to base 64
+                formattedCiphertext = Bin2CustomBase(output, BASE_64);
 
             // Are we using iobase uwu?
             else if (CommandlineInterface::Get().HasParam("--iobase-uwu"))
-                // Yes: convert hex to base 64
-                formattedCiphertext = Hex2CustomBase<std::vector<std::string>>(hexString, BASE_UWU, " ");
+                // Yes: convert binary to base 64
+                formattedCiphertext = Bin2CustomBase(output, BASE_UWU, " ");
 
-             // Are we using iobase emoji?
-            else if (CommandlineInterface::Get().HasParam("--iobase-emoji"))
-                // Yes: convert hex to base 64
-                formattedCiphertext = Hex2CustomBase<std::vector<std::string>>(hexString, BASE_EMOJI);
+             // Are we using iobase ugh?
+            else if (CommandlineInterface::Get().HasParam("--iobase-ugh"))
+                // Yes: convert binary to base 64
+                formattedCiphertext = Bin2CustomBase(output, BASE_UGH, " ");
 
             // Else, no special output format specified, use hex
             else
-                formattedCiphertext = hexString;
+                formattedCiphertext = BitsToHexstring(output);
 
             std::cout << formattedCiphertext << std::endl;
         }
         else {
+            // We are just decrypting:
+            // Just print it string-formatted
             std::cout << BitsToString(output) << std::endl;
         }
     }

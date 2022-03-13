@@ -64,22 +64,22 @@ void CommandlineInterface::Init(int argc, const char* const* argv)
 	nupp.RegisterAbbreviation("-p", "--progress");
 
 	nupp.RegisterDescription("--iobase-2", "Interpret and format ciphertexts in base2");
-	nupp.RegisterConstraint("--iobase-2", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-8", "--iobase-10", "--iobase-64", "--iobase-uwu", "--iobase-emoji" }));
+	nupp.RegisterConstraint("--iobase-2", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-8", "--iobase-10", "--iobase-64", "--iobase-uwu", "--iobase-ugh" }));
 
 	nupp.RegisterDescription("--iobase-8", "Interpret and format ciphertexts in base8");
-	nupp.RegisterConstraint("--iobase-8", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-2", "--iobase-10", "--iobase-64", "--iobase-uwu", "--iobase-emoji" }));
+	nupp.RegisterConstraint("--iobase-8", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-2", "--iobase-10", "--iobase-64", "--iobase-uwu", "--iobase-ugh" }));
 
 	nupp.RegisterDescription("--iobase-10", "Interpret and format ciphertexts in base10");
-	nupp.RegisterConstraint("--iobase-10", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-2", "--iobase-8", "--iobase-64", "--iobase-uwu", "--iobase-emoji" }));
+	nupp.RegisterConstraint("--iobase-10", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-2", "--iobase-8", "--iobase-64", "--iobase-uwu", "--iobase-ugh" }));
 
 	nupp.RegisterDescription("--iobase-64", "Interpret and format ciphertexts in base64");
-	nupp.RegisterConstraint("--iobase-64", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-uwu", "--iobase-emoji" }));
+	nupp.RegisterConstraint("--iobase-64", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-uwu", "--iobase-ugh" }));
 
 	nupp.RegisterDescription("--iobase-uwu", "Interpret and format ciphertexts in base uwu");
-	nupp.RegisterConstraint("--iobase-uwu", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-64", "--iobase-emoji" }));
+	nupp.RegisterConstraint("--iobase-uwu", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-64", "--iobase-ugh" }));
 
-	nupp.RegisterDescription("--iobase-emoji", "Interpret and format ciphertexts in base emoji (EXPERIMENTAL)");
-	nupp.RegisterConstraint("--iobase-emoji", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-64", "--iobase-uwu" }));
+	nupp.RegisterDescription("--iobase-ugh", "Interpret and format ciphertexts in base ugh");
+	nupp.RegisterConstraint("--iobase-ugh", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-64", "--iobase-uwu" }));
 
 	nupp.RegisterDescription("--version", "Will supply the version of ghettocrypt used.");
 	nupp.RegisterConstraint("--version", ParamConstraint(true, DATA_TYPE::VOID, {}, false, {}));

@@ -11,5 +11,6 @@ add_executable(GhettoCryptCLI
 
         CommandLineInterface.cpp
         Hazelnupp.cpp
+        StringTools.cpp
         main.cpp
 )
