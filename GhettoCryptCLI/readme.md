@@ -4,7 +4,7 @@ Again, please only use this as an obfuscator or if the only other option would b
 Do you want to quickly and securely encrypt stuff via the command line? Use openssl-cli with the aes cipher. It's a bit more wordy but much faster and more secure.
 
 Still want to use Ghetto Crypt cli? Here ya go!
-Just clone this repository, navigate into this directory and run `cmake && make`. It shouuuld *\*crosses fingers\** just build.
+Just clone this repository, navigate into this directory and run `cmake . && make`. It shouuuld *\*crosses fingers\** just build.
 
 If you want to use this globally, you could move it to `/usr/bin/`, or some other location in your $PATH.
 
