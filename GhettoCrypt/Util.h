@@ -6,6 +6,8 @@
 #include "SecureBitset.h"
 #include "Block.h"
 #include "Flexblock.h"
+#include "Config.h"
+#include "Cipher.h"
 #include "InitializationVector.h"
 
 namespace GhettoCipher
@@ -236,15 +238,42 @@ namespace GhettoCipher
     //! : return b ^ iv(b)
     inline Block PasswordToKey(const std::string& in)
     {
-        Block b;
+        // Let's provide a nice initial value to be sure even a password of length 0 results in a proper key
+        Block b = InitializationVector(StringToBitblock("3J7IipfQTDJbO8jtasz9PgWui6faPaEMOuVuAqyhB1S2CRcLw5caawewgDUEG1WN"));
 
         // Segment the password in segments of key-size, and xor them together.
         for (std::size_t i = 0; i < in.size(); i += BLOCK_SIZE / 8)
-            b ^= StringToBitblock(
+        {
+            const Block fragment = StringToBitblock(
                 PadStringToLength(in.substr(i, BLOCK_SIZE / 8), BLOCK_SIZE / 8, 0, false)
             );
 
-        return b ^ InitializationVector(b);
+            // To provide confusion, xor the blocks together
+            // To provide diffusion, hash fragment to fragment' first
+            b ^= Block(Cipher(fragment).Encipher(fragment.to_string()));
+        }
+            
+
+        return b;
+    }
+
+    //! Will reduce a flexblock (they are of arbitrary length) to a single block.
+    //! This single block should change completely, if a single bit in the input flexblock changes anywhere.
+    inline Block ReductionFunction_Flexblock2Block(const Flexblock& in)
+    {
+        Block b; // No initialization vector needed here
+
+        // Segment the input in segments of BLOCK_SIZE, and xor them together.
+        for (std::size_t i = 0; i < in.size(); i += BLOCK_SIZE)
+        {
+            const Block fragment = Block(PadStringToLength(in.substr(i, BLOCK_SIZE), BLOCK_SIZE, 0, false));
+            
+            // To provide confusion, xor the blocks together
+            // To provide diffusion, hash fragment to fragment' first
+            b ^= Block(Cipher(fragment).Encipher(fragment.to_string()));
+        }
+
+        return b;
     }
 
     //! Will read a file into a flexblock
