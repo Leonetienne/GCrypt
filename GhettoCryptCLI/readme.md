@@ -92,7 +92,7 @@ $ gecrypt -e --keyask --intext "hello, world!" --iobase-10
 $ gecrypt -e --keyask --intext "hello, world!" --iobase-64
 Co/WjpV5nPrCaz0QMdrXAXzzOH5HODRsBNL22KZowmGMcTLwfmsQpzt7Ik+ViR5vOhUXowFQeR5x2vbcj1X5ae
 ```
-I won't be pasting in stdout results anymore. It would become too cluttered.
+I won't be pasting in stdout for every example. It would become too cluttered.
 
 #### Passing the key as an argument
 ```sh
@@ -122,7 +122,7 @@ File `encrypted_cat.jpg` will be created.
 ```sh
 $ gecrypt -d --keyask --infile "cat.jpg.crypt"
 ```
-File `cat.jpg.crypt.plain` will be created. It's contents match `cat.jpg`  
+File `cat.jpg.crypt.plain` will be created. Its contents match `cat.jpg`  
 > :warning: Since this is a block cipher, decrypted files may be tailpadded with a few nullbytes.
 
 #### Decrypting files to a target file name
@@ -140,10 +140,10 @@ Something along the lines of `Encrypting... (Block 200 / 1148 - 17.4216%)` will 
 #### Any cipher can also compute hashsums
 ```sh
 $ gecrypt -h --intext "hello, world!"
-a96f42c9...b03d8254d
+a96f42c9d97e46b9e1ed7de5182770170d4ef9b7b8264f3fbd89b38dc60c1fe06232653f5856013307fc020fb1d35f2bea26bc0f373c5ac35a722c6b03d8254d
 
 $ gecrypt -h --infile "cat.jpg"
-a96f42c9...b03d8254d
+fe6bdfb6ec39771c4fdcdc40e52397bcd67fbfef0ad5a15ebbd8b9e4c2a815848b3984eda5ef6f727e9e420c23500c90c42ab80ac5659048be8969357741e3e5
 
 ```
 The hashsum will always be of size BLOCK_SIZE. That is 512 bits by default.  
