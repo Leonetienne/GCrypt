@@ -15,7 +15,7 @@ $ gecrypt --help
 CLI for the ghettocrypt cipher/obfuscator
 Copyright (c) 2022 Leon Etienne
 Ghettocrypt v0.21
-Ghettocrypt CLI v0.123
+Ghettocrypt CLI v0.124
 THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS TO ENCRYPT SENSITIVE DATA! READ THE README FILES ACCESSIBLE AT "https://github.com/Leonetienne/GhettoCrypt/blob/master/readme.md" AND "https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCryptCLI/readme.md"
 
 ==== AVAILABLE PARAMETERS ====
@@ -26,35 +26,37 @@ THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS T
 
 --cli-version   VOID   Will supply the version of ghettocrypt-cli used.
 
+--keyfile   -kf   STRING   incompatibilities=[--key, --keyask, --hash]   Read in the first {KEYSIZE}(=512) bits of this file and use that as an encryption key. WARNING: Arguments may be logged by the system!
+
+--iobase-2   VOID   incompatibilities=[--iobase-8, --iobase-10, --iobase-64, --iobase-uwu, --iobase-ugh]   Interpret and format ciphertexts in base2
+
+--iobase-10   VOID   incompatibilities=[--iobase-2, --iobase-8, --iobase-64, --iobase-uwu, --iobase-ugh]   Interpret and format ciphertexts in base10
+
 --iobase-ugh   VOID   incompatibilities=[--iobase-2, --iobase-8, --iobase-10, --iobase-64, --iobase-uwu]   Interpret and format ciphertexts in base ugh
 
 --iobase-uwu   VOID   incompatibilities=[--iobase-2, --iobase-8, --iobase-10, --iobase-64, --iobase-ugh]   Interpret and format ciphertexts in base uwu
 
 --iobase-64   VOID   incompatibilities=[--iobase-2, --iobase-8, --iobase-10, --iobase-uwu, --iobase-ugh]   Interpret and format ciphertexts in base64
 
---ostdout   VOID   incompatibilities=[--ofile]   Output of digested files will be dumped to stdout instead of a file.
+--ostdout   VOID   incompatibilities=[--ofile, --hash]   Output of digested files will be dumped to stdout instead of a file.
 
---encrypt   -e   VOID   incompatibilities=[--decrypt]   Use the encryption routine.
+--encrypt   -e   VOID   incompatibilities=[--decrypt, --hash]   Use the encryption routine.
 
 --infile   -if   STRING   incompatibilities=[--intext]   Encrypt this file. Saves as {filename}.crypt, if not specified otherwise.
 
 --version   -v   VOID   Will supply the version of ghettocrypt used.
 
---keyfile   -kf   STRING   incompatibilities=[--key, --keyask]   Read in the first {KEYSIZE}(=512) bits of this file and use that as an encryption key. WARNING: Arguments may be logged by the system!
+--decrypt   -d   VOID   incompatibilities=[--encrypt, --hash]   Use decryption routine.
 
---iobase-10   VOID   incompatibilities=[--iobase-2, --iobase-8, --iobase-64, --iobase-uwu, --iobase-ugh]   Interpret and format ciphertexts in base10
-
---iobase-2   VOID   incompatibilities=[--iobase-8, --iobase-10, --iobase-64, --iobase-uwu, --iobase-ugh]   Interpret and format ciphertexts in base2
-
---decrypt   -d   VOID   incompatibilities=[--encrypt]   Use decryption routine.
+--hash   -h   VOID   incompatibilities=[--encrypt, --decrypt]   Use the ghetto cipher as a hash digest.
 
 --intext   -it   STRING   incompatibilities=[--infile]   Encrypt this string. Dumps to stdout.
 
---ofile   -of   STRING   incompatibilities=[--ostdout]   Use this filename for output if --infile is specified. Gets ignored otherwise.
+--ofile   -o   STRING   incompatibilities=[--ostdout, --hash]   Use this filename for output if --infile is specified. Gets ignored otherwise.
 
---keyask   -ka   VOID   incompatibilities=[--key, --keyfile]   Read the encryption key from stdin.
+--keyask   -ka   VOID   incompatibilities=[--key, --keyfile, --hash]   Read the encryption key from stdin.
 
---key   -k   STRING   incompatibilities=[--keyfile, --keyask]   Use this value as a password to extrapolate the encryption key. WARNING: Arguments may be logged by the system!
+--key   -k   STRING   incompatibilities=[--keyfile, --keyask, --hash]   Use this value as a password to extrapolate the encryption key. WARNING: Arguments may be logged by the system!
 ```
 
 ###  Examples
@@ -134,6 +136,18 @@ File `decrypted_cat.jpg` will be created. You can now open it again.
 $ gecrypt -e --keyask --infile "cat.jpg" --progress
 ```
 Something along the lines of `Encrypting... (Block 200 / 1148 - 17.4216%)` will be regularly, but not too often, printed to stdout.
+
+#### Any cipher can also compute hashsums
+```sh
+$ gecrypt -h --intext "hello, world!"
+a96f42c9...b03d8254d
+
+$ gecrypt -h --infile "cat.jpg"
+a96f42c9...b03d8254d
+
+```
+The hashsum will always be of size BLOCK_SIZE. That is 512 bits by default.  
+> :warning: Calculating a hashsum takes about twice as long as regular encryption.
 
 #### What version am i running?
 Depending on wether you want to know the GhettoCrypt version or the CLI's version, use either `--version` or `--cli-version`. It will print out a floating point number.
