@@ -24,6 +24,12 @@
 
 using namespace GhettoCipher;
 
+enum class OPERATION_MODE {
+    ENCRYPT,
+    DECRYPT,
+    HASH
+};
+
 namespace {
     inline std::string Bin2CustomBase(const std::string& bin, const std::vector<std::string>& customSet, const std::string& seperator = "")
     {
@@ -112,11 +118,11 @@ Block GetEncryptionKey()
 {
     // Easy-case: key supplied as param
     if (CommandlineInterface::Get().HasParam("--key"))
-        return StringToBitblock(CommandlineInterface::Get()["--key"].GetString());
+        return PasswordToKey(CommandlineInterface::Get()["--key"].GetString());
 
     // Case: Ask for key
     else if (CommandlineInterface::Get().HasParam("--keyask"))
-        return StringToBitblock(PasswordPrompt());
+        return PasswordToKey(PasswordPrompt());
 
     // Case: Read key from file
     else if (CommandlineInterface::Get().HasParam("--keyfile"))
@@ -161,17 +167,18 @@ Block GetEncryptionKey()
     throw std::runtime_error("This code should not have been reached. Most likely, the cli argument parser failed making sure at least one key method was supplied.");
 }
 
-const Flexblock GetInputText(bool encryptionMode)
+const Flexblock GetInputText(const OPERATION_MODE operationMode)
 {
     // Easy-case: input text supplied as param
-    if (CommandlineInterface::Get().HasParam("--intext"))
-        // Encryption mode: We want to return the text as-is, as bits
-        if (encryptionMode)
+    if (CommandlineInterface::Get().HasParam("--intext")) {
+        switch (operationMode) {
+        // Encryption, or hashing mode: We want to return the text as-is, as bits
+        case OPERATION_MODE::ENCRYPT:
+        case OPERATION_MODE::HASH:
             return StringToBits(CommandlineInterface::Get()["--intext"].GetString());
 
         // Decryption mode: We need to first convert our input to a bitstring
-        else
-        {
+        case OPERATION_MODE::DECRYPT:
             const std::string userInput = CommandlineInterface::Get()["--intext"].GetString();
 
             // Are we using iobase 2?
@@ -208,6 +215,7 @@ const Flexblock GetInputText(bool encryptionMode)
             else
                 return HexstringToBits(userInput);
         }
+    }
 
 
     // Case: Read from file
@@ -218,7 +226,7 @@ const Flexblock GetInputText(bool encryptionMode)
     throw std::runtime_error("This code should not have been reached. Most likely, the cli argument parser failed making sure at least one input method was supplied.");
 }
 
-const std::string GetOutfileName(const bool isEncryptionMode)
+const std::string GetOutfileName(const OPERATION_MODE operationMode)
 {
     // Do we have an output file name specified?
     // Use it.
@@ -227,7 +235,8 @@ const std::string GetOutfileName(const bool isEncryptionMode)
     
     // Else: append a custom postfix to the inputs filename
     else
-        return CommandlineInterface::Get()["--infile"].GetString() + (isEncryptionMode ? ".crypt" : ".plain");
+        return CommandlineInterface::Get()["--infile"].GetString() +
+            (operationMode == OPERATION_MODE::ENCRYPT ? ".crypt" : ".plain");
 }
 
 int main(int argc, char** argv)
@@ -235,30 +244,99 @@ int main(int argc, char** argv)
     // Init cmdargs
     CommandlineInterface::Init(argc, argv);
 
-    // Get encryption key
-    const Block encryptionKey = GetEncryptionKey();
-
     // Get operation modes
-    const bool shouldEncrypt = CommandlineInterface::Get().HasParam("--encrypt");
-    const bool isFileMode = CommandlineInterface::Get().HasParam("--infile");
+    OPERATION_MODE opMode;
+    if (CommandlineInterface::Get().HasParam("--encrypt"))
+        opMode = OPERATION_MODE::ENCRYPT;
+    else if (CommandlineInterface::Get().HasParam("--hash"))
+        opMode = OPERATION_MODE::HASH;
+    else if (CommandlineInterface::Get().HasParam("--decrypt"))
+        opMode = OPERATION_MODE::DECRYPT;
+    else
+        // Unreachable
+        throw std::runtime_error("This code should not have been reached. Most likely, the cli argument parser failed making sure at least one mode of operation (-e, -d, -h) was supplied.");
 
-    // Get the input text
-    const Flexblock input = GetInputText(shouldEncrypt);
+    const bool isFileMode = CommandlineInterface::Get().HasParam("--infile");
+    const bool printDigestionProgress = CommandlineInterface::Get().HasParam("--progress");
+
 
     // Digest
     Flexblock output;
-    Cipher cipher(encryptionKey);
 
-    const bool printDigestionProgress = CommandlineInterface::Get().HasParam("--progress");
+    switch (opMode) {
+        case OPERATION_MODE::ENCRYPT: {
+            // Gather input and key
+            const Block encryptionKey = GetEncryptionKey();
+            const Flexblock input = GetInputText(opMode);
 
-    if (shouldEncrypt)
-        output = cipher.Encipher(input, printDigestionProgress);
-    else
-        output = cipher.Decipher(input, printDigestionProgress);
+            // Create cipher
+            Cipher cipher(encryptionKey);
+
+            // Run it
+            output = cipher.Encipher(input, printDigestionProgress);
+            break;
+        }
+
+        case OPERATION_MODE::DECRYPT: {
+            // Gather input and key
+            const Block encryptionKey = GetEncryptionKey();
+            const Flexblock input = GetInputText(opMode);
+
+            // Create cipher
+            Cipher cipher(encryptionKey);
+
+            // Run it
+            output = cipher.Decipher(input, printDigestionProgress);
+            break;
+        }
+
+        case OPERATION_MODE::HASH: {
+            // Gather input
+            Flexblock input = GetInputText(opMode);
+
+            // Also add an extra left-padded block with the length of the input,
+            // to make sure, H(n) != H(n + 0x0)
+            input += PadStringToLength(Block(input.size()).to_string(), BLOCK_SIZE, '0');
+
+            // Derive an encryption key
+            // This is quiet sensitive, because it absolutely MUST be impossible
+            // to acquire K without already knowing M.
+            // This alone is making this cipher a one-way function.
+            // Just reducing the output is not a solution, because: If len(input) <= BLOCK_SIZE: H(m) = E(m)_k ^ k, with k being 0 <= k <= BLOCK_SIZE. That's not good.
+            //
+            // So here's what we're doing:
+            // - We're going to take the first BLOCK_SIZE bits of the input (it's length is at least that because of the size embedding)
+            // - We're creating a sudo-random initialization vector, seeded with this block.
+            // - That's our encryption key.
+            // This way, the encryption key can only be obtained by already knowing the first BLOCK_SIZE bits of the cleartext.
+            // By not taking in ALL the bits for deriving a key, we're saving a LOT on performance, as otherwise we would basically be encrypting the input THREE times.
+            // Why create an initialization vector at all? To make sure, even an input of only zeroes would provide a strong key
+            const Block encryptionKey = InitializationVector(
+                    Block(input.substr(0, BLOCK_SIZE))
+                );
+
+            // Create cipher
+            Cipher cipher(encryptionKey);
+
+            // Run it
+            output = cipher.Encipher(input, printDigestionProgress);
+
+            if (printDigestionProgress) {
+                std::cout << "Done encrypting... Applying reduction function on ciphertext..." << std::endl;
+                std::cout << "This will take about just as long..." << std::endl;
+            }
+
+            // Reduce output to a single block
+            output = ReductionFunction_Flexblock2Block(output).to_string();
+
+            break;
+        }
+    }
+
 
     // Now output the darn thing.
-    // Outputting a file
-    if (isFileMode)
+    // Outputting to a file (only if not hashing)
+    if ((isFileMode) && (opMode != OPERATION_MODE::HASH))
     {
         // File mode is a bit different.
 
@@ -274,15 +352,18 @@ int main(int argc, char** argv)
         // Else: Dump to file
         else
         {
-            const std::string outfileName = GetOutfileName(shouldEncrypt);
+            const std::string outfileName = GetOutfileName(opMode);
             WriteBitsToFile(outfileName, output);
         }
     }
-    // Else: we are just dealing with a string
+    // Else: we are just dealing with a string, or want to print a hashsum
     else
     {
-        if (shouldEncrypt) {
-            // We are decrypting:
+        switch (opMode) {
+        case OPERATION_MODE::ENCRYPT:
+        case OPERATION_MODE::HASH: {
+
+            // We are encrypting or hashing:
             // Output to stdout as a formatted bytestring
             std::string formattedCiphertext;
 
@@ -311,7 +392,7 @@ int main(int argc, char** argv)
                 // Yes: convert binary to base 64
                 formattedCiphertext = Bin2CustomBase(output, BASE_UWU, " ");
 
-             // Are we using iobase ugh?
+            // Are we using iobase ugh?
             else if (CommandlineInterface::Get().HasParam("--iobase-ugh"))
                 // Yes: convert binary to base 64
                 formattedCiphertext = Bin2CustomBase(output, BASE_UGH, " ");
@@ -321,11 +402,14 @@ int main(int argc, char** argv)
                 formattedCiphertext = BitsToHexstring(output);
 
             std::cout << formattedCiphertext << std::endl;
+            break;
         }
-        else {
+
+        case OPERATION_MODE::DECRYPT:
             // We are just decrypting:
             // Just print it string-formatted
             std::cout << BitsToString(output) << std::endl;
+            break;
         }
     }
 
