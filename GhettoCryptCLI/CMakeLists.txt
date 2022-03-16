@@ -9,7 +9,7 @@ add_executable(GhettoCryptCLI
         
         ${GhettoCrypt}
 
-        CommandLineInterface.cpp
+        CommandlineInterface.cpp
         Hazelnupp.cpp
         StringTools.cpp
         main.cpp
