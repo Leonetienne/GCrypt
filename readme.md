@@ -1,5 +1,5 @@
-﻿# Ghettocrypt
-*because frankly i have no idea what the fuck i'm doing*  
+﻿# GCrypt
+*(GhettoCrypt), because frankly i have no idea what the fuck i'm doing*  
 <sub>*Please don't use this for anything critical*</sub>
 
 ## What the hell is this?
@@ -32,10 +32,10 @@ Even assumed it's a good cipher, it's implementation leaves a lot to be desired 
 
 ## How do I use this?
 ### *"I don't care about the library. Just let me use it from the command line!"*
-There is a CLI version availabile [here](https://github.com/Leonetienne/GhettoCrypt/tree/master/GhettoCryptCLI).
+There is a CLI version availabile [here](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GhettoCryptCLI).
 
 ### Installation as a library
-Download the `.h` and `.cpp` file from [INCLUDE/](https://github.com/Leonetienne/GhettoCrypt/tree/master/INCLUDE) and add them to your projects files. *Single-header-magic*.
+Download the `.h` and `.cpp` file from [INCLUDE/](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/INCLUDE) and add them to your projects files. *Single-header-magic*.
 
 ### Working with strings
 ```c++
@@ -65,12 +65,12 @@ GhettoCryptWrapper::EncryptFile("main.cpp", "main.cpp.crypt", "password1");
 GhettoCryptWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", "password1");
 ```
 
-If you want to do more complex stuff, use the cipher-class [`GhettoCipher::Cipher`](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/Cipher.h) aswell as the conversion methods in [Util.h](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/Util.h). This way you can cipher on bitlevel. Examples on how to do this are in [GhettoCryptWrapper.cpp](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/GhettoCryptWrapper.cpp).
+If you want to do more complex stuff, use the cipher-class [`GhettoCipher::Cipher`](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GhettoCrypt/Cipher.h) aswell as the conversion methods in [Util.h](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GhettoCrypt/Util.h). This way you can cipher on bitlevel. Examples on how to do this are in [GhettoCryptWrapper.cpp](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GhettoCrypt/GhettoCryptWrapper.cpp).
 This way you could, for example, decrypt an ecrypted file directly into memory. Or use a full-length key instead of a password.
 Without saying, this is more advanced and not as-easy as the methods supplied in the wrapper.
 
 ---
-<sup>\*</sup> A key is always of size `BLOCK_SIZE`. The default block size is 512 (bit), but you can easily change it in [Config.h](https://github.com/Leonetienne/GhettoCrypt/blob/master/GhettoCrypt/Config.h) or wherever it'll be put in the INCLUDE/*.cpp. `BLOCK_SIZE` is also the minimal output length!
+<sup>\*</sup> A key is always of size `BLOCK_SIZE`. The default block size is 512 (bit), but you can easily change it in [Config.h](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GhettoCrypt/Config.h) or wherever it'll be put in the INCLUDE/*.cpp. `BLOCK_SIZE` is also the minimal output length!
 
 ## The deets 🍝
 
