@@ -90,12 +90,11 @@ First up, we have to establish what requirements this transformation must fulfil
 Let's be honest, I'm not a cryptographer, I have no idea how collision resistant this is.
 This means, it has to be considered *insecure*!
 I have tried a few passwords brute-forcibly, experimentally (about 1mil) and have not been able to produce a collision.
-Obviously there have to be collisions, since *|P|, len\(p\) &#8712; &#8501;  &#8811; |C|*.
+Obviously there have to be collisions, since *|P|, len\(p\) &#8712; &#8501;  &#8811; |C|, len(c)*.
 
 How does it work? Basically, what happens is your password gets recoded to binary. It is then split into blocks of
-size KEY_SIZE, they are &xoplus; together, and this single block is then encrypted with itself as a key.
+size KEY_SIZE, and they are combined using *c<sub>i+1</sub> = c<sub>i</sub> &xoplus; E(c=block<sub>i</sub>, k=block<sub>i</sub>)*. *c<sub>0</sub>* is a static initialization vector. The final *c* is they key corresponding to a password.
 
-The end result is the key corresponding to your password.
 This is a one-way operation. Since the key used for this operation is the cleartext itself, you cannot undo it without already
 knowing the password(=cleartext) to begin with. *You could make a hashfunction out of this.*
 
