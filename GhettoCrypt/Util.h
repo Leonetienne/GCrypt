@@ -116,7 +116,7 @@ namespace GhettoCipher
         // Decode to bytes
         std::string text = BitblockToBytes(bits);
 
-        // Dümp excess nullbytes
+        // DÃ¼mp excess nullbytes
         text.resize(strlen(text.data()));
 
         return text;
@@ -144,7 +144,7 @@ namespace GhettoCipher
         // Decode to bytes
         std::string text = BitsToBytes(bits);
 
-        // Dümp excess nullbytes
+        // DÃ¼mp excess nullbytes
         text.resize(strlen(text.data()));
 
         return text;
@@ -232,7 +232,6 @@ namespace GhettoCipher
     }
 
     //! Creates a key of size BLOCK_SIZE from a password of arbitrary length.
-    //! Using passwords larger (in bits) than BLOCK_SIZE is generally not recommended.
     //! Note that if your password is shorter (in bits) than BLOCK_SIZE, the rest of the key will be padded with 0 (see next line!).
     //! To provide a better initial key, (and to get rid of padding zeroes), the raw result (b) will be xor'd with an initialization vector based on b.
     //! : return b ^ iv(b)
