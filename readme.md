@@ -1,5 +1,5 @@
 ﻿# GCrypt
-*(GhettoCrypt), because frankly i have no idea what the fuck i'm doing*  
+*(GhettoCrypt), because frankly I have no idea what the fuck I'm doing*  
 <sub>*Please don't use this for anything critical*</sub>
 
 ## What the hell is this?
@@ -38,7 +38,7 @@ There is a CLI version availabile [here](https://gitea.leonetienne.de/leonetienn
 Download the `.h` and `.cpp` file from [INCLUDE/](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/INCLUDE) and add them to your projects files. *Single-header-magic*.
 
 ### Working with strings
-```c++
+```cpp
 using namespace GhettoCipher;
 
 // Get some string
@@ -55,7 +55,7 @@ std::cout << decrypted << std::endl;
 ```
 
 ### Working with files
-```c++
+```cpp
 using namespace GhettoCipher;
 
 // Encrypt
