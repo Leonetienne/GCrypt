@@ -247,7 +247,7 @@ void GhettoCipher::Feistel::GenerateRoundKeys(const Block& seedKey)
         // and put them back together
         auto halfkeys = FeistelSplit(newKey);
         Halfblock halfkey1 = F(halfkeys.first, roundKeys[i - 2]);
-        Halfblock halfkey2 = halfkeys.second ^ halfkey1;
+        Halfblock halfkey2 = halfkeys.second ^ halfkey1; // I know this is reversible, but it helps to diffuse future round keys.
 
         roundKeys[i] = FeistelCombine(halfkey1, halfkey2);
     }
