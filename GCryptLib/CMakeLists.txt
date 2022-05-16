@@ -48,6 +48,5 @@ target_link_libraries(exec ${PROJECT_NAME})
 
 target_include_directories(exec PRIVATE
   include
-  ${eule_include}
 )
 
