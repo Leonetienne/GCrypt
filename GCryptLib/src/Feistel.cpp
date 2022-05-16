@@ -1,7 +1,7 @@
 #include <unordered_map>
-#include "Feistel.h"
-#include "Util.h"
-#include "Config.h"
+#include "GCrypt/Feistel.h"
+#include "GCrypt/Util.h"
+#include "GCrypt/Config.h"
 
 namespace Leonetienne::GCrypt {
 

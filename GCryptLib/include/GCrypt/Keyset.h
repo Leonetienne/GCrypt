@@ -1,7 +1,7 @@
 #pragma once
 #include <array>
-#include "Block.h"
-#include "Config.h"
+#include "GCrypt/Block.h"
+#include "GCrypt/Config.h"
 
 namespace Leonetienne::GCrypt {
   typedef std::array<Block, N_ROUNDS> Keyset;

@@ -1,6 +1,6 @@
 #pragma once
-#include "SecureBitset.h"
-#include "Config.h"
+#include "GCrypt/SecureBitset.h"
+#include "GCrypt/Config.h"
 
 namespace Leonetienne::GCrypt {
   typedef SecureBitset<BLOCK_SIZE> Block;

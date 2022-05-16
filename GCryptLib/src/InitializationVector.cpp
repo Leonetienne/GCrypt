@@ -1,5 +1,5 @@
-#include "InitializationVector.h"
-#include "Feistel.h"
+#include "GCrypt/InitializationVector.h"
+#include "GCrypt/Feistel.h"
 
 namespace Leonetienne::GCrypt {
 
