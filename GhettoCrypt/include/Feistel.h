@@ -3,7 +3,7 @@
 #include "Block.h"
 #include "Halfblock.h"
 
-namespace GhettoCipher {
+namespace Leonetienne::GCrypt {
   /** Class to perform a feistel block chipher
   */
   class Feistel {

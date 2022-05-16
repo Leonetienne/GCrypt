@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 
-namespace GhettoCipher {
+namespace Leonetienne::GCrypt {
   /** This class is a wrapper to make working with the GhettoCipher
-    * super easy with a python-like syntax
+  *   super easy with a python-like syntax
   */
   class GhettoCryptWrapper {
   public:

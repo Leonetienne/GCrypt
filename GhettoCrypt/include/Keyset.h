@@ -3,6 +3,6 @@
 #include "Block.h"
 #include "Config.h"
 
-namespace GhettoCipher {
+namespace Leonetienne::GCrypt {
   typedef std::array<Block, N_ROUNDS> Keyset;
 }
