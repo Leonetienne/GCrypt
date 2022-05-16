@@ -1,4 +1,4 @@
-#include <GCrypt/GhettoCryptWrapper.h>
+#include <GCrypt/GCryptWrapper.h>
 #include <GCrypt/Flexblock.h>
 #include <GCrypt/Util.h>
 #include "Catch2.h"
@@ -17,10 +17,10 @@ TEST_CASE(__FILE__"/Encrypting and decrypting strings works", "[Wrapper]") {
     std::string decrypted;
 
     // Encryption
-    ciphertext = GhettoCryptWrapper::EncryptString(plaintext, password);
+    ciphertext = GCryptWrapper::EncryptString(plaintext, password);
 
     // Decryption
-    decrypted = GhettoCryptWrapper::DecryptString(ciphertext, password);
+    decrypted = GCryptWrapper::DecryptString(ciphertext, password);
 
     // Assertion
     REQUIRE(plaintext == decrypted);
@@ -40,10 +40,10 @@ TEST_CASE(__FILE__"/Encrypting and decrypting files works", "[Wrapper]") {
 
 
       // Encryption
-      GhettoCryptWrapper::EncryptFile(filename_plain, filename_encrypted, password);
+      GCryptWrapper::EncryptFile(filename_plain, filename_encrypted, password);
 
       // Decryption
-      GhettoCryptWrapper::DecryptFile(filename_encrypted, filename_decrypted, password);
+      GCryptWrapper::DecryptFile(filename_encrypted, filename_decrypted, password);
 
       // Read in both the base, and the decrypted file
       const Flexblock plainfile = ReadFileToBits(filename_plain);

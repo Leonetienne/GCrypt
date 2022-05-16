@@ -1,10 +1,10 @@
-#include "GCrypt/GhettoCryptWrapper.h"
+#include "GCrypt/GCryptWrapper.h"
 #include "GCrypt/Cipher.h"
 #include "GCrypt/Util.h"
 
 namespace Leonetienne::GCrypt {
 
-  std::string GhettoCryptWrapper::EncryptString(const std::string& cleartext, const std::string& password) {
+  std::string GCryptWrapper::EncryptString(const std::string& cleartext, const std::string& password) {
     // Instanciate our cipher and supply a key
     const Block key = PasswordToKey(password);
     Cipher cipher(key);
@@ -22,7 +22,7 @@ namespace Leonetienne::GCrypt {
     return ciphertext;
   }
 
-  std::string GhettoCryptWrapper::DecryptString(const std::string& ciphertext, const std::string& password) {
+  std::string GCryptWrapper::DecryptString(const std::string& ciphertext, const std::string& password) {
     // Instanciate our cipher and supply a key
     const Block key = PasswordToKey(password);
     Cipher cipher(key);
@@ -40,7 +40,7 @@ namespace Leonetienne::GCrypt {
     return cleartext;
   }
 
-  bool GhettoCryptWrapper::EncryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport) {
+  bool GCryptWrapper::EncryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport) {
     try {
       // Read the file to bits
       const Flexblock cleartext_bits = ReadFileToBits(filename_in);
@@ -62,7 +62,7 @@ namespace Leonetienne::GCrypt {
     }
   }
 
-  bool GhettoCryptWrapper::DecryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport) {
+  bool GCryptWrapper::DecryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport) {
     try {
       // Read the file to bits
       const Flexblock ciphertext_bits = ReadFileToBits(filename_in);
