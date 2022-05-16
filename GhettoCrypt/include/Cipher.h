@@ -2,7 +2,7 @@
 #include "Feistel.h"
 #include "Flexblock.h"
 
-namespace GhettoCipher {
+namespace Leonetienne::GCrypt {
   /** Class to apply a block cipher to messages of arbitrary length in a distributed manner
   */
   class Cipher {

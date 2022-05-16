@@ -10,7 +10,7 @@
 #include "Cipher.h"
 #include "InitializationVector.h"
 
-namespace GhettoCipher {
+namespace Leonetienne::GCrypt {
     //! Mod-operator that works with negative values
     inline int Mod(const int numerator, const int denominator) {
         return (denominator + (numerator % denominator)) % denominator;

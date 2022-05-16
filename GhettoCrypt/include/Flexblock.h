@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-namespace GhettoCipher {
+namespace Leonetienne::GCrypt {
   //! A "bitset" of variable length
   typedef std::string Flexblock;
 }

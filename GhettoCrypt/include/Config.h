@@ -1,7 +1,7 @@
 #pragma once
 #include <cstddef>
 
-namespace GhettoCipher {
+namespace Leonetienne::GCrypt {
   // MUST BE A POWER OF 2 > 4
   constexpr std::size_t BLOCK_SIZE = 512;
 

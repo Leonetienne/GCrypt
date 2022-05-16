@@ -3,7 +3,7 @@
 #include <ostream>
 #include <istream>
 
-namespace GhettoCipher {
+namespace Leonetienne::GCrypt {
   /** Wrapper for std::bitset<T> that zeroes memory upon deletion.
   * This does not include ALL methods, but the ones needed.
   *

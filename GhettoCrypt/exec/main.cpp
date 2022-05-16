@@ -4,7 +4,7 @@
 #include <Util.h>
 #include <InitializationVector.h>
 
-using namespace GhettoCipher;
+using namespace Leonetienne::GCrypt;
 
 void ExampleString() {
   std::cout << "Example on how to encrypt & decrypt a string:" << std::endl;
