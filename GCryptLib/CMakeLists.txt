@@ -29,6 +29,13 @@ target_include_directories(test PRIVATE
   include
 )
 
+## Move test images to build dir
+ADD_CUSTOM_COMMAND(
+  TARGET ${PROJECT_NAME} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+  ${CMAKE_SOURCE_DIR}/test/testAssets/ $<TARGET_FILE_DIR:${PROJECT_NAME}>/testAssets/
+)
+
 
 ##############
 # Executable #
