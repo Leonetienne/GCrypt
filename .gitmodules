@@ -4,6 +4,3 @@
 [submodule "Hazelnupp"]
 	path = Hazelnupp
 	url = git@gitea.leonetienne.de:leonetienne/Hazelnupp.git
-[submodule "GeneralUtility"]
-	path = GeneralUtility
-	url = git@gitea.leonetienne.de:leonetienne/GeneralUtility.git
