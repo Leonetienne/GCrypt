@@ -32,45 +32,48 @@ Even assumed it's a good cipher, it's implementation leaves a lot to be desired 
 
 ## How do I use this?
 ### *"I don't care about the library. Just let me use it from the command line!"*
-There is a CLI version availabile [here](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GhettoCryptCLI).
+There is a CLI version availabile [here](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptCLI).
 
 ### Installation as a library
-Download the `.h` and `.cpp` file from [INCLUDE/](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/INCLUDE) and add them to your projects files. *Single-header-magic*.
+Somehow get this repository into your projects directory (I recommend as a git submodule),
+and instruct your compiler to look in `GCryptLib/include` for include files.
+From there you could either hand all files in `GCryptLib/src/` to your compiler to compile, or precompile it, and link it.
+An example on how to use GCrypt in a project is right in here: GCryptCLI.
 
 ### Working with strings
 ```cpp
-using namespace GhettoCipher;
+using namespace Leonetienne:GCrypt;
 
 // Get some string
 const std::string input = "I am a super secret message!";
 std::cout << input << std::endl;
 
 // Encrypt
-const std::string encrypted = GhettoCryptWrapper::EncryptString(input, "password1");
+const std::string encrypted = GCryptWrapper::EncryptString(input, "password1");
 std::cout << encrypted << std::endl;
 
 // Decrypt
-const std::string decrypted = GhettoCryptWrapper::DecryptString(encrypted, "password1");
+const std::string decrypted = GCryptWrapper::DecryptString(encrypted, "password1");
 std::cout << decrypted << std::endl;
 ```
 
 ### Working with files
 ```cpp
-using namespace GhettoCipher;
+using namespace Leonetienne:GCrypt;
 
 // Encrypt
-GhettoCryptWrapper::EncryptFile("main.cpp", "main.cpp.crypt", "password1");
+GCryptWrapper::EncryptFile("main.cpp", "main.cpp.crypt", "password1");
 
 // Decrypt
-GhettoCryptWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", "password1");
+GCryptWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", "password1");
 ```
 
-If you want to do more complex stuff, use the cipher-class [`GhettoCipher::Cipher`](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GhettoCrypt/Cipher.h) aswell as the conversion methods in [Util.h](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GhettoCrypt/Util.h). This way you can cipher on bitlevel. Examples on how to do this are in [GhettoCryptWrapper.cpp](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GhettoCrypt/GhettoCryptWrapper.cpp).
+If you want to do more complex stuff, use the cipher-class [`GCrypt::Cipher`](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/include/GCrypt/Cipher.h) aswell as the conversion methods in [Util.h](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/include/GCrypt/Util.h). This way you can cipher on bitlevel. Examples on how to do this are in [GCryptWrapper.cpp](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/src/GCryptWrapper.cpp).
 This way you could, for example, decrypt an ecrypted file directly into memory. Or use a full-length key instead of a password.
 Without saying, this is more advanced and not as-easy as the methods supplied in the wrapper.
 
 ---
-<sup>\*</sup> A key is always of size `BLOCK_SIZE`. The default block size is 512 (bit), but you can easily change it in [Config.h](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GhettoCrypt/Config.h) or wherever it'll be put in the INCLUDE/*.cpp. `BLOCK_SIZE` is also the minimal output length!
+<sup>\*</sup> A key is always of size `BLOCK_SIZE`. The default block size is 512 (bit), but you can easily change it in [Config.h](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/include/GCrypt/Config.h) or wherever it'll be put in the INCLUDE/*.cpp. `BLOCK_SIZE` is also the minimal output length!
 
 ## The deets 🍝
 
