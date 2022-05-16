@@ -3,12 +3,12 @@
 #include <sstream>
 #include <fstream>
 #include <cstring>
-#include "SecureBitset.h"
-#include "Block.h"
-#include "Flexblock.h"
-#include "Config.h"
-#include "Cipher.h"
-#include "InitializationVector.h"
+#include "GCrypt/SecureBitset.h"
+#include "GCrypt/Block.h"
+#include "GCrypt/Flexblock.h"
+#include "GCrypt/Config.h"
+#include "GCrypt/Cipher.h"
+#include "GCrypt/InitializationVector.h"
 
 namespace Leonetienne::GCrypt {
     //! Mod-operator that works with negative values

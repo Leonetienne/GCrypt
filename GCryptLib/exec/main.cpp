@@ -1,8 +1,8 @@
 #include <iostream>
-#include <GhettoCryptWrapper.h>
-#include <SecureBitset.h>
-#include <Util.h>
-#include <InitializationVector.h>
+#include <GCrypt/GhettoCryptWrapper.h>
+#include <GCrypt/SecureBitset.h>
+#include <GCrypt/Util.h>
+#include <GCrypt/InitializationVector.h>
 
 using namespace Leonetienne::GCrypt;
 

@@ -1,7 +1,7 @@
 #pragma once
-#include "Keyset.h"
-#include "Block.h"
-#include "Halfblock.h"
+#include "GCrypt/Keyset.h"
+#include "GCrypt/Block.h"
+#include "GCrypt/Halfblock.h"
 
 namespace Leonetienne::GCrypt {
   /** Class to perform a feistel block chipher

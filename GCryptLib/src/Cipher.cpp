@@ -1,8 +1,8 @@
 #include <iostream>
 #include <vector>
-#include "Cipher.h"
-#include "Util.h"
-#include "InitializationVector.h"
+#include "GCrypt/Cipher.h"
+#include "GCrypt/Util.h"
+#include "GCrypt/InitializationVector.h"
 
 namespace Leonetienne::GCrypt {
 

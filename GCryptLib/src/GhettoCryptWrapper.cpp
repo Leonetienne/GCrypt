@@ -1,6 +1,6 @@
-#include "GhettoCryptWrapper.h"
-#include "Cipher.h"
-#include "Util.h"
+#include "GCrypt/GhettoCryptWrapper.h"
+#include "GCrypt/Cipher.h"
+#include "GCrypt/Util.h"
 
 namespace Leonetienne::GCrypt {
 

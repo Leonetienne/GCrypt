@@ -1,6 +1,6 @@
 #pragma once
-#include "Config.h"
-#include "Block.h"
+#include "GCrypt/Config.h"
+#include "GCrypt/Block.h"
 
 namespace Leonetienne::GCrypt {
   /** Will create a sudo-random Block based on a seed

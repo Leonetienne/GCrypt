@@ -1,6 +1,6 @@
 #pragma once
-#include "Feistel.h"
-#include "Flexblock.h"
+#include "GCrypt/Feistel.h"
+#include "GCrypt/Flexblock.h"
 
 namespace Leonetienne::GCrypt {
   /** Class to apply a block cipher to messages of arbitrary length in a distributed manner

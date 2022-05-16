@@ -1,7 +1,7 @@
 #pragma once
-#include "SecureBitset.h"
 #include <cstdint>
-#include "Config.h"
+#include "GCrypt/SecureBitset.h"
+#include "GCrypt/Config.h"
 
 namespace Leonetienne::GCrypt {
   constexpr std::size_t HALFBLOCK_SIZE = (BLOCK_SIZE / 2);
