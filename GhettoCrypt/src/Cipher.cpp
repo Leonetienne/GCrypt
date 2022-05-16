@@ -5,114 +5,111 @@
 #include "InitializationVector.h"
 
 GhettoCipher::Cipher::Cipher(const Block& key)
-	:
-	key { key },
-	initializationVector(InitializationVector(key))
-{
+  :
+  key { key },
+  initializationVector(InitializationVector(key)) {
 
-	return;
+  return;
 }
 
 GhettoCipher::Cipher::Cipher(const std::string& password)
-	:
-	key { PasswordToKey(password) },
-	initializationVector(InitializationVector(key))
-{
-	return;
+  :
+  key { PasswordToKey(password) },
+  initializationVector(InitializationVector(key)) {
+  return;
 }
 
-GhettoCipher::Cipher::~Cipher()
-{
-	// Clear key memory
-	ZeroKeyMemory();
+GhettoCipher::Cipher::~Cipher() {
+  // Clear key memory
+  ZeroKeyMemory();
 
-	return;
+  return;
 }
 
-void GhettoCipher::Cipher::SetKey(const Block& key)
-{
-	ZeroKeyMemory();
+void GhettoCipher::Cipher::SetKey(const Block& key) {
+  ZeroKeyMemory();
 
-	this->key = key;
-	return;
+  this->key = key;
+  return;
 }
 
-void GhettoCipher::Cipher::SetPassword(const std::string& password)
-{
-	ZeroKeyMemory();
+void GhettoCipher::Cipher::SetPassword(const std::string& password) {
+  ZeroKeyMemory();
 
-	key = PasswordToKey(password);
-	return;
+  key = PasswordToKey(password);
+  return;
 }
 
-GhettoCipher::Flexblock GhettoCipher::Cipher::Encipher(const Flexblock& data, bool printProgress) const
-{
-	// Split cleartext into blocks
-	std::vector<Block> blocks;
+GhettoCipher::Flexblock GhettoCipher::Cipher::Encipher(const Flexblock& data, bool printProgress) const {
+  // Split cleartext into blocks
+  std::vector<Block> blocks;
 
-	for (std::size_t i = 0; i < data.size(); i += BLOCK_SIZE)
-		blocks.push_back(Block(
-			PadStringToLength(data.substr(i, BLOCK_SIZE), BLOCK_SIZE, '0', false))
-		);
+  for (std::size_t i = 0; i < data.size(); i += BLOCK_SIZE) {
+    blocks.push_back(Block(
+      PadStringToLength(data.substr(i, BLOCK_SIZE), BLOCK_SIZE, '0', false))
+    );
+  }
 
-	// Encrypt individual blocks using cipher block chaining
-	Feistel feistel(key);
+  // Encrypt individual blocks using cipher block chaining
+  Feistel feistel(key);
 
-	for (std::size_t i = 0; i < blocks.size(); i++)
-	{
-		// Print reports if desired. If we have > 1000 blocks, print one report every 100 blocks. Otherwise for every 10th block.
-		if ((i % ((blocks.size() > 1000)? 100 : 10) == 0) && (printProgress))
-			std::cout << "Encrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100 / blocks.size()) << "%)" << std::endl;
-	
-		const Block& lastBlock = (i>0) ? blocks[i-1] : initializationVector;
-		blocks[i] = feistel.Encipher(blocks[i] ^ lastBlock); // Xor last cipher block with new clear text block before E()
-	}
+  for (std::size_t i = 0; i < blocks.size(); i++) {
+    // Print reports if desired. If we have > 1000 blocks, print one report every 100 blocks. Otherwise for every 10th block.
+    if ((i % ((blocks.size() > 1000)? 100 : 10) == 0) && (printProgress)) {
+      std::cout << "Encrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100 / blocks.size()) << "%)" << std::endl;
+    }
 
-	// Concatenate ciphertext blocks back into a flexblock
-	std::stringstream ss;
-	for (Block& b : blocks)
-		ss << b;
+    const Block& lastBlock = (i>0) ? blocks[i-1] : initializationVector;
+    blocks[i] = feistel.Encipher(blocks[i] ^ lastBlock); // Xor last cipher block with new clear text block before E()
+  }
 
-	// Return it
-	return ss.str();
+  // Concatenate ciphertext blocks back into a flexblock
+  std::stringstream ss;
+  for (Block& b : blocks) {
+    ss << b;
+  }
+
+  // Return it
+  return ss.str();
 }
 
-GhettoCipher::Flexblock GhettoCipher::Cipher::Decipher(const Flexblock& data, bool printProgress) const
-{
-	// Split ciphertext into blocks
-	std::vector<Block> blocks;
+GhettoCipher::Flexblock GhettoCipher::Cipher::Decipher(const Flexblock& data, bool printProgress) const {
+  // Split ciphertext into blocks
+  std::vector<Block> blocks;
 
-	for (std::size_t i = 0; i < data.size(); i += BLOCK_SIZE)
-		blocks.push_back(Block(
-			PadStringToLength(data.substr(i, BLOCK_SIZE), BLOCK_SIZE, '0', false))
-		);
+  for (std::size_t i = 0; i < data.size(); i += BLOCK_SIZE) {
+    blocks.push_back(Block(
+      PadStringToLength(data.substr(i, BLOCK_SIZE), BLOCK_SIZE, '0', false))
+    );
+  }
 
-	// Decrypt individual blocks
-	Feistel feistel(key);
+  // Decrypt individual blocks
+  Feistel feistel(key);
 
-	// We can't do this in-loop for decryption, because we are decrypting the blocks in-place.
-	Block lastBlock = initializationVector;
-	
-	for (std::size_t i = 0; i < blocks.size(); i++)
-	{
-		// Print reports if desired. If we have > 1000 blocks, print one report every 100 blocks. Otherwise for every 10th block.
-		if ((i % ((blocks.size() > 1000) ? 100 : 10) == 0) && (printProgress))
-			std::cout << "Decrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100/ blocks.size()) << "%)" << std::endl;
+  // We can't do this in-loop for decryption, because we are decrypting the blocks in-place.
+  Block lastBlock = initializationVector;
 
-		Block tmpCopy = blocks[i];
+  for (std::size_t i = 0; i < blocks.size(); i++) {
+    // Print reports if desired. If we have > 1000 blocks, print one report every 100 blocks. Otherwise for every 10th block.
+    if ((i % ((blocks.size() > 1000) ? 100 : 10) == 0) && (printProgress)) {
+      std::cout << "Decrypting... (Block " << i << " / " << blocks.size() << " - " << ((float)i*100/ blocks.size()) << "%)" << std::endl;
+    }
 
-		blocks[i] = feistel.Decipher(blocks[i]) ^ lastBlock; // Decipher cipher block [i] and then xor it with the last cipher block [i-1] we've had
+    Block tmpCopy = blocks[i];
 
-		lastBlock = std::move(tmpCopy);
-	}
+    blocks[i] = feistel.Decipher(blocks[i]) ^ lastBlock; // Decipher cipher block [i] and then xor it with the last cipher block [i-1] we've had
 
-	// Concatenate ciphertext blocks back into a flexblock
-	std::stringstream ss;
-	for (Block& b : blocks)
-		ss << b;
+    lastBlock = std::move(tmpCopy);
+  }
 
-	// Return it
-	return ss.str();
+  // Concatenate ciphertext blocks back into a flexblock
+  std::stringstream ss;
+  for (Block& b : blocks) {
+    ss << b;
+  }
+
+  // Return it
+  return ss.str();
 }
 
 // These pragmas only work for MSVC and g++, as far as i know. Beware!!!
@@ -122,13 +119,13 @@ GhettoCipher::Flexblock GhettoCipher::Cipher::Decipher(const Flexblock& data, bo
 #pragma GCC push_options
 #pragma GCC optimize ("O0")
 #endif
-void GhettoCipher::Cipher::ZeroKeyMemory()
-{
-	key.reset();
-	return;
+void GhettoCipher::Cipher::ZeroKeyMemory() {
+  key.reset();
+  return;
 }
 #if defined _WIN32 || defined _WIN64
 #pragma optimize("", on )
 #elif defined __GNUG__
 #pragma GCC pop_options
 #endif
+

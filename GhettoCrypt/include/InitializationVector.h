@@ -2,18 +2,16 @@
 #include "Config.h"
 #include "Block.h"
 
-namespace GhettoCipher
-{
-	/** Will create a sudo-random Block based on a seed
-	*/
-	class InitializationVector
-	{
-	public:
-		InitializationVector(const GhettoCipher::Block& seed);
+namespace GhettoCipher {
+  /** Will create a sudo-random Block based on a seed
+  */
+  class InitializationVector {
+  public:
+    InitializationVector(const GhettoCipher::Block& seed);
 
-		operator GhettoCipher::Block() const;
+    operator GhettoCipher::Block() const;
 
-	private:
-		GhettoCipher::Block iv;
-	};
+  private:
+    GhettoCipher::Block iv;
+  };
 }

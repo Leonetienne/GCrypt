@@ -3,51 +3,46 @@
 #include "Util.h"
 #include "Config.h"
 
-GhettoCipher::Feistel::Feistel(const Block& key)
-{
+GhettoCipher::Feistel::Feistel(const Block& key) {
     SetKey(key);
     return;
 }
 
-GhettoCipher::Feistel::~Feistel()
-{
+GhettoCipher::Feistel::~Feistel() {
     ZeroKeyMemory();
 
     return;
 }
 
-void GhettoCipher::Feistel::SetKey(const Block& key)
-{
+void GhettoCipher::Feistel::SetKey(const Block& key) {
     GenerateRoundKeys(key);
     return;
 }
 
-GhettoCipher::Block GhettoCipher::Feistel::Encipher(const Block& data)
-{
+GhettoCipher::Block GhettoCipher::Feistel::Encipher(const Block& data) {
     return Run(data, false);
 }
 
-GhettoCipher::Block GhettoCipher::Feistel::Decipher(const Block& data)
-{
+GhettoCipher::Block GhettoCipher::Feistel::Decipher(const Block& data) {
     return Run(data, true);
 }
 
-GhettoCipher::Block GhettoCipher::Feistel::Run(const Block& data, bool reverseKeys)
-{
+GhettoCipher::Block GhettoCipher::Feistel::Run(const Block& data, bool reverseKeys) {
     const auto splitData = FeistelSplit(data);
     GhettoCipher::Halfblock l = splitData.first;
     GhettoCipher::Halfblock r = splitData.second;
 
     Halfblock tmp;
 
-    for (std::size_t i = 0; i < N_ROUNDS; i++)
-    {
+    for (std::size_t i = 0; i < N_ROUNDS; i++) {
         // Calculate key index
         std::size_t keyIndex;
-        if (reverseKeys)
+        if (reverseKeys) {
             keyIndex = N_ROUNDS - i - 1;
-        else
+        }
+        else {
             keyIndex = i;
+        }
 
         // Do a feistel round
         tmp = r;
@@ -62,8 +57,7 @@ GhettoCipher::Block GhettoCipher::Feistel::Run(const Block& data, bool reverseKe
     return FeistelCombine(r, l);
 }
 
-GhettoCipher::Halfblock GhettoCipher::Feistel::F(Halfblock m, const Block& key)
-{
+GhettoCipher::Halfblock GhettoCipher::Feistel::F(Halfblock m, const Block& key) {
     // Made-up F function
 
     // Expand to full bitwidth
@@ -79,8 +73,7 @@ GhettoCipher::Halfblock GhettoCipher::Feistel::F(Halfblock m, const Block& key)
     std::stringstream ss;
     const std::string m_str = m_expanded.to_string();
 
-    for (std::size_t i = 0; i < BLOCK_SIZE; i += 4)
-    {
+    for (std::size_t i = 0; i < BLOCK_SIZE; i += 4) {
         ss << SBox(m_str.substr(i, 4));
     }
 
@@ -90,8 +83,7 @@ GhettoCipher::Halfblock GhettoCipher::Feistel::F(Halfblock m, const Block& key)
     return CompressionFunction(m_expanded);
 }
 
-std::pair<GhettoCipher::Halfblock, GhettoCipher::Halfblock> GhettoCipher::Feistel::FeistelSplit(const Block& block)
-{
+std::pair<GhettoCipher::Halfblock, GhettoCipher::Halfblock> GhettoCipher::Feistel::FeistelSplit(const Block& block) {
     const std::string bits = block.to_string();
 
     Halfblock l(bits.substr(0, bits.size() / 2));
@@ -100,13 +92,11 @@ std::pair<GhettoCipher::Halfblock, GhettoCipher::Halfblock> GhettoCipher::Feiste
     return std::make_pair(l, r);
 }
 
-GhettoCipher::Block GhettoCipher::Feistel::FeistelCombine(const Halfblock& l, const Halfblock& r)
-{
+GhettoCipher::Block GhettoCipher::Feistel::FeistelCombine(const Halfblock& l, const Halfblock& r) {
     return Block(l.to_string() + r.to_string());
 }
 
-GhettoCipher::Block GhettoCipher::Feistel::ExpansionFunction(const Halfblock& block)
-{
+GhettoCipher::Block GhettoCipher::Feistel::ExpansionFunction(const Halfblock& block) {
     std::stringstream ss;
     const std::string bits = block.to_string();
 
@@ -117,8 +107,7 @@ GhettoCipher::Block GhettoCipher::Feistel::ExpansionFunction(const Halfblock& bl
     expansionMap["11"] = "0111";
 
     // We have to double the bits!
-    for (std::size_t i = 0; i < HALFBLOCK_SIZE; i += 2)
-    {
+    for (std::size_t i = 0; i < HALFBLOCK_SIZE; i += 2) {
         const std::string sub = bits.substr(i, 2);
         ss << expansionMap[sub];
     }
@@ -126,8 +115,7 @@ GhettoCipher::Block GhettoCipher::Feistel::ExpansionFunction(const Halfblock& bl
     return Block(ss.str());
 }
 
-GhettoCipher::Halfblock GhettoCipher::Feistel::CompressionFunction(const Block& block)
-{
+GhettoCipher::Halfblock GhettoCipher::Feistel::CompressionFunction(const Block& block) {
     std::stringstream ss;
     const std::string bits = block.to_string();
 
@@ -150,8 +138,7 @@ GhettoCipher::Halfblock GhettoCipher::Feistel::CompressionFunction(const Block& 
     compressionMap["1111"] = "01";
 
     // We have to half the bits!
-    for (std::size_t i = 0; i < BLOCK_SIZE; i += 4)
-    {
+    for (std::size_t i = 0; i < BLOCK_SIZE; i += 4) {
         const std::string sub = bits.substr(i, 4);
         ss << compressionMap[sub];
     }
@@ -159,12 +146,10 @@ GhettoCipher::Halfblock GhettoCipher::Feistel::CompressionFunction(const Block& 
     return Halfblock(ss.str());
 }
 
-std::string GhettoCipher::Feistel::SBox(const std::string& in)
-{
+std::string GhettoCipher::Feistel::SBox(const std::string& in) {
     static std::unordered_map<std::string, std::string> subMap;
     static bool mapInitialized = false;
-    if (!mapInitialized)
-    {
+    if (!mapInitialized) {
         subMap["0000"] = "1100";
         subMap["0001"] = "1000";
         subMap["0010"] = "0001";
@@ -187,8 +172,7 @@ std::string GhettoCipher::Feistel::SBox(const std::string& in)
     return subMap[in];
 }
 
-void GhettoCipher::Feistel::GenerateRoundKeys(const Block& seedKey)
-{
+void GhettoCipher::Feistel::GenerateRoundKeys(const Block& seedKey) {
     // Clear initial key memory
     ZeroKeyMemory();
     roundKeys = Keyset();
@@ -205,10 +189,12 @@ void GhettoCipher::Feistel::GenerateRoundKeys(const Block& seedKey)
     // if it is a multiple of 4, we'll shift it by 1 into the opposite direction
     const std::size_t setBits1 = compressedSeed1.count();
 
-    if (setBits1 % 4 == 0)
+    if (setBits1 % 4 == 0) {
         compressedSeed1 = Shiftr(compressedSeed1, 1);
-    else if (setBits1 % 3 == 0)
+    }
+    else if (setBits1 % 3 == 0) {
         compressedSeed1 = Shiftl(compressedSeed1, 1);
+    }
 
     // Now apply substitution
     std::stringstream ssKey1;
@@ -216,8 +202,7 @@ void GhettoCipher::Feistel::GenerateRoundKeys(const Block& seedKey)
     const std::string bitsKey1 = compressedSeed1.to_string();
     const std::string bitsKey2 = compressedSeed2.to_string();
 
-    for (std::size_t i = 0; i < HALFBLOCK_SIZE; i += 4)
-    {
+    for (std::size_t i = 0; i < HALFBLOCK_SIZE; i += 4) {
         ssKey1 << SBox(bitsKey1.substr(i, 4));
         ssKey2 << SBox(bitsKey2.substr(i, 4));
     }
@@ -230,11 +215,9 @@ void GhettoCipher::Feistel::GenerateRoundKeys(const Block& seedKey)
     roundKeys[0] = ExpansionFunction(compressedSeed1) ^ seedKey;
     roundKeys[1] = ExpansionFunction(compressedSeed2) ^ seedKey;
 
-    
     // Now derive all other round keys
 
-    for (std::size_t i = 2; i < roundKeys.size(); i++)
-    {
+    for (std::size_t i = 2; i < roundKeys.size(); i++) {
         // Initialize new round key with last round key
         Block newKey = roundKeys[i - 1];
 
@@ -262,10 +245,10 @@ void GhettoCipher::Feistel::GenerateRoundKeys(const Block& seedKey)
 #pragma GCC push_options
 #pragma GCC optimize ("O0")
 #endif
-void GhettoCipher::Feistel::ZeroKeyMemory()
-{
-    for (Block& key : roundKeys)
+void GhettoCipher::Feistel::ZeroKeyMemory() {
+    for (Block& key : roundKeys) {
         key.reset();
+    }
 
     return;
 }
@@ -274,3 +257,4 @@ void GhettoCipher::Feistel::ZeroKeyMemory()
 #elif defined __GNUG__
 #pragma GCC pop_options
 #endif
+

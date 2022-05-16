@@ -3,7 +3,6 @@
 #include "Block.h"
 #include "Config.h"
 
-namespace GhettoCipher
-{
-	typedef std::array<Block, N_ROUNDS> Keyset;
+namespace GhettoCipher {
+  typedef std::array<Block, N_ROUNDS> Keyset;
 }
