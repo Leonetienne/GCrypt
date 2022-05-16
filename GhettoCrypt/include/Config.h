@@ -8,4 +8,3 @@ namespace GhettoCipher {
   // MUST BE > 2
   constexpr std::size_t N_ROUNDS = 64;
 }
-

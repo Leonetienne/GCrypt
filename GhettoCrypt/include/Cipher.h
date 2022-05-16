@@ -37,4 +37,3 @@ namespace GhettoCipher {
     Block initializationVector;
   };
 }
-
