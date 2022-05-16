@@ -3,16 +3,16 @@
 #include <cstring>
 #include <sstream>
 #include <vector>
+#include <GCrypt/Util.h>
+#include <GCrypt/Config.h>
+#include <GCrypt/Cipher.h>
+#include <GCrypt/Flexblock.h>
+#include <GCrypt/Block.h>
 #include "CommandlineInterface.h"
-#include "../GhettoCrypt/Util.h"
-#include "../GhettoCrypt/Config.h"
-#include "../GhettoCrypt/Cipher.h"
-#include "../GhettoCrypt/Flexblock.h"
-#include "../GhettoCrypt/Block.h"
 
 #include "Bases.h"
-#include "BaseConversion.h"
-#include "StringTools.h"
+#include <GeneralUtility/BaseConversion.h>
+#include <StringTools/StringTools.h>
 
 // Required for hidden password input
 #if defined _WIN32 || defined _WIN64
@@ -22,7 +22,9 @@
 #include <unistd.h>
 #endif
 
-using namespace GhettoCipher;
+using namespace ::Leonetienne::GCrypt;
+using namespace ::Leonetienne::StringTools;
+using namespace ::Leonetienne::GeneralUtility;
 
 enum class OPERATION_MODE {
     ENCRYPT,
@@ -43,7 +45,7 @@ namespace {
         for (std::size_t i = 0; i < vec_base_custom.size(); i++)
         {
             ss << vec_base_custom[i];
-         
+
             if (i != vec_base_custom.size() - 1)
                 ss << seperator;
         }
@@ -59,7 +61,7 @@ namespace {
         // Translate to binary
         std::string binary =
             Leonetienne::GeneralUtility::BaseConversion::BaseX_2_Y<std::vector<std::string>, std::string>(in_symbols, customSet, std::string("01"));
-        
+
         // Apply padding to be a multiple of BLOCK_SIZE
         // Count how many bits we need
         std::size_t required_size = 0;
@@ -130,7 +132,7 @@ Block GetEncryptionKey()
         const std::string keyfilepath = CommandlineInterface::Get()["--keyfile"].GetString();
 
         // Read this many chars
-        const std::size_t maxChars = GhettoCipher::BLOCK_SIZE / 8;
+        const std::size_t maxChars = BLOCK_SIZE / 8;
 
         // Open ifilestream for keyfile
         std::ifstream ifs(keyfilepath, std::ios::in | std::ios::binary);
@@ -152,7 +154,7 @@ Block GetEncryptionKey()
         std::stringstream ss;
         for (std::size_t i = 0; i < maxChars; i++)
             ss << std::bitset<8>(ckeyfileContent[i]);
-        
+
         Block key(ss.str());
 
         // And delete the buffer
@@ -232,7 +234,7 @@ const std::string GetOutfileName(const OPERATION_MODE operationMode)
     // Use it.
     if (CommandlineInterface::Get().HasParam("--ofile"))
         return CommandlineInterface::Get()["--ofile"].GetString();
-    
+
     // Else: append a custom postfix to the inputs filename
     else
         return CommandlineInterface::Get()["--infile"].GetString() +
@@ -415,3 +417,4 @@ int main(int argc, char** argv)
 
     return 0;
 }
+
