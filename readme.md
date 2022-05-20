@@ -42,7 +42,7 @@ An example on how to use GCrypt in a project is right in here: GCryptCLI.
 
 ### Working with strings
 ```cpp
-using namespace Leonetienne:GCrypt;
+using namespace Leonetienne::GCrypt;
 
 // Get some string
 const std::string input = "I am a super secret message!";
@@ -59,7 +59,7 @@ std::cout << decrypted << std::endl;
 
 ### Working with files
 ```cpp
-using namespace Leonetienne:GCrypt;
+using namespace Leonetienne::GCrypt;
 
 // Encrypt
 GCryptWrapper::EncryptFile("main.cpp", "main.cpp.crypt", "password1");
