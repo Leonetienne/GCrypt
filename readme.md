@@ -101,6 +101,8 @@ size KEY_SIZE, and they are combined using *c<sub>i+1</sub> = c<sub>i</sub> &xop
 This is a one-way operation. Since the key used for this operation is the cleartext itself, you cannot undo it without already
 knowing the password(=cleartext) to begin with. *You could make a hashfunction out of this.*
 
+## Noteworthy:
+* This is no fixed algorithm. Newer versions may very well be unable to decrypt ciphertexts encrypted with earlier versions.
 
 ## LICENSE
 ```
