@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GCRYPT_UTIL_H
+#define GCRYPT_UTIL_H
+
 #include <bitset>
 #include <sstream>
 #include <fstream>
@@ -78,7 +80,7 @@ namespace Leonetienne::GCrypt {
         }
 
         // Pad rest with zeores
-        return Block(PadStringToLength(ss.str(), 128, '0', false));
+        return Block(PadStringToLength(ss.str(), BLOCK_SIZE, '0', false));
     }
 
     //! Will convert a string to a flexible data block
@@ -226,43 +228,7 @@ namespace Leonetienne::GCrypt {
     }
 
     //! Creates a key of size BLOCK_SIZE from a password of arbitrary length.
-    //! Note that if your password is shorter (in bits) than BLOCK_SIZE, the rest of the key will be padded with 0 (see next line!).
-    //! To provide a better initial key, (and to get rid of padding zeroes), the raw result (b) will be xor'd with an initialization vector based on b.
-    //! : return b ^ iv(b)
-    inline Block PasswordToKey(const std::string& in) {
-        // Let's provide a nice initial value to be sure even a password of length 0 results in a proper key
-        Block b = InitializationVector(StringToBitblock("3J7IipfQTDJbO8jtasz9PgWui6faPaEMOuVuAqyhB1S2CRcLw5caawewgDUEG1WN"));
-
-        // Segment the password in segments of key-size, and xor them together.
-        for (std::size_t i = 0; i < in.size(); i += BLOCK_SIZE / 8) {
-            const Block fragment = StringToBitblock(
-                PadStringToLength(in.substr(i, BLOCK_SIZE / 8), BLOCK_SIZE / 8, 0, false)
-            );
-
-            // To provide confusion, xor the blocks together
-            // To provide diffusion, hash fragment to fragment' first
-            b ^= Block(Cipher(fragment, Cipher::CIPHER_DIRECTION::ENCIPHER).Digest(fragment).to_string());
-        }
-
-        return b;
-    }
-
-    //! Will reduce a flexblock (they are of arbitrary length) to a single block.
-    //! This single block should change completely, if a single bit in the input flexblock changes anywhere.
-    inline Block ReductionFunction_Flexblock2Block(const Flexblock& in) {
-        Block b; // No initialization vector needed here
-
-        // Segment the input in segments of BLOCK_SIZE, and xor them together.
-        for (std::size_t i = 0; i < in.size(); i += BLOCK_SIZE) {
-            const Block fragment = Block(PadStringToLength(in.substr(i, BLOCK_SIZE), BLOCK_SIZE, 0, false));
-
-            // To provide confusion, xor the blocks together
-            // To provide diffusion, hash fragment to fragment' first
-            b ^= Block(Cipher(fragment, Cipher::CIPHER_DIRECTION::ENCIPHER).Digest(fragment).to_string());
-        }
-
-        return b;
-    }
+    Block PasswordToKey(const std::string& in);
 
     //! Will read a file into a flexblock
     inline Flexblock ReadFileToBits(const std::string& filepath) {
@@ -306,4 +272,6 @@ namespace Leonetienne::GCrypt {
         return;
     }
 }
+
+#endif
 
