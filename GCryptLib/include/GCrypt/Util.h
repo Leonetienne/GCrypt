@@ -241,7 +241,7 @@ namespace Leonetienne::GCrypt {
 
             // To provide confusion, xor the blocks together
             // To provide diffusion, hash fragment to fragment' first
-            b ^= Block(Cipher(fragment).Encipher(fragment.to_string()));
+            b ^= Block(Cipher(fragment, Cipher::CIPHER_DIRECTION::ENCIPHER).Digest(fragment).to_string());
         }
 
         return b;
@@ -258,7 +258,7 @@ namespace Leonetienne::GCrypt {
 
             // To provide confusion, xor the blocks together
             // To provide diffusion, hash fragment to fragment' first
-            b ^= Block(Cipher(fragment).Encipher(fragment.to_string()));
+            b ^= Block(Cipher(fragment, Cipher::CIPHER_DIRECTION::ENCIPHER).Digest(fragment).to_string());
         }
 
         return b;

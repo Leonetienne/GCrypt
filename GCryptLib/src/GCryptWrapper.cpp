@@ -5,15 +5,14 @@
 namespace Leonetienne::GCrypt {
 
   std::string GCryptWrapper::EncryptString(const std::string& cleartext, const std::string& password) {
-    // Instanciate our cipher and supply a key
+    // Transform the password to a key
     const Block key = PasswordToKey(password);
-    Cipher cipher(key);
 
     // Recode the ascii-string to bits
     const Flexblock cleartext_bits = StringToBits(cleartext);
 
     // Encrypt our cleartext bits
-    const Flexblock ciphertext_bits = cipher.Encipher(cleartext_bits);
+    const Flexblock ciphertext_bits = DigestFlexblock(cleartext_bits, key, Cipher::CIPHER_DIRECTION::ENCIPHER);
 
     // Recode the ciphertext bits to a hex-string
     const std::string ciphertext = BitsToHexstring(ciphertext_bits);
@@ -23,15 +22,14 @@ namespace Leonetienne::GCrypt {
   }
 
   std::string GCryptWrapper::DecryptString(const std::string& ciphertext, const std::string& password) {
-    // Instanciate our cipher and supply a key
+    // Transform the password to a key
     const Block key = PasswordToKey(password);
-    Cipher cipher(key);
 
     // Recode the hex-string to bits
     const Flexblock ciphertext_bits = HexstringToBits(ciphertext);
 
     // Decrypt the ciphertext bits
-    const std::string cleartext_bits = cipher.Decipher(ciphertext_bits);
+    const std::string cleartext_bits = DigestFlexblock(ciphertext_bits, key, Cipher::CIPHER_DIRECTION::DECIPHER);
 
     // Recode the cleartext bits to an ascii-string
     const std::string cleartext = BitsToString(cleartext_bits);
@@ -45,12 +43,11 @@ namespace Leonetienne::GCrypt {
       // Read the file to bits
       const Flexblock cleartext_bits = ReadFileToBits(filename_in);
 
-      // Instanciate our cipher and supply a key
+      // Transform the password to a key
       const Block key = PasswordToKey(password);
-      Cipher cipher(key);
 
       // Encrypt our cleartext bits
-      const Flexblock ciphertext_bits = cipher.Encipher(cleartext_bits, printProgressReport);
+      const Flexblock ciphertext_bits = DigestFlexblock(cleartext_bits, key, Cipher::CIPHER_DIRECTION::ENCIPHER);
 
       // Write our ciphertext bits to file
       WriteBitsToFile(filename_out, ciphertext_bits);
@@ -67,12 +64,11 @@ namespace Leonetienne::GCrypt {
       // Read the file to bits
       const Flexblock ciphertext_bits = ReadFileToBits(filename_in);
 
-      // Instanciate our cipher and supply a key
+      // Transform the password to a key
       const Block key = PasswordToKey(password);
-      Cipher cipher(key);
 
       // Decrypt the ciphertext bits
-      const Flexblock cleartext_bits = cipher.Decipher(ciphertext_bits, printProgressReport);
+      const Flexblock cleartext_bits = DigestFlexblock(ciphertext_bits, key, Cipher::CIPHER_DIRECTION::DECIPHER);
 
       // Write our cleartext bits to file
       WriteBitsToFile(filename_out, cleartext_bits);
@@ -84,5 +80,32 @@ namespace Leonetienne::GCrypt {
     }
   }
 
+  Flexblock GCryptWrapper::DigestFlexblock(const Flexblock& data, const Block& key, const Cipher::CIPHER_DIRECTION direction) {
+    // Split input into blocks
+    std::vector<Block> blocks;
+
+    for (std::size_t i = 0; i < data.size(); i += BLOCK_SIZE) {
+      blocks.push_back(Block(
+        PadStringToLength(data.substr(i, BLOCK_SIZE), BLOCK_SIZE, '0', false))
+      );
+    }
+
+    // Create cipher instance
+    Cipher cipher(key, direction);
+
+    // Digest all blocks
+    for (Block& block : blocks) {
+      block = cipher.Digest(block);
+    }
+
+    // Concatenate ciphertext blocks back into a flexblock
+    std::stringstream ss;
+    for (Block& b : blocks) {
+      ss << b;
+    }
+
+    // Return it
+    return ss.str();
+  }
 }
 

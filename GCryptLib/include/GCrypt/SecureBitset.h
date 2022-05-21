@@ -2,6 +2,7 @@
 #include <bitset>
 #include <ostream>
 #include <istream>
+#include <vector>
 
 namespace Leonetienne::GCrypt {
   /** Wrapper for std::bitset<T> that zeroes memory upon deletion.
@@ -32,7 +33,7 @@ namespace Leonetienne::GCrypt {
     SecureBitset<T>& operator^=(const SecureBitset<T>& other);
     SecureBitset<T> operator&(const SecureBitset<T>& other);
     SecureBitset<T> operator|(const SecureBitset<T>& other);
-    SecureBitset<T> operator^(const SecureBitset<T>& other);
+    SecureBitset<T> operator^(const SecureBitset<T>& other) const;
     SecureBitset<T> operator~() const;
     SecureBitset<T>& operator<<=(const std::size_t offset);
     SecureBitset<T>& operator>>=(const std::size_t offset);
@@ -174,7 +175,7 @@ namespace Leonetienne::GCrypt {
   }
 
   template<std::size_t T>
-  inline SecureBitset<T> SecureBitset<T>::operator^(const SecureBitset<T>& other) {
+  inline SecureBitset<T> SecureBitset<T>::operator^(const SecureBitset<T>& other) const {
     SecureBitset bs;
     bs.bitset = bitset ^ other.bitset;
     return bs;
