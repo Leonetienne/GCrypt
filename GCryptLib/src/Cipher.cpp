@@ -6,18 +6,22 @@
 
 namespace Leonetienne::GCrypt {
 
-  Cipher::Cipher(const Block& key)
+  Cipher::Cipher(const Block& key, const CIPHER_DIRECTION direction)
     :
     key { key },
-    initializationVector(InitializationVector(key)) {
+    direction { direction },
+    lastBlock(InitializationVector(key)), // Initialize our lastBlock with some deterministic initial value, based on the key
+    feistel(key) {
 
     return;
   }
 
-  Cipher::Cipher(const std::string& password)
+  Cipher::Cipher(const std::string& password, const CIPHER_DIRECTION direction)
     :
     key { PasswordToKey(password) },
-    initializationVector(InitializationVector(key)) {
+    direction { direction },
+    lastBlock(InitializationVector(key)),  // Initialize our lastBlock with some deterministic initial value, based on the key   feistel(key) {
+    feistel(key) {
     return;
   }
 
@@ -28,20 +32,42 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  void Cipher::SetKey(const Block& key) {
-    ZeroKeyMemory();
+  Block Cipher::Digest(const Block& input) {
 
-    this->key = key;
-    return;
+    switch (direction) {
+      case CIPHER_DIRECTION::ENCIPHER: {
+        // Rename our input to cleartext
+        const Block& cleartext = input;
+
+        // First, xor our cleartext with the last block, and then encipher it
+        Block ciphertext = feistel.Encipher(cleartext ^ lastBlock);
+
+        // Now set our lastBlock to the ciphertext of this block
+        lastBlock = ciphertext;
+
+        // Now return the ciphertext
+        return ciphertext;
+      }
+
+      case CIPHER_DIRECTION::DECIPHER: {
+        // Rename our input into ciphertext
+        const Block& ciphertext = input;
+
+        // First, decipher our ciphertext, and then xor it with our last block
+        Block cleartext = feistel.Decipher(ciphertext) ^ lastBlock;
+
+        // Now set our lastBLock to the ciphertext of this block
+        lastBlock = ciphertext;
+
+        // Now return the cleartext
+        return cleartext;
+      }
+    }
+
+
   }
 
-  void Cipher::SetPassword(const std::string& password) {
-    ZeroKeyMemory();
-
-    key = PasswordToKey(password);
-    return;
-  }
-
+  /*
   Flexblock Cipher::Encipher(const Flexblock& data, bool printProgress) const {
     // Split cleartext into blocks
     std::vector<Block> blocks;
@@ -113,6 +139,7 @@ namespace Leonetienne::GCrypt {
     // Return it
     return ss.str();
   }
+*/
 
   // These pragmas only work for MSVC and g++, as far as i know. Beware!!!
 #if defined _WIN32 || defined _WIN64

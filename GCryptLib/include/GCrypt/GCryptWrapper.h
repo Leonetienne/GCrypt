@@ -1,5 +1,8 @@
 #pragma once
 #include <string>
+#include "GCrypt/Flexblock.h"
+#include "GCrypt/Block.h"
+#include "GCrypt/Cipher.h"
 
 namespace Leonetienne::GCrypt {
   /** This class is a wrapper to make working with the GhettoCipher
@@ -26,6 +29,10 @@ namespace Leonetienne::GCrypt {
     static bool DecryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport = false);
 
   private:
+
+    //! Will digest a flexblock with a key
+    static Flexblock DigestFlexblock(const Flexblock& data, const Block& key, const Cipher::CIPHER_DIRECTION direction);
+
     // No instanciation! >:(
     GCryptWrapper();
   };
