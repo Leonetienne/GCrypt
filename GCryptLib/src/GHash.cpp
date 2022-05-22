@@ -55,5 +55,10 @@ namespace Leonetienne::GCrypt {
     return hasher.GetHashsum();
   }
 
+  void GHash::operator=(const GHash& other) {
+    cipher = other.cipher;
+
+    return;
+  }
 }
 
