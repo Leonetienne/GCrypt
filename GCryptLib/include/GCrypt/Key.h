@@ -17,6 +17,12 @@ namespace Leonetienne::GCrypt {
       //! Will generate a random key from actual randomness (std::random_device)
       static Key Random();
 
+      //! Loads a keyfile
+      static Key LoadFromFile(const std::string& path);
+
+      //! Will save a keyfile
+      void WriteToFile(const std::string& path);
+
       Key();
       Key(const Key& k);
       Key(const Block& b);
