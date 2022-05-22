@@ -1,5 +1,5 @@
-#ifndef GCRYPT_HASHER_H
-#define GCRYPT_HASHER_H
+#ifndef GCRYPT_GHASH_H
+#define GCRYPT_GHASH_H
 
 #include "GCrypt/Flexblock.h"
 #include "GCrypt/Block.h"
@@ -8,9 +8,9 @@
 namespace Leonetienne::GCrypt {
   /** This class implements a hash function, based on the GCrypt cipher
   */
-  class Hasher {
+  class GHash {
   public:
-    Hasher();
+    GHash();
 
     //! Will add the hash value of the block `data` to the hashsum.
     //! WARNING: If you compute hashes using this digestive method,

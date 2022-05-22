@@ -1,10 +1,10 @@
-#include "GCrypt/Hasher.h"
+#include "GCrypt/GHash.h"
 #include "GCrypt/Util.h"
 #include "GCrypt/InitializationVector.h"
 
 namespace Leonetienne::GCrypt {
 
-  Hasher::Hasher() :
+  GHash::GHash() :
     // Initialize our cipher with a static, but randomly distributed key.
     cipher(
         StringToBitblock("CfRtNdMTP4Y5CWRd"),
@@ -15,17 +15,17 @@ namespace Leonetienne::GCrypt {
       return;
   }
 
-  void Hasher::DigestBlock(const Block& data) {
+  void GHash::DigestBlock(const Block& data) {
     // Encipher the current block, and xor it on the current hashsum
     block ^= cipher.Digest(data);
     return;
   }
 
-  const Block& Hasher::GetHashsum() const {
+  const Block& GHash::GetHashsum() const {
     return block;
   }
 
-  Block Hasher::CalculateHashsum(const Flexblock& data) {
+  Block GHash::CalculateHashsum(const Flexblock& data) {
     // Split input into blocks
     std::vector<Block> blocks;
 
@@ -42,7 +42,7 @@ namespace Leonetienne::GCrypt {
     blocks.push_back(lengthBlock);
 
     // Create hasher instance
-    Hasher hasher;
+    GHash hasher;
 
     // Digest all blocks
     for (Block& block : blocks) {
