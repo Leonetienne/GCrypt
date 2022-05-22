@@ -62,10 +62,10 @@ std::cout << decrypted << std::endl;
 using namespace Leonetienne::GCrypt;
 
 // Encrypt
-GCryptWrapper::EncryptFile("main.cpp", "main.cpp.crypt", Key::FromPassword("password1"));
+GWrapper::EncryptFile("main.cpp", "main.cpp.crypt", Key::FromPassword("password1"));
 
 // Decrypt
-GCryptWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", Key::FromPassword("password1"));
+GWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", Key::FromPassword("password1"));
 ```
 
 ### Prefer keyfiles instead?
@@ -76,7 +76,7 @@ using namespace Leonetienne::GCrypt;
 const Key newKey = Key::Random(); // Will create a key from actual randomness (like, hardware events)
 
 // Use the key
-GCryptWrapper::EncryptFile("main.cpp", "main.cpp.crypt", newKey);
+GWrapper::EncryptFile("main.cpp", "main.cpp.crypt", newKey);
 
 // Save the key to a keyfile
 newKey.WriteToFile("/var/stuff/mykeyfile");
@@ -111,7 +111,7 @@ GHash is a streaming hash function based on the GCipher.
 For all intents and purposes, it does the following:
 You have a *Block b*, which is initialized with a static random distribution.
 Once you give the GHash instance a data block to digest, it will use the GCipher to encrypt it, with itself as a key, and xor that onto *b*.
-(*b<sub>i</sub> = b<sub>i-1</sub> &#8853; E(key=b, data=k)*)
+(*b<sub>i</sub> = b<sub>i-1</sub> &#8853; E(key=b, data=b)*)
 
 The lastest *b* represents the current result of the hash function.
 
@@ -122,8 +122,8 @@ This wrapper function adds an additional block including the length of the input
 Whilst we're at it, why not implement a pseudo-random number generator based on GHash aswell. So here it is, [GPrng](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/feature/relaunch/GCryptLib/include/GCrypt/GPrng.h).  
 GPrng is really nothing special. I just wanted to implement it, mainly to visualize the GCiphers entropy.
 
-GPrng basically does the following: It creates a GHash instance, which initially digested the prngs seed. This produces a hash result, which is one block in size.
-This block gets eaten up, as pseudo-randomness is used. Once there are no bits left, the GHash instance will digest the result of this block &#8853; seed.
+GPrng basically does the following: It creates a GHash instance, which initially digests the prngs seed. This produces a hash result, which is one block in size.
+This block gets eaten up, as pseudo-randomness is used. Once there are no bits left, the GHash instance will digest the result of this block &#8853; the initial seed.
 The xor operation ensures that an observer will never know the internal state of the GHash instance. This is important, as to ensure an observer won't be able to predict
 future output.
 
