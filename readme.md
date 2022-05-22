@@ -122,7 +122,7 @@ This wrapper function adds an additional block including the length of the input
 Whilst we're at it, why not implement a pseudo-random number generator based on GHash aswell. So here it is, [GPrng](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/feature/relaunch/GCryptLib/include/GCrypt/GPrng.h).  
 GPrng is really nothing special. I just wanted to implement it, mainly to visualize the GCiphers entropy.
 
-GPrng basically does the following: It creates a GHash instance, which initially digests the prngs seed. This produces a hash result, which is one block in size.
+GPrng basically does the following: It creates a GHash instance, which initially digests the prng's seed. This produces a hash result, which is one block in size.
 This block gets eaten up, as pseudo-randomness is used. Once there are no bits left, the GHash instance will digest the result of this block &#8853; the initial seed.
 The xor operation ensures that an observer will never know the internal state of the GHash instance. This is important, as to ensure an observer won't be able to predict
 future output.
