@@ -128,41 +128,31 @@ The xor operation ensures that an observer will never know the internal state of
 future output.
 
 ### Speaking of... Visualizations!
-<div>
-<span style="display: inline-block;">
-`"Hello :3"` in binary:  
+`"Hello :3"` in binary, and it's ciphertext:
+
 !["Hello :3" in binary](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/input.bmp.png)
-</span>
-
-<span style="display: inline-block;">
-It's ciphertext:  
+&nbsp;&nbsp;&nbsp;
 ![Ciphertext 1](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/output.bmp.png)
-</span>
-</div>
 
-Now, let's flip a single bit in the input:
 
-One bit flipped:  
+Now, let's flip a single bit in the input:  
+
+One bit flipped, and again the corresponding ciphertext:  
 ![One bit flipped](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/input-flip.bmp.png)
-
-It's ciphertext:  
+&nbsp;&nbsp;&nbsp;
 ![Ciphertext for flipped bit](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/output-flip.bmp.png)
 
-Let's gif them together, to better see the difference...
-
-Input:  
+Let's gif them together, to better see the difference:  
 ![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/input.gif)
-
-Ciphertext:  
+&nbsp;&nbsp;&nbsp;
 ![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/output.gif)
 
 
 What about input longer a single block?
 
-Input:  
+Input, and ciphertext:  
 ![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/input-big.gif)
-
-Ciphertext:  
+&nbsp;&nbsp;&nbsp;
 ![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/output-big.gif)
 
 Notice how the ciphertext doesn't change until the block containing the bitflip is reached. This is a limitation of cipher block chaining.
