@@ -7,11 +7,11 @@
 
 namespace Leonetienne::GCrypt {
 
-  GCipher::GCipher(const Key& key, const DIRECTION direction)
-    :
+  GCipher::GCipher(const Key& key, const DIRECTION direction) :
     direction { direction },
     lastBlock(InitializationVector(key)), // Initialize our lastBlock with some deterministic initial value, based on the key
-    feistel(key) {
+    feistel(key)
+  {
 
     return;
   }
