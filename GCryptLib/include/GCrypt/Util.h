@@ -227,9 +227,6 @@ namespace Leonetienne::GCrypt {
         return ss.str();
     }
 
-    //! Creates a key of size BLOCK_SIZE from a password of arbitrary length.
-    Block PasswordToKey(const std::string& in);
-
     //! Will read a file into a flexblock
     inline Flexblock ReadFileToBits(const std::string& filepath) {
         // Read file

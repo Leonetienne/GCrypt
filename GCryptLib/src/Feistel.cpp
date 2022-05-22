@@ -5,7 +5,7 @@
 
 namespace Leonetienne::GCrypt {
 
-  Feistel::Feistel(const Block& key) {
+  Feistel::Feistel(const Key& key) {
       SetKey(key);
       return;
   }
@@ -16,7 +16,7 @@ namespace Leonetienne::GCrypt {
       return;
   }
 
-  void Feistel::SetKey(const Block& key) {
+  void Feistel::SetKey(const Key& key) {
       GenerateRoundKeys(key);
       return;
   }
@@ -59,7 +59,7 @@ namespace Leonetienne::GCrypt {
       return FeistelCombine(r, l);
   }
 
-  Halfblock Feistel::F(Halfblock m, const Block& key) {
+  Halfblock Feistel::F(Halfblock m, const Key& key) {
       // Made-up F function
 
       // Expand to full bitwidth
@@ -174,7 +174,7 @@ namespace Leonetienne::GCrypt {
       return subMap[in];
   }
 
-  void Feistel::GenerateRoundKeys(const Block& seedKey) {
+  void Feistel::GenerateRoundKeys(const Key& seedKey) {
       // Clear initial key memory
       ZeroKeyMemory();
       roundKeys = Keyset();
@@ -234,7 +234,7 @@ namespace Leonetienne::GCrypt {
           Halfblock halfkey1 = F(halfkeys.first, roundKeys[i - 2]);
           Halfblock halfkey2 = halfkeys.second ^ halfkey1; // I know this is reversible, but it helps to diffuse future round keys.
 
-          roundKeys[i] = FeistelCombine(halfkey1, halfkey2);
+          roundKeys[i] = Key(FeistelCombine(halfkey1, halfkey2));
       }
 
       return;
@@ -248,7 +248,7 @@ namespace Leonetienne::GCrypt {
 #pragma GCC optimize ("O0")
 #endif
   void Feistel::ZeroKeyMemory() {
-      for (Block& key : roundKeys) {
+      for (Key& key : roundKeys) {
           key.reset();
       }
 

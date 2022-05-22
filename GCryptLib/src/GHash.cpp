@@ -7,7 +7,9 @@ namespace Leonetienne::GCrypt {
   GHash::GHash() :
     // Initialize our cipher with a static, but randomly distributed key.
     cipher(
-        StringToBitblock("CfRtNdMTP4Y5CWRd"),
+        // Can't use Key::FromPassword here, because it depends on GHash.
+        // Instead use a hardcoded key.
+        Key(StringToBitblock("CfRtNdMTP4Y5CWRd")),
         GCipher::DIRECTION::ENCIPHER
     ) {
       block = InitializationVector(StringToBitblock("3J7IipfQTDJbO8jtasz9PgWui6faPaEMOuVuAqyhB1S2CRcLw5caawewgDUEG1WN"));
