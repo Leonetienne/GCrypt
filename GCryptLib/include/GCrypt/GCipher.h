@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GCRYPT_GCIPHER_H
+#define GCRYPT_GCIPHER_H
+
 #include "GCrypt/Feistel.h"
 #include "GCrypt/Flexblock.h"
 
@@ -35,3 +37,6 @@ namespace Leonetienne::GCrypt {
     Block lastBlock;
   };
 }
+
+#endif
+
