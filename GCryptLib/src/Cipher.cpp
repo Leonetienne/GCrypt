@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <stdexcept>
 #include "GCrypt/Cipher.h"
 #include "GCrypt/Util.h"
 #include "GCrypt/InitializationVector.h"
@@ -64,7 +65,7 @@ namespace Leonetienne::GCrypt {
       }
     }
 
-
+    throw std::runtime_error("Unreachable branch reached.");
   }
 
   /*
