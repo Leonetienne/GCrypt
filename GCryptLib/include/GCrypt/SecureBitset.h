@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GCRYPT_SECUREBITSET_H
+#define GCRYPT_SECUREBITSET_H
+
 #include <bitset>
 #include <ostream>
 #include <istream>
@@ -285,3 +287,6 @@ namespace Leonetienne::GCrypt {
     return ifs >> bs.Get();
   }
 }
+
+#endif
+

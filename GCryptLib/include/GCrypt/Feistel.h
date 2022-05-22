@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GCRYPT_FEISTEL_H
+#define GCRYPT_FEISTEL_H
+
 #include "GCrypt/Keyset.h"
 #include "GCrypt/Block.h"
 #include "GCrypt/Key.h"
@@ -60,3 +62,6 @@ namespace Leonetienne::GCrypt {
     Keyset roundKeys;
   };
 }
+
+#endif
+
