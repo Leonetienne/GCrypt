@@ -1,4 +1,4 @@
-#include <GCrypt/Cipher.h>
+#include <GCrypt/GWrapper.h>
 #include <GCrypt/Util.h>
 #include "Catch2.h"
 
@@ -10,8 +10,7 @@ using namespace Leonetienne::GCrypt;
 TEST_CASE(__FILE__"/SingleBlock_NoPadding", "[Encryption/Decryption consistency]") {
 
   // Instanciate our cipher and supply a key
-  const Block key = PasswordToKey("1234");
-  const Cipher cipher(key, Cipher::CIPHER_DIRECTION::Encryption);
+  const Key key = Key::FromPassword("1234");
 
   // Recode the ascii-string to bits
   const Flexblock cleartext_bits =
@@ -25,24 +24,23 @@ TEST_CASE(__FILE__"/SingleBlock_NoPadding", "[Encryption/Decryption consistency]
     "0000011110010110111010110110111110011110011010001100100111110101";
 
   // Encrypt our cleartext bits
-  const Flexblock ciphertext_bits = cipher.Encipher(cleartext_bits);
+  const Flexblock ciphertext_bits = GWrapper::CipherFlexblock(cleartext_bits, key, GCipher::DIRECTION::ENCIPHER);
 
   // Decipher it again
-  const Flexblock decryptedBits = cipher.Decipher(ciphertext_bits);
+  const Flexblock decryptedBits = GWrapper::CipherFlexblock(ciphertext_bits, key, GCipher::DIRECTION::DECIPHER);
 
   // Assert that the decrypted text equals the plaintext
   REQUIRE(
-    cleartext_bits ==
-    decryptedBits
-  );
+      cleartext_bits ==
+      decryptedBits
+      );
 }
 
 // Tests that encrypting a message of less than BLOCK_SIZE yields the exact message plus zero-padding back
 TEST_CASE(__FILE__"/SingleBlock_Padding", "[Encryption/Decryption consistency]") {
 
   // Instanciate our cipher and supply a key
-  const Block key = PasswordToKey("1234");
-  const Cipher cipher(key);
+  const Key key = Key::FromPassword("1234");
 
   // Recode the ascii-string to bits
   const Flexblock cleartext_bits =
@@ -65,24 +63,23 @@ TEST_CASE(__FILE__"/SingleBlock_Padding", "[Encryption/Decryption consistency]")
     "0000000000000000000000000000000000000000000000000000000000000000";
 
   // Encrypt our cleartext bits
-  const Flexblock ciphertext_bits = cipher.Encipher(cleartext_bits);
+  const Flexblock ciphertext_bits = GWrapper::CipherFlexblock(cleartext_bits, key, GCipher::DIRECTION::ENCIPHER);
 
   // Decipher it again
-  const Flexblock decryptedBits = cipher.Decipher(ciphertext_bits);
+  const Flexblock decryptedBits = GWrapper::CipherFlexblock(ciphertext_bits, key, GCipher::DIRECTION::DECIPHER);
 
   // Assert that the decrypted text equals the plaintext
   REQUIRE(
-    cleartext_bits_EXPECTED_RESULT ==
-    decryptedBits
-  );
+      cleartext_bits_EXPECTED_RESULT ==
+      decryptedBits
+      );
 }
 
 // Tests that a decrypted ciphertext equals its plaintrext version, using a cleartext that requires A LOT of blocks
 TEST_CASE(__FILE__"MultiBlock_NoPadding/", "[Encryption/Decryption consistency]") {
 
   // Instanciate our cipher and supply a key
-  const Block key = PasswordToKey("1234");
-  const Cipher cipher(key);
+  const Key key = Key::FromPassword("1234");
 
   // Recode the ascii-string to bits
   const Flexblock cleartext_bits =
@@ -120,24 +117,23 @@ TEST_CASE(__FILE__"MultiBlock_NoPadding/", "[Encryption/Decryption consistency]"
     "0101110011001101010110010100011001110110000110010001100110011111";
 
   // Encrypt our cleartext bits
-  const Flexblock ciphertext_bits = cipher.Encipher(cleartext_bits);
+  const Flexblock ciphertext_bits = GWrapper::CipherFlexblock(cleartext_bits, key, GCipher::DIRECTION::ENCIPHER);
 
   // Decipher it again
-  const Flexblock decryptedBits = cipher.Decipher(ciphertext_bits);
+  const Flexblock decryptedBits = GWrapper::CipherFlexblock(ciphertext_bits, key, GCipher::DIRECTION::DECIPHER);
 
   // Assert that the decrypted text equals the plaintext
   REQUIRE(
-  cleartext_bits ==
-  decryptedBits
-  );
+      cleartext_bits ==
+      decryptedBits
+      );
 }
 
 // Tests that a decrypted ciphertext equals its plaintrext version, using a cleartext that requires A LOT of blocks
 TEST_CASE(__FILE__"MultiBlock_Padding/", "[Encryption/Decryption consistency]") {
 
   // Instanciate our cipher and supply a key
-  const Block key = PasswordToKey("1234");
-  const Cipher cipher(key);
+  const Key key = Key::FromPassword("1234");
 
   // Recode the ascii-string to bits
   const Flexblock cleartext_bits =
@@ -208,15 +204,15 @@ TEST_CASE(__FILE__"MultiBlock_Padding/", "[Encryption/Decryption consistency]") 
     "0000000000000000000000000000000000000000000000000000000000000000";
 
   // Encrypt our cleartext bits
-  const Flexblock ciphertext_bits = cipher.Encipher(cleartext_bits);
+  const Flexblock ciphertext_bits = GWrapper::CipherFlexblock(cleartext_bits, key, GCipher::DIRECTION::ENCIPHER);
 
   // Decipher it again
-  const Flexblock decryptedBits = cipher.Decipher(ciphertext_bits);
+  const Flexblock decryptedBits = GWrapper::CipherFlexblock(ciphertext_bits, key, GCipher::DIRECTION::DECIPHER);
 
   // Assert that the decrypted text equals the plaintext
   REQUIRE(
-    cleartext_bits_EXPECTED_RESULT ==
-    decryptedBits
-  );
+      cleartext_bits_EXPECTED_RESULT ==
+      decryptedBits
+      );
 }
 
