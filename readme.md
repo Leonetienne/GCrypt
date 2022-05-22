@@ -111,7 +111,7 @@ GHash is a streaming hash function based on the GCipher.
 For all intents and purposes, it does the following:
 You have a *Block b*, which is initialized with a static random distribution.
 Once you give the GHash instance a data block to digest, it will use the GCipher to encrypt it, with itself as a key, and xor that onto *b*.
-(*b<sub>i</sub> = b</sub>i-1</sub> &#8853; E(key=b, data=k)*)
+(*b<sub>i</sub> = b<sub>i-1</sub> &#8853; E(key=b, data=k)*)
 
 The lastest *b* represents the current result of the hash function.
 
