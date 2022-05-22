@@ -8,14 +8,14 @@ namespace Leonetienne::GCrypt {
     // Initialize our cipher with a static, but randomly distributed key.
     cipher(
         StringToBitblock("CfRtNdMTP4Y5CWRd"),
-        Cipher::CIPHER_DIRECTION::ENCIPHER
+        GCipher::DIRECTION::ENCIPHER
     ) {
       block = InitializationVector(StringToBitblock("3J7IipfQTDJbO8jtasz9PgWui6faPaEMOuVuAqyhB1S2CRcLw5caawewgDUEG1WN"));
 
       return;
   }
- 
-  void Hasher::Digest(const Block& data) {
+
+  void Hasher::DigestBlock(const Block& data) {
     // Encipher the current block, and xor it on the current hashsum
     block ^= cipher.Digest(data);
     return;
@@ -46,7 +46,7 @@ namespace Leonetienne::GCrypt {
 
     // Digest all blocks
     for (Block& block : blocks) {
-      hasher.Digest(block);
+      hasher.DigestBlock(block);
     }
 
     // Return the total hashsum

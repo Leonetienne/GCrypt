@@ -5,32 +5,32 @@
 namespace Leonetienne::GCrypt {
   /** Class to apply a block/-stream cipher to messages of arbitrary length in a distributed manner
   */
-  class Cipher {
+  class GCipher {
   public:
     //! Describes the direction the cipher runs in
-    enum class CIPHER_DIRECTION {
+    enum class DIRECTION {
       ENCIPHER,
       DECIPHER
     };
 
     //! Will initialize this cipher with a key
-    explicit Cipher(const Block& key, const CIPHER_DIRECTION direction);
+    explicit GCipher(const Block& key, const DIRECTION direction);
 
     //! Will initialize this cipher with a key
-    explicit Cipher(const std::string& password, const CIPHER_DIRECTION direction);
+    explicit GCipher(const std::string& password, const DIRECTION direction);
 
     // Disable copying
-    Cipher(const Cipher& other) = delete;
-    Cipher(Cipher&& other) noexcept = delete;
+    GCipher(const GCipher& other) = delete;
+    GCipher(GCipher&& other) noexcept = delete;
 
-    ~Cipher();
+    ~GCipher();
 
     //! Will digest a data block, and return it
     Block Digest(const Block& input);
 
   private:
     Block key;
-    const CIPHER_DIRECTION direction;
+    const DIRECTION direction;
 
     //! The feistel instance to be used
     Feistel feistel;

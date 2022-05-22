@@ -3,7 +3,7 @@
 
 #include "GCrypt/Flexblock.h"
 #include "GCrypt/Block.h"
-#include "GCrypt/Cipher.h"
+#include "GCrypt/GCipher.h"
 
 namespace Leonetienne::GCrypt {
   /** This class implements a hash function, based on the GCrypt cipher
@@ -12,8 +12,11 @@ namespace Leonetienne::GCrypt {
   public:
     Hasher();
 
-    //! Will add the hash value of `data` to the hashsum
-    void Digest(const Block& data);
+    //! Will add the hash value of the block `data` to the hashsum.
+    //! WARNING: If you compute hashes using this digestive method,
+    //! you REALLY REALLY should add a trailing block just containing the cleartext size!
+    //! You MOST LIKELY just want to use the wrapper function GHash::CalculateHashsum(Flexblock const&) instead!
+    void DigestBlock(const Block& data);
 
     //! Will return the current hashsum
     const Block& GetHashsum() const;
@@ -23,7 +26,7 @@ namespace Leonetienne::GCrypt {
 
   private:
     //! The cipher to use
-    Cipher cipher;
+    GCipher cipher;
 
     //! The current state of the hashsum
     Block block;
