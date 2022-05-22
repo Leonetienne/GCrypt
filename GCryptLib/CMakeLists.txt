@@ -34,6 +34,12 @@ target_include_directories(test PRIVATE
   include
 )
 
+target_compile_options(test PRIVATE
+  -Werror
+  -fdiagnostics-color=always
+)
+
+
 ## Move test images to build dir
 ADD_CUSTOM_COMMAND(
   TARGET ${PROJECT_NAME} POST_BUILD
@@ -53,5 +59,10 @@ target_link_libraries(exec ${PROJECT_NAME})
 
 target_include_directories(exec PRIVATE
   include
+)
+
+target_compile_options(exec PRIVATE
+  -Werror
+  -fdiagnostics-color=always
 )
 
