@@ -136,7 +136,7 @@ future output.
 ![Ciphertext 1](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/output.bmp.png)
 
 
-Now, let's flip than a single bit in the input:  
+Now, let's flip a single bit in the input:  
 
 One bit flipped, and again the corresponding ciphertext:  
 ![One bit flipped](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/input-flip.bmp.png)
@@ -148,15 +148,16 @@ Let's gif them together, to better see the difference:
 &nbsp;&nbsp;&nbsp;
 ![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/output.gif)
 
+As shown, flipping even a single bit, affects the entire ciphertext.
 
-#### What about input longer a single block?
+#### What about input longer than a single block?
 
 Input, and ciphertext:  
 ![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/input-big.gif)
 &nbsp;&nbsp;&nbsp;
 ![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/output-big.gif)
 
-Notice how the ciphertext doesn't change until the block containing the bitflip is reached. This is a limitation of cipher block chaining.
+Notice how the ciphertext doesn't change until the block containing the bitflip is reached? This is a limitation of cipher block chaining.
 
 ### What about extreme inputs?
 How non-transparent is the cipher with extreme inputs? Even with a super problematic key?:  
