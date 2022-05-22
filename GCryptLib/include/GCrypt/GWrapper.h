@@ -8,7 +8,7 @@ namespace Leonetienne::GCrypt {
   /** This class is a wrapper to make working with the GhettoCipher
   *   super easy with a python-like syntax
   */
-  class GCryptWrapper {
+  class GWrapper {
   public:
     //! Will encrypt a string and return it hexadecimally encoded.
     static std::string EncryptString(const std::string& cleartext, const std::string& password);
@@ -33,9 +33,8 @@ namespace Leonetienne::GCrypt {
 
   private:
 
-
     // No instanciation! >:(
-    GCryptWrapper();
+    GWrapper();
   };
 }
 

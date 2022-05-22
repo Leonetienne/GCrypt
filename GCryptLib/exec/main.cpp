@@ -1,5 +1,5 @@
 #include <iostream>
-#include <GCrypt/GCryptWrapper.h>
+#include <GCrypt/GWrapper.h>
 #include <GCrypt/SecureBitset.h>
 #include <GCrypt/Util.h>
 #include <GCrypt/InitializationVector.h>
@@ -14,11 +14,11 @@ void ExampleString() {
   std::cout << input << std::endl;
 
   // Encrypt
-  const std::string encrypted = GCryptWrapper::EncryptString(input, "password1");
+  const std::string encrypted = GWrapper::EncryptString(input, "password1");
   std::cout << encrypted << std::endl;
 
   // Decrypt
-  const std::string decrypted = GCryptWrapper::DecryptString(encrypted, "password1");
+  const std::string decrypted = GWrapper::DecryptString(encrypted, "password1");
   std::cout << decrypted << std::endl;
 
   return;
@@ -28,10 +28,10 @@ void ExampleFiles() {
   std::cout << "Example on how to encrypt & decrypt any file:" << std::endl;
 
   // Encrypt
-  GCryptWrapper::EncryptFile("main.cpp", "main.cpp.crypt", "password1");
+  GWrapper::EncryptFile("main.cpp", "main.cpp.crypt", "password1");
 
   // Decrypt
-  GCryptWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", "password1");
+  GWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", "password1");
 
   return;
 }
