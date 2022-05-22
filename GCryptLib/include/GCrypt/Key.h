@@ -11,7 +11,12 @@ namespace Leonetienne::GCrypt {
   */
   class Key : public Block {
     public:
+      //! Will generate a key from a password
       static Key FromPassword(const std::string& password);
+
+      //! Will generate a random key from actual randomness (std::random_device)
+      static Key Random();
+
       Key();
       Key(const Key& k);
       Key(const Block& b);
