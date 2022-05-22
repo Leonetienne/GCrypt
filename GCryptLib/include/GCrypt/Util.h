@@ -72,7 +72,9 @@ namespace Leonetienne::GCrypt {
     }
 
     //! Will convert a string to a fixed-size data block
-    inline Block StringToBitblock(const std::string& s) {
+    //! @s: The string to pad
+    //! padLeft: should padding be added to the left? If not, to the right.
+    inline Block StringToBitblock(const std::string& s, bool padLeft = true) {
         std::stringstream ss;
 
         for (std::size_t i = 0; i < s.size(); i++) {
@@ -80,7 +82,7 @@ namespace Leonetienne::GCrypt {
         }
 
         // Pad rest with zeores
-        return Block(PadStringToLength(ss.str(), BLOCK_SIZE, '0', false));
+        return Block(PadStringToLength(ss.str(), BLOCK_SIZE, '0', padLeft));
     }
 
     //! Will convert a string to a flexible data block
