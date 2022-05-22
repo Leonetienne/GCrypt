@@ -28,10 +28,11 @@ namespace Leonetienne::GCrypt {
     //! @filename_out The file the decrypted version should be saved in.
     static bool DecryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport = false);
 
+    //! Will enncrypt or decrypt an entire flexblock of binary data, given a key.
+    static Flexblock CipherFlexblock(const Flexblock& data, const Block& key, const GCipher::DIRECTION direction);
+
   private:
 
-    //! Will digest a flexblock with a key
-    static Flexblock DigestFlexblock(const Flexblock& data, const Block& key, const GCipher::DIRECTION direction);
 
     // No instanciation! >:(
     GCryptWrapper();
