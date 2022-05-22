@@ -128,6 +128,7 @@ The xor operation ensures that an observer will never know the internal state of
 future output.
 
 ### Speaking of... Visualizations!
+#### Single-block diffusion
 `"Hello :3"` in binary, and it's ciphertext:
 
 !["Hello :3" in binary](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/input.bmp.png)
@@ -135,7 +136,7 @@ future output.
 ![Ciphertext 1](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/output.bmp.png)
 
 
-Now, let's flip a single bit in the input:  
+Now, let's flip than a single bit in the input:  
 
 One bit flipped, and again the corresponding ciphertext:  
 ![One bit flipped](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/input-flip.bmp.png)
@@ -148,7 +149,7 @@ Let's gif them together, to better see the difference:
 ![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/output.gif)
 
 
-What about input longer a single block?
+#### What about input longer a single block?
 
 Input, and ciphertext:  
 ![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/input-big.gif)
@@ -156,6 +157,19 @@ Input, and ciphertext:
 ![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/output-big.gif)
 
 Notice how the ciphertext doesn't change until the block containing the bitflip is reached. This is a limitation of cipher block chaining.
+
+### What about extreme inputs?
+How non-transparent is the cipher with extreme inputs? Even with a super problematic key?:  
+
+Input, key, and ciphertext:  
+![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/input-extreme.gif)
+&nbsp;&nbsp;&nbsp;
+![Key](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/input-extreme-key.bmp.png)
+&nbsp;&nbsp;&nbsp;
+![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/output-extreme.gif)
+
+Notice how even cleartexts that are almost completely uniform, with a key that is just zeores, will produce ambiguous ciphertexts.
+I darkened the input gif, as to not cause disorientation by flickering.
 
 ## Noteworthy:
 * This is no fixed algorithm. Newer versions may very well be unable to decrypt ciphertexts encrypted with earlier versions.
