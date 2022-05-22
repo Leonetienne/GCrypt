@@ -23,8 +23,10 @@ namespace Leonetienne::GCrypt {
     //! Will digest a data block, and return it
     Block Digest(const Block& input);
 
+    void operator=(const GCipher& other);
+
   private:
-    const DIRECTION direction;
+    DIRECTION direction;
 
     //! The feistel instance to be used
     Feistel feistel;

@@ -240,6 +240,12 @@ namespace Leonetienne::GCrypt {
       return;
   }
 
+  void Feistel::operator=(const Feistel& other) {
+    roundKeys = other.roundKeys;
+
+    return;
+  }
+
   // These pragmas only work for MSVC and g++, as far as i know. Beware!!!
 #if defined _WIN32 || defined _WIN64
 #pragma optimize("", off )

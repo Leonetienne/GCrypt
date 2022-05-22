@@ -24,6 +24,8 @@ namespace Leonetienne::GCrypt {
     //! Will calculate a hashsum for `data`.
     static Block CalculateHashsum(const Flexblock& data);
 
+    void operator=(const GHash& other);
+
   private:
     //! The cipher to use
     GCipher cipher;

@@ -26,6 +26,8 @@ namespace Leonetienne::GCrypt {
     //! Will decipher a data block via the set seed-key
     Block Decipher(const Block& data);
 
+    void operator=(const Feistel& other);
+
   private:
     //! Will run the feistel rounds, with either regular key
     //! order or reversed key order
