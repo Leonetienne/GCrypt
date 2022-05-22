@@ -54,12 +54,13 @@ namespace Leonetienne::GCrypt {
 
     // Block has finished de*ciphering.
     // Let's generate a new set of round keys.
-    GenerateRoundKeys((Block)roundKeys.back());
+    GenerateRoundKeys((Key)roundKeys.back());
 
     return FeistelCombine(r, l);
   }
 
   Halfblock Feistel::F(Halfblock m, const Key& key) {
+
     // Made-up F function
 
     // Expand to full bitwidth
@@ -74,15 +75,13 @@ namespace Leonetienne::GCrypt {
     // Non-linearly apply subsitution boxes
     std::stringstream ss;
     const std::string m_str = m_expanded.to_string();
-
     for (std::size_t i = 0; i < BLOCK_SIZE; i += 4) {
       ss << SBox(m_str.substr(i, 4));
     }
-
     m_expanded = Block(ss.str());
 
-    // Return the compressed version
-    return CompressionFunction(m_expanded);
+    // Return the compressed version, shifted by 3
+    return Shiftl(CompressionFunction(m_expanded), 3);
   }
 
   std::pair<Halfblock, Halfblock> Feistel::FeistelSplit(const Block& block) {
@@ -124,13 +123,13 @@ namespace Leonetienne::GCrypt {
     std::unordered_map<std::string, std::string> compressionMap;
     compressionMap["0000"] = "10";
     compressionMap["0001"] = "01";
-    compressionMap["0010"] = "10";
+    compressionMap["0010"] = "11";
     compressionMap["0011"] = "10";
     compressionMap["0100"] = "11";
     compressionMap["0101"] = "01";
     compressionMap["0110"] = "00";
-    compressionMap["0111"] = "11";
-    compressionMap["1000"] = "01";
+    compressionMap["0111"] = "01";
+    compressionMap["1000"] = "11";
     compressionMap["1001"] = "00";
     compressionMap["1010"] = "11";
     compressionMap["1011"] = "00";

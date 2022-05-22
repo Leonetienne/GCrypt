@@ -25,6 +25,9 @@ namespace Leonetienne::GCrypt {
     //! Will digest a data block, and return it
     Block Digest(const Block& input);
 
+    //! Will update the base key used
+    void SetKey(const Key& key);
+
     void operator=(const GCipher& other);
 
   private:
