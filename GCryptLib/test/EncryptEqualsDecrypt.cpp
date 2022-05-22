@@ -11,7 +11,7 @@ TEST_CASE(__FILE__"/SingleBlock_NoPadding", "[Encryption/Decryption consistency]
 
   // Instanciate our cipher and supply a key
   const Block key = PasswordToKey("1234");
-  const Cipher cipher(key);
+  const Cipher cipher(key, Cipher::CIPHER_DIRECTION::Encryption);
 
   // Recode the ascii-string to bits
   const Flexblock cleartext_bits =

@@ -9,7 +9,7 @@
 #include "GCrypt/Block.h"
 #include "GCrypt/Flexblock.h"
 #include "GCrypt/Config.h"
-#include "GCrypt/Cipher.h"
+#include "GCrypt/GCipher.h"
 #include "GCrypt/InitializationVector.h"
 
 namespace Leonetienne::GCrypt {

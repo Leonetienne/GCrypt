@@ -2,7 +2,7 @@
 #include <string>
 #include "GCrypt/Flexblock.h"
 #include "GCrypt/Block.h"
-#include "GCrypt/Cipher.h"
+#include "GCrypt/GCipher.h"
 
 namespace Leonetienne::GCrypt {
   /** This class is a wrapper to make working with the GhettoCipher
@@ -31,7 +31,7 @@ namespace Leonetienne::GCrypt {
   private:
 
     //! Will digest a flexblock with a key
-    static Flexblock DigestFlexblock(const Flexblock& data, const Block& key, const Cipher::CIPHER_DIRECTION direction);
+    static Flexblock DigestFlexblock(const Flexblock& data, const Block& key, const GCipher::DIRECTION direction);
 
     // No instanciation! >:(
     GCryptWrapper();
