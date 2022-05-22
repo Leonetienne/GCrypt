@@ -7,8 +7,8 @@ namespace Leonetienne::GCrypt {
   GHash::GHash() :
     // Initialize our cipher with a static, but randomly distributed key.
     cipher(
-        // Can't use Key::FromPassword here, because it depends on GHash.
-        // Instead use a hardcoded key.
+        // The key really does not matter, as it gets changed
+        // each time before digesting anything.
         Key(StringToBitblock("nsoCZfvdqpRkeVTt9wzvPR3TT26peOW9E2kTHh3pdPCq2M7BpskvUljJHSrobUTI")),
         GCipher::DIRECTION::ENCIPHER
     ) {
@@ -18,6 +18,9 @@ namespace Leonetienne::GCrypt {
   }
 
   void GHash::DigestBlock(const Block& data) {
+    // Set the cipher key to the current data to be hashed
+    cipher.SetKey(Key(data));
+
     // Encipher the current block, and xor it on the current hashsum
     block ^= cipher.Digest(data);
     return;

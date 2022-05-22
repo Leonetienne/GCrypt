@@ -51,6 +51,12 @@ namespace Leonetienne::GCrypt {
     throw std::runtime_error("Unreachable branch reached.");
   }
 
+  void GCipher::SetKey(const Key& key) {
+    feistel.SetKey(key);
+
+    return;
+  }
+
   void GCipher::operator=(const GCipher& other) {
     direction = other.direction;
     feistel = other.feistel;

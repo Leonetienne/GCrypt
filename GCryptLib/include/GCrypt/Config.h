@@ -8,7 +8,7 @@ namespace Leonetienne::GCrypt {
   constexpr std::size_t BLOCK_SIZE = 512;
 
   // MUST BE > 2
-  constexpr std::size_t N_ROUNDS = 64;
+  constexpr std::size_t N_ROUNDS = 400;
 }
 
 #endif
