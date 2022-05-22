@@ -3,6 +3,7 @@
 #include <GCrypt/SecureBitset.h>
 #include <GCrypt/Util.h>
 #include <GCrypt/InitializationVector.h>
+#include <GCrypt/Key.h>
 
 using namespace Leonetienne::GCrypt;
 
@@ -14,11 +15,11 @@ void ExampleString() {
   std::cout << input << std::endl;
 
   // Encrypt
-  const std::string encrypted = GWrapper::EncryptString(input, "password1");
+  const std::string encrypted = GWrapper::EncryptString(input, Key::FromPassword("password1"));
   std::cout << encrypted << std::endl;
 
   // Decrypt
-  const std::string decrypted = GWrapper::DecryptString(encrypted, "password1");
+  const std::string decrypted = GWrapper::DecryptString(encrypted, Key::FromPassword("password1"));
   std::cout << decrypted << std::endl;
 
   return;
@@ -28,10 +29,10 @@ void ExampleFiles() {
   std::cout << "Example on how to encrypt & decrypt any file:" << std::endl;
 
   // Encrypt
-  GWrapper::EncryptFile("main.cpp", "main.cpp.crypt", "password1");
+  GWrapper::EncryptFile("main.cpp", "main.cpp.crypt", Key::FromPassword("password1"));
 
   // Decrypt
-  GWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", "password1");
+  GWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", Key::FromPassword("password1"));
 
   return;
 }

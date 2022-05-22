@@ -4,10 +4,10 @@
 
 namespace Leonetienne::GCrypt {
 
-  std::string GWrapper::EncryptString(const std::string& cleartext, const std::string& password) {
-    // Transform the password to a key
-    const Block key = PasswordToKey(password);
-
+  std::string GWrapper::EncryptString(
+      const std::string& cleartext,
+      const Key& key)
+  {
     // Recode the ascii-string to bits
     const Flexblock cleartext_bits = StringToBits(cleartext);
 
@@ -21,10 +21,10 @@ namespace Leonetienne::GCrypt {
     return ciphertext;
   }
 
-  std::string GWrapper::DecryptString(const std::string& ciphertext, const std::string& password) {
-    // Transform the password to a key
-    const Block key = PasswordToKey(password);
-
+  std::string GWrapper::DecryptString(
+      const std::string& ciphertext,
+      const Key& key)
+  {
     // Recode the hex-string to bits
     const Flexblock ciphertext_bits = HexstringToBits(ciphertext);
 
@@ -38,13 +38,15 @@ namespace Leonetienne::GCrypt {
     return cleartext;
   }
 
-  bool GWrapper::EncryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport) {
+  bool GWrapper::EncryptFile(
+      const std::string& filename_in,
+      const std::string& filename_out,
+      const Key& key,
+      bool printProgressReport)
+  {
     try {
       // Read the file to bits
       const Flexblock cleartext_bits = ReadFileToBits(filename_in);
-
-      // Transform the password to a key
-      const Block key = PasswordToKey(password);
 
       // Encrypt our cleartext bits
       const Flexblock ciphertext_bits = CipherFlexblock(cleartext_bits, key, GCipher::DIRECTION::ENCIPHER);
@@ -59,13 +61,15 @@ namespace Leonetienne::GCrypt {
     }
   }
 
-  bool GWrapper::DecryptFile(const std::string& filename_in, const std::string& filename_out, const std::string& password, bool printProgressReport) {
+  bool GWrapper::DecryptFile(
+      const std::string& filename_in,
+      const std::string& filename_out,
+      const Key& key,
+      bool printProgressReport)
+  {
     try {
       // Read the file to bits
       const Flexblock ciphertext_bits = ReadFileToBits(filename_in);
-
-      // Transform the password to a key
-      const Block key = PasswordToKey(password);
 
       // Decrypt the ciphertext bits
       const Flexblock cleartext_bits = CipherFlexblock(ciphertext_bits, key, GCipher::DIRECTION::DECIPHER);
@@ -82,7 +86,7 @@ namespace Leonetienne::GCrypt {
 
   Flexblock GWrapper::CipherFlexblock(
       const Flexblock& data,
-      const Block& key,
+      const Key& key,
       const GCipher::DIRECTION direction)
   {
     // Split input into blocks

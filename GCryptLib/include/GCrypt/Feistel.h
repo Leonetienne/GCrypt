@@ -1,6 +1,7 @@
 #pragma once
 #include "GCrypt/Keyset.h"
 #include "GCrypt/Block.h"
+#include "GCrypt/Key.h"
 #include "GCrypt/Halfblock.h"
 
 namespace Leonetienne::GCrypt {
@@ -8,7 +9,7 @@ namespace Leonetienne::GCrypt {
   */
   class Feistel {
   public:
-    explicit Feistel(const Block& key);
+    explicit Feistel(const Key& key);
 
     Feistel(const Feistel& other) = delete;
     Feistel(Feistel&& other) noexcept = delete;
@@ -17,7 +18,7 @@ namespace Leonetienne::GCrypt {
 
     //! Will set the seed-key for this feistel network.
     //! Roundkeys will be derived from this.
-    void SetKey(const Block& key);
+    void SetKey(const Key& key);
 
     //! Will encipher a data block via the set seed-key
     Block Encipher(const Block& data);
@@ -31,7 +32,7 @@ namespace Leonetienne::GCrypt {
     Block Run(const Block& data, bool reverseKeys);
 
     //! Arbitrary cipher function
-    static Halfblock F(Halfblock m, const Block& key);
+    static Halfblock F(Halfblock m, const Key& key);
 
     //! Split a data block into two half blocks (into L and R)
     static std::pair<Halfblock, Halfblock> FeistelSplit(const Block& block);
@@ -49,7 +50,7 @@ namespace Leonetienne::GCrypt {
     static std::string SBox(const std::string& in);
 
     //! Will generate a the round keys
-    void GenerateRoundKeys(const Block& seedKey);
+    void GenerateRoundKeys(const Key& seedKey);
 
     //! Will zero the memory used by the keyset
     void ZeroKeyMemory();
