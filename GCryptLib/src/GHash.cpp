@@ -9,7 +9,7 @@ namespace Leonetienne::GCrypt {
     cipher(
         // Can't use Key::FromPassword here, because it depends on GHash.
         // Instead use a hardcoded key.
-        Key(StringToBitblock("CfRtNdMTP4Y5CWRd")),
+        Key(StringToBitblock("nsoCZfvdqpRkeVTt9wzvPR3TT26peOW9E2kTHh3pdPCq2M7BpskvUljJHSrobUTI")),
         GCipher::DIRECTION::ENCIPHER
     ) {
       block = InitializationVector(StringToBitblock("3J7IipfQTDJbO8jtasz9PgWui6faPaEMOuVuAqyhB1S2CRcLw5caawewgDUEG1WN"));
