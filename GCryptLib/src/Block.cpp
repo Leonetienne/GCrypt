@@ -214,11 +214,11 @@ namespace Leonetienne::GCrypt {
     memset(data.data(), 0, CHUNK_SIZE*data.size());
     return;
   }
-
 #if defined _WIN32 || defined _WIN64
 #pragma optimize("", on )
 #elif defined __GNUG__
 #pragma GCC pop_options
 #endif
+
 }
 
