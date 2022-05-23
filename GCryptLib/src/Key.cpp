@@ -67,7 +67,7 @@ namespace Leonetienne::GCrypt {
 
   void Key::WriteToFile(const std::string& path) {
     // Transform key to bytes
-    const std::string keybytes = BitsToBytes(to_string());
+    const std::string keybytes = BitsToBytes(ToString());
 
     // Create an ofilestream
     std::ofstream ofs(path, std::ios::out | std::ios::binary);

@@ -52,14 +52,14 @@ namespace Leonetienne::GCrypt {
     // Slurp up the rest of the current block
     std::stringstream ss;
     const std::size_t bitsLeft = BLOCK_SIZE - nextBit;
-    ss << hasher.GetHashsum().to_string().substr(nextBit, bitsLeft);
+    ss << hasher.GetHashsum().ToString().substr(nextBit, bitsLeft);
 
     // Now we have to advance to the next block
     AdvanceBlock();
 
     // Now, grab the remaining bits
     const std::size_t remainingBits = BLOCK_SIZE - bitsLeft;
-    ss << hasher.GetHashsum().to_string().substr(0, remainingBits);
+    ss << hasher.GetHashsum().ToString().substr(0, remainingBits);
 
     // Assert that we have the correct number of bits
     assert(ss.str().length() == BLOCK_SIZE);

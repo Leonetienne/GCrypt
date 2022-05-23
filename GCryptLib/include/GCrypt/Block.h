@@ -1,12 +1,126 @@
 #ifndef GCRYPT_BLOCK_H
 #define GCRYPT_BLOCK_H
 
-#include "GCrypt/SecureBitset.h"
-#include "GCrypt/Config.h"
+#include <cstdint>
+#include <array>
+#include <string>
+#include <ostream>
 
 namespace Leonetienne::GCrypt {
-  typedef SecureBitset<BLOCK_SIZE> Block;
+
+  /* This class represents a block of data,
+   * and provides functions to manipulate it
+  */
+  class Block {
+    public:
+      //! Will constuct an uninitialized data block
+      Block();
+
+      //! Will construct this block from a string like "101010".. Length MUST be 512.
+      Block(const std::string& other);
+
+      //! Copy-ctor
+      Block(const Block& other);
+
+      ~Block();
+
+      //! Will construct this block from a string like "011101..". Length MUST be 512.
+      void FromString(const std::string& str);
+
+      //! Will create a bitset-compatible string ("0101110..") representation
+      //! of this block. Length will always be 512.
+      std::string ToString() const;
+
+      //! Will matrix-multiply two blocks together.
+      //! Since the matrices values are pretty much sudo-random,
+      //! they will most likely integer-overflow.
+      //! So see this as a one-way function.
+      Block MMul(const Block& other) const;
+      Block operator*(const Block& other) const;
+
+      //! Will matrix-multiply two blocks together,
+      //! and directly write into this same block.
+      //! Since the matrices values are pretty much sudo-random,
+      //! they will most likely integer-overflow.
+      //! So see this as a one-way function.
+      void MMulInplace(const Block& other);
+      Block& operator*=(const Block& other);
+
+      //! Will xor two blocks together
+      Block Xor(const Block& other) const;
+      //! Will xor two blocks together
+      Block operator^(const Block& other) const;
+
+      //! Will xor two blocks together, inplace
+      void XorInplace(const Block& other);
+      //! Will xor two blocks together, inplace
+      Block& operator^=(const Block& other);
+
+      // # TO BE IMPLEMENTED
+      //! Will shift rows upwards by n
+      void ShiftRowsUp(const std::size_t n);
+
+      // # TO BE IMPLEMENTED
+      //! Will shift matrix rows downwards by n
+      void ShiftRowsDown(const std::size_t n);
+
+      // # TO BE IMPLEMENTED
+      //! Will shift matrix columns to the left by n
+      void ShiftColumnsLeft(const std::size_t n);
+
+      // # TO BE IMPLEMENTED
+      //! Will shift matrix columns to the right by n
+      void ShiftColumnsRight(const std::size_t n);
+
+      // # TO BE IMPLEMENTED
+      //! Will shift array cells to the left by n
+      void ShiftCellsLeft(const std::size_t n);
+
+      // # TO BE IMPLEMENTED
+      //! Will shift array cells to the right by n
+      void ShiftCellsRight(const std::size_t n);
+
+      //! Will copy a block
+      Block& operator=(const Block& other);
+
+      //! Will compare whether or not two blocks are equal
+      bool operator==(const Block& other) const;
+      //! Will compare whether or not two blocks are unequal
+      bool operator!=(const Block& other) const;
+
+      //! Will zero all data
+      void Reset();
+
+
+      //! Returns 32-bit chunks of data, indexed by matrix coordinates (0-3)
+      std::uint32_t& Get(const std::uint8_t row, const std::uint8_t column);
+      //! Returns 32-bit chunks of data, indexed by matrix coordinates (0-3)
+      const std::uint32_t& Get(const std::uint8_t row, const std::uint8_t column) const;
+
+      //! Returns 32-bit chunks of data, indexed by a 1d-index (0-16)
+      std::uint32_t& Get(const std::uint8_t index);
+
+      //! Returns 32-bit chunks of data, indexed by a 1d-index (0-16)
+      const std::uint32_t& Get(const std::uint8_t index) const;
+
+      //! Returns 32-bit chunks of data, indexed by a 1d-index (0-16)
+      std::uint32_t& operator[](const std::uint8_t index);
+
+      //! Returns 32-bit chunks of data, indexed by a 1d-index (0-16)
+      const std::uint32_t& operator[](const std::uint8_t index) const;
+
+      static constexpr std::size_t CHUNK_SIZE = sizeof(std::uint32_t);
+      static constexpr std::size_t CHUNK_SIZE_BITS = CHUNK_SIZE * 8;
+
+      friend std::ostream& operator<<(std::ostream& os, const Block& b);
+
+    private:
+
+      std::array<std::uint32_t, 16> data;
+  };
+
 }
+
 
 #endif
 
