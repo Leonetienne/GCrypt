@@ -44,6 +44,8 @@ namespace Leonetienne::GCrypt {
 
     Block m;
 
+    // Maybe pre-calculate the 1d-index...?
+
     m.Get(0, 0) = (this->Get(0, 0) * o.Get(0, 0)) + (this->Get(0, 1) * o.Get(1, 0)) + (this->Get(0, 2) * o.Get(2, 0)) + (this->Get(0, 3) * o.Get(3, 0));
     m.Get(0, 1) = (this->Get(0, 0) * o.Get(0, 1)) + (this->Get(0, 1) * o.Get(1, 1)) + (this->Get(0, 2) * o.Get(2, 1)) + (this->Get(0, 3) * o.Get(3, 1));
     m.Get(0, 2) = (this->Get(0, 0) * o.Get(0, 2)) + (this->Get(0, 1) * o.Get(1, 2)) + (this->Get(0, 2) * o.Get(2, 2)) + (this->Get(0, 3) * o.Get(3, 2));
@@ -74,6 +76,8 @@ namespace Leonetienne::GCrypt {
   void Block::MMulInplace(const Block& o) {
 
     Block m = *this;
+
+    // Maybe pre-calculate the 1d-index...?
 
     this->Get(0, 0) = (m.Get(0, 0) * o.Get(0, 0)) + (m.Get(0, 1) * o.Get(1, 0)) + (m.Get(0, 2) * o.Get(2, 0)) + (m.Get(0, 3) * o.Get(3, 0));
     this->Get(0, 1) = (m.Get(0, 0) * o.Get(0, 1)) + (m.Get(0, 1) * o.Get(1, 1)) + (m.Get(0, 2) * o.Get(2, 1)) + (m.Get(0, 3) * o.Get(3, 1));
