@@ -1,6 +1,7 @@
 #include <unordered_map>
 #include "GCrypt/Feistel.h"
 #include "GCrypt/Util.h"
+#include "GCrypt/BlockMatrix.h"
 #include "GCrypt/Config.h"
 
 namespace Leonetienne::GCrypt {
@@ -69,8 +70,8 @@ namespace Leonetienne::GCrypt {
     // Shift to left by 1
     m_expanded = Shiftl(m_expanded, 1);
 
-    // Xor with key
-    m_expanded ^= key;
+    // Matrix-mult with key
+    m_expanded = (BlockMatrix(m_expanded) * BlockMatrix(key)).ToBlock();
 
     // Non-linearly apply subsitution boxes
     std::stringstream ss;
