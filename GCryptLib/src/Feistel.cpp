@@ -68,25 +68,27 @@ namespace Leonetienne::GCrypt {
     Block m_expanded = ExpansionFunction(m);
 
     // Shift to left by 1
-    m_expanded = Shiftl(m_expanded, 1);
+    //m_expanded = Shiftl(m_expanded, 1);
+    m_expanded = (m_expanded);
 
     // Matrix-mult with key
-    m_expanded = (BlockMatrix(m_expanded) * BlockMatrix(key)).ToBlock();
+    m_expanded *= key;
 
     // Non-linearly apply subsitution boxes
     std::stringstream ss;
-    const std::string m_str = m_expanded.to_string();
+    const std::string m_str = m_expanded.ToString();
     for (std::size_t i = 0; i < BLOCK_SIZE; i += 4) {
       ss << SBox(m_str.substr(i, 4));
     }
     m_expanded = Block(ss.str());
 
     // Return the compressed version, shifted by 3
-    return Shiftl(CompressionFunction(m_expanded), 3);
+    //return Shiftl(CompressionFunction(m_expanded), 3);
+    return (CompressionFunction(m_expanded));
   }
 
   std::pair<Halfblock, Halfblock> Feistel::FeistelSplit(const Block& block) {
-    const std::string bits = block.to_string();
+    const std::string bits = block.ToString();
 
     Halfblock l(bits.substr(0, bits.size() / 2));
     Halfblock r(bits.substr(bits.size() / 2));
@@ -119,7 +121,7 @@ namespace Leonetienne::GCrypt {
 
   Halfblock Feistel::CompressionFunction(const Block& block) {
     std::stringstream ss;
-    const std::string bits = block.to_string();
+    const std::string bits = block.ToString();
 
     std::unordered_map<std::string, std::string> compressionMap;
     compressionMap["0000"] = "10";
@@ -184,7 +186,8 @@ namespace Leonetienne::GCrypt {
     // Compress- substitute, and expand the seed key to form the initial and the second-initial round key
     // This action is non-linear and irreversible, and thus strenghtens security.
     Halfblock compressedSeed1 = CompressionFunction(seedKey);
-    Halfblock compressedSeed2 = CompressionFunction(Shiftl(seedKey, 1)); // Shifting one key by 1 will result in a completely different compression
+    //Halfblock compressedSeed2 = CompressionFunction(Shiftl(seedKey, 1)); // Shifting one key by 1 will result in a completely different compression
+    Halfblock compressedSeed2 = CompressionFunction((seedKey)); // Shifting one key by 1 will result in a completely different compression
 
     // To add further confusion, let's shift seed1 by 1 aswell (after compression, but before substitution)
     // but only if the total number of bits set are a multiple of 3
@@ -192,10 +195,11 @@ namespace Leonetienne::GCrypt {
     const std::size_t setBits1 = compressedSeed1.count();
 
     if (setBits1 % 4 == 0) {
-      compressedSeed1 = Shiftr(compressedSeed1, 1);
+      //compressedSeed1 = Shiftr(compressedSeed1, 1);
+      compressedSeed1 = (compressedSeed1);
     }
     else if (setBits1 % 3 == 0) {
-      compressedSeed1 = Shiftl(compressedSeed1, 1);
+      compressedSeed1 = (compressedSeed1);
     }
 
     // Now apply substitution
@@ -224,7 +228,8 @@ namespace Leonetienne::GCrypt {
       Block newKey = roundKeys[i - 1];
 
       // Shift to left by how many bits are set, modulo 8
-      newKey = Shiftl(newKey, newKey.count() % 8); // This action is irreversible
+      //newKey = Shiftl(newKey, newKey.count() % 8); // This action is irreversible
+      newKey = (newKey); // This action is irreversible
 
       // Split into two halfblocks,
       // apply F() to one halfblock with rk[i-2],
@@ -255,7 +260,7 @@ namespace Leonetienne::GCrypt {
 #endif
   void Feistel::ZeroKeyMemory() {
     for (Key& key : roundKeys) {
-      key.reset();
+      key.Reset();
     }
 
     return;

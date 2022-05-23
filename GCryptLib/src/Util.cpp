@@ -53,7 +53,7 @@ namespace Leonetienne::GCrypt {
   std::string BitblockToBytes(const Block& bits) {
     std::stringstream ss;
 
-    const std::string bitstring = bits.to_string();
+    const std::string bitstring = bits.ToString();
 
     for (std::size_t i = 0; i < BLOCK_SIZE; i += 8) {
       ss << (char)std::bitset<8>(bitstring.substr(i, 8)).to_ulong();
@@ -97,7 +97,7 @@ namespace Leonetienne::GCrypt {
   std::string BitblockToHexstring(const Block& b) {
     std::stringstream ss;
     const std::string charset = "0123456789abcdef";
-    const std::string bstr = b.to_string();
+    const std::string bstr = b.ToString();
 
     for (std::size_t i = 0; i < bstr.size(); i += 4) {
       ss << charset[std::bitset<4>(bstr.substr(i, 4)).to_ulong()];
@@ -139,7 +139,7 @@ namespace Leonetienne::GCrypt {
       }
 
       // Append to our bits
-      ss << std::bitset<4>(value);
+      ss << std::bitset<4>(value).to_string();
     }
 
     return Block(ss.str());
@@ -166,7 +166,7 @@ namespace Leonetienne::GCrypt {
       }
 
       // Append to our bits
-      ss << std::bitset<4>(value);
+      ss << std::bitset<4>(value).to_string();
     }
 
     return ss.str();
