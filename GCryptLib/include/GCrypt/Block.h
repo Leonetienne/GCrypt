@@ -123,6 +123,9 @@ namespace Leonetienne::GCrypt {
       //! Will zero all data
       void Reset();
 
+      //! Will return the state of any given bit
+      [[nodiscard]] bool GetBit(const std::size_t index) const;
+
       //! Returns 32-bit chunks of data, indexed by matrix coordinates (0-3)
       [[nodiscard]] std::uint32_t& Get(const std::uint8_t row, const std::uint8_t column);
       //! Returns 32-bit chunks of data, indexed by matrix coordinates (0-3)

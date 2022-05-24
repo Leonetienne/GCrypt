@@ -1,4 +1,5 @@
 #include "GCrypt/Block.h"
+#include <iostream>
 #include "GCrypt/Config.h"
 #include <sstream>
 #include <bitset>
@@ -445,6 +446,16 @@ namespace Leonetienne::GCrypt {
   Block& Block::operator=(const Block& other) {
     data = other.data;
     return *this;
+  }
+
+  bool Block::GetBit(const std::size_t index) const {
+    // Fetch index of integer the bit is located in
+    const std::size_t intIndex = index / CHUNK_SIZE_BITS;
+
+    // Fetch bit index relative to that int
+    const std::size_t relBitIndex = index - (intIndex * CHUNK_SIZE_BITS);
+
+    return data[intIndex] & (1 << (CHUNK_SIZE_BITS - relBitIndex - 1));
   }
 
   std::uint32_t& Block::Get(const std::uint8_t row, const std::uint8_t column){
