@@ -648,3 +648,60 @@ TEST_CASE(__FILE__"/get-bit", "[Block]") {
   REQUIRE(ss.str() == a.ToString());
 }
 
+// Tests that the set-bit to-false method works
+TEST_CASE(__FILE__"/set-bit-to-false", "[Block]") {
+  // Setup
+  Block a = Key::FromPassword("Halleluja");
+
+  // Exercise
+  a.SetBit(5, 0);
+  a.SetBit(15, 0);
+  a.SetBit(105, 0);
+  a.SetBit(205, 0);
+
+  // Verify
+  REQUIRE(a.GetBit(5) == false);
+  REQUIRE(a.GetBit(15) == false);
+  REQUIRE(a.GetBit(105) == false);
+  REQUIRE(a.GetBit(205) == false);
+}
+
+// Tests that the set-bit to-true method works
+TEST_CASE(__FILE__"/set-bit-to-true", "[Block]") {
+  // Setup
+  Block a = Key::FromPassword("Halleluja");
+
+  // Exercise
+  a.SetBit(5, 1);
+  a.SetBit(15, 1);
+  a.SetBit(105, 1);
+  a.SetBit(205, 1);
+
+  // Verify
+  REQUIRE(a.GetBit(5) == true);
+  REQUIRE(a.GetBit(15) == true);
+  REQUIRE(a.GetBit(105) == true);
+  REQUIRE(a.GetBit(205) == true);
+}
+
+// Tests that the flip-bit method works
+TEST_CASE(__FILE__"/flip-bit", "[Block]") {
+  // Setup
+  Block a = Key::FromPassword("Halleluja");
+
+  std::string compare = a.ToString();
+  compare[5]   = compare[5]   == '1' ? '0' : '1';
+  compare[15]  = compare[15]  == '1' ? '0' : '1';
+  compare[105] = compare[105] == '1' ? '0' : '1';
+  compare[205] = compare[205] == '1' ? '0' : '1';
+
+  // Exercise
+  a.FlipBit(5);
+  a.FlipBit(15);
+  a.FlipBit(105);
+  a.FlipBit(205);
+
+  // Verify
+  REQUIRE(a.ToString() == compare);
+}
+

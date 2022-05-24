@@ -455,7 +455,47 @@ namespace Leonetienne::GCrypt {
     // Fetch bit index relative to that int
     const std::size_t relBitIndex = index - (intIndex * CHUNK_SIZE_BITS);
 
-    return data[intIndex] & (1 << (CHUNK_SIZE_BITS - relBitIndex - 1));
+    // Pre-calculate the bitmask to use
+    const std::size_t bitmask = 1 << (CHUNK_SIZE_BITS - relBitIndex - 1);
+
+    return data[intIndex] & bitmask;
+  }
+
+  void Block::SetBit(const std::size_t index, const bool state) {
+    // Fetch index of integer the bit is located in
+    const std::size_t intIndex = index / CHUNK_SIZE_BITS;
+
+    // Fetch bit index relative to that int
+    const std::size_t relBitIndex = index - (intIndex * CHUNK_SIZE_BITS);
+
+    // Pre-calculate the bitmask to use
+    const std::size_t bitmask = 1 << (CHUNK_SIZE_BITS - relBitIndex - 1);
+
+    // Set the bit
+    if (state) {
+      data[intIndex] |= bitmask;
+    }
+    // Clear the bit
+    else {
+      data[intIndex] &= ~bitmask;
+    }
+
+    return;
+  }
+
+  void Block::FlipBit(const std::size_t index) {
+    // Fetch index of integer the bit is located in
+    const std::size_t intIndex = index / CHUNK_SIZE_BITS;
+
+    // Fetch bit index relative to that int
+    const std::size_t relBitIndex = index - (intIndex * CHUNK_SIZE_BITS);
+
+    // Pre-calculate the bitmask to use
+    const std::size_t bitmask = 1 << (CHUNK_SIZE_BITS - relBitIndex - 1);
+
+    data[intIndex] ^= bitmask;
+
+    return;
   }
 
   std::uint32_t& Block::Get(const std::uint8_t row, const std::uint8_t column){
