@@ -633,3 +633,18 @@ TEST_CASE(__FILE__"/multiple-combined-shifts-and-additions-can-be-undone", "[Blo
   REQUIRE(a == initial_a);
 }
 
+// Tests that the get-bit method works
+TEST_CASE(__FILE__"/get-bit", "[Block]") {
+  // Setup
+  Block a = Key::FromPassword("Halleluja");
+
+  // Exercise
+  std::stringstream ss;
+  for (std::size_t i = 0; i < 512; i++) {
+    ss << a.GetBit(i);
+  }
+
+  // Verify
+  REQUIRE(ss.str() == a.ToString());
+}
+
