@@ -5,6 +5,10 @@
 #include <cassert>
 #include <cstring>
 
+// Just to be sure, the compiler will optimize this
+// little formula out, let's do it in the preprocessor
+#define MAT_INDEX(row, column) (column*4 + row)
+
 namespace Leonetienne::GCrypt {
 
   Block::Block() {
@@ -132,28 +136,310 @@ namespace Leonetienne::GCrypt {
     return *this;
   }
 
-  void ShiftRowsUp(const std::size_t n) {
-    // TO BE IMPLEMENTED
+  Block Block::Add(const Block& other) const {
+
+    Block m;
+    for (std::size_t i = 0; i < data.size(); i++) {
+      m.Get(i) = this->Get(i) + other.Get(i);
+    }
+    return m;
   }
 
-  void ShiftRowsDown(const std::size_t n) {
-    // TO BE IMPLEMENTED
+  Block Block::operator+(const Block& other) const {
+    return Add(other);
   }
 
-  void ShiftColumnsLeft(const std::size_t n) {
-    // TO BE IMPLEMENTED
+  void Block::AddInplace(const Block& other) {
+    for (std::size_t i = 0; i < data.size(); i++) {
+      this->Get(i) += other.Get(i);
+    }
+    return;
   }
 
-  void ShiftColumnsRight(const std::size_t n) {
-    // TO BE IMPLEMENTED
+  Block& Block::operator+=(const Block& other) {
+    AddInplace(other);
+    return *this;
   }
 
-  void ShiftCellsLeft(const std::size_t n) {
-    // TO BE IMPLEMENTED
+  Block Block::Sub(const Block& other) const {
+
+    Block m;
+    for (std::size_t i = 0; i < data.size(); i++) {
+      m.Get(i) = this->Get(i) - other.Get(i);
+    }
+    return m;
   }
 
-  void ShiftCellsRight(const std::size_t n) {
-    // TO BE IMPLEMENTED
+  Block Block::operator-(const Block& other) const {
+    return Sub(other);
+  }
+
+  void Block::SubInplace(const Block& other) {
+    for (std::size_t i = 0; i < data.size(); i++) {
+      this->Get(i) -= other.Get(i);
+    }
+    return;
+  }
+
+  Block& Block::operator-=(const Block& other) {
+    SubInplace(other);
+    return *this;
+  }
+
+  void Block::ShiftRowsUpInplace() {
+    Block tmp = *this;
+
+    Get(MAT_INDEX(0, 0)) = tmp.Get(MAT_INDEX(1, 0));
+    Get(MAT_INDEX(0, 1)) = tmp.Get(MAT_INDEX(1, 1));
+    Get(MAT_INDEX(0, 2)) = tmp.Get(MAT_INDEX(1, 2));
+    Get(MAT_INDEX(0, 3)) = tmp.Get(MAT_INDEX(1, 3));
+
+    Get(MAT_INDEX(1, 0)) = tmp.Get(MAT_INDEX(2, 0));
+    Get(MAT_INDEX(1, 1)) = tmp.Get(MAT_INDEX(2, 1));
+    Get(MAT_INDEX(1, 2)) = tmp.Get(MAT_INDEX(2, 2));
+    Get(MAT_INDEX(1, 3)) = tmp.Get(MAT_INDEX(2, 3));
+
+    Get(MAT_INDEX(2, 0)) = tmp.Get(MAT_INDEX(3, 0));
+    Get(MAT_INDEX(2, 1)) = tmp.Get(MAT_INDEX(3, 1));
+    Get(MAT_INDEX(2, 2)) = tmp.Get(MAT_INDEX(3, 2));
+    Get(MAT_INDEX(2, 3)) = tmp.Get(MAT_INDEX(3, 3));
+
+    Get(MAT_INDEX(3, 0)) = tmp.Get(MAT_INDEX(0, 0));
+    Get(MAT_INDEX(3, 1)) = tmp.Get(MAT_INDEX(0, 1));
+    Get(MAT_INDEX(3, 2)) = tmp.Get(MAT_INDEX(0, 2));
+    Get(MAT_INDEX(3, 3)) = tmp.Get(MAT_INDEX(0, 3));
+
+    return;
+  }
+
+  Block Block::ShiftRowsUp() const {
+    Block b;
+
+    b.Get(MAT_INDEX(0, 0)) = Get(MAT_INDEX(1, 0));
+    b.Get(MAT_INDEX(0, 1)) = Get(MAT_INDEX(1, 1));
+    b.Get(MAT_INDEX(0, 2)) = Get(MAT_INDEX(1, 2));
+    b.Get(MAT_INDEX(0, 3)) = Get(MAT_INDEX(1, 3));
+
+    b.Get(MAT_INDEX(1, 0)) = Get(MAT_INDEX(2, 0));
+    b.Get(MAT_INDEX(1, 1)) = Get(MAT_INDEX(2, 1));
+    b.Get(MAT_INDEX(1, 2)) = Get(MAT_INDEX(2, 2));
+    b.Get(MAT_INDEX(1, 3)) = Get(MAT_INDEX(2, 3));
+
+    b.Get(MAT_INDEX(2, 0)) = Get(MAT_INDEX(3, 0));
+    b.Get(MAT_INDEX(2, 1)) = Get(MAT_INDEX(3, 1));
+    b.Get(MAT_INDEX(2, 2)) = Get(MAT_INDEX(3, 2));
+    b.Get(MAT_INDEX(2, 3)) = Get(MAT_INDEX(3, 3));
+
+    b.Get(MAT_INDEX(3, 0)) = Get(MAT_INDEX(0, 0));
+    b.Get(MAT_INDEX(3, 1)) = Get(MAT_INDEX(0, 1));
+    b.Get(MAT_INDEX(3, 2)) = Get(MAT_INDEX(0, 2));
+    b.Get(MAT_INDEX(3, 3)) = Get(MAT_INDEX(0, 3));
+
+    return b;
+  }
+
+  void Block::ShiftRowsDownInplace() {
+    Block tmp = *this;
+
+    Get(MAT_INDEX(0, 0)) = tmp.Get(MAT_INDEX(3, 0));
+    Get(MAT_INDEX(0, 1)) = tmp.Get(MAT_INDEX(3, 1));
+    Get(MAT_INDEX(0, 2)) = tmp.Get(MAT_INDEX(3, 2));
+    Get(MAT_INDEX(0, 3)) = tmp.Get(MAT_INDEX(3, 3));
+
+    Get(MAT_INDEX(1, 0)) = tmp.Get(MAT_INDEX(0, 0));
+    Get(MAT_INDEX(1, 1)) = tmp.Get(MAT_INDEX(0, 1));
+    Get(MAT_INDEX(1, 2)) = tmp.Get(MAT_INDEX(0, 2));
+    Get(MAT_INDEX(1, 3)) = tmp.Get(MAT_INDEX(0, 3));
+
+    Get(MAT_INDEX(2, 0)) = tmp.Get(MAT_INDEX(1, 0));
+    Get(MAT_INDEX(2, 1)) = tmp.Get(MAT_INDEX(1, 1));
+    Get(MAT_INDEX(2, 2)) = tmp.Get(MAT_INDEX(1, 2));
+    Get(MAT_INDEX(2, 3)) = tmp.Get(MAT_INDEX(1, 3));
+
+    Get(MAT_INDEX(3, 0)) = tmp.Get(MAT_INDEX(2, 0));
+    Get(MAT_INDEX(3, 1)) = tmp.Get(MAT_INDEX(2, 1));
+    Get(MAT_INDEX(3, 2)) = tmp.Get(MAT_INDEX(2, 2));
+    Get(MAT_INDEX(3, 3)) = tmp.Get(MAT_INDEX(2, 3));
+
+    return;
+  }
+
+  Block Block::ShiftRowsDown() const {
+    Block b;
+
+    b.Get(MAT_INDEX(0, 0)) = Get(MAT_INDEX(3, 0));
+    b.Get(MAT_INDEX(0, 1)) = Get(MAT_INDEX(3, 1));
+    b.Get(MAT_INDEX(0, 2)) = Get(MAT_INDEX(3, 2));
+    b.Get(MAT_INDEX(0, 3)) = Get(MAT_INDEX(3, 3));
+
+    b.Get(MAT_INDEX(1, 0)) = Get(MAT_INDEX(0, 0));
+    b.Get(MAT_INDEX(1, 1)) = Get(MAT_INDEX(0, 1));
+    b.Get(MAT_INDEX(1, 2)) = Get(MAT_INDEX(0, 2));
+    b.Get(MAT_INDEX(1, 3)) = Get(MAT_INDEX(0, 3));
+
+    b.Get(MAT_INDEX(2, 0)) = Get(MAT_INDEX(1, 0));
+    b.Get(MAT_INDEX(2, 1)) = Get(MAT_INDEX(1, 1));
+    b.Get(MAT_INDEX(2, 2)) = Get(MAT_INDEX(1, 2));
+    b.Get(MAT_INDEX(2, 3)) = Get(MAT_INDEX(1, 3));
+
+    b.Get(MAT_INDEX(3, 0)) = Get(MAT_INDEX(2, 0));
+    b.Get(MAT_INDEX(3, 1)) = Get(MAT_INDEX(2, 1));
+    b.Get(MAT_INDEX(3, 2)) = Get(MAT_INDEX(2, 2));
+    b.Get(MAT_INDEX(3, 3)) = Get(MAT_INDEX(2, 3));
+
+    return b;
+  }
+
+  void Block::ShiftColumnsLeftInplace() {
+    Block tmp = *this;
+
+    Get(MAT_INDEX(0, 0)) = tmp.Get(MAT_INDEX(0, 1));
+    Get(MAT_INDEX(1, 0)) = tmp.Get(MAT_INDEX(1, 1));
+    Get(MAT_INDEX(2, 0)) = tmp.Get(MAT_INDEX(2, 1));
+    Get(MAT_INDEX(3, 0)) = tmp.Get(MAT_INDEX(3, 1));
+
+    Get(MAT_INDEX(0, 1)) = tmp.Get(MAT_INDEX(0, 2));
+    Get(MAT_INDEX(1, 1)) = tmp.Get(MAT_INDEX(1, 2));
+    Get(MAT_INDEX(2, 1)) = tmp.Get(MAT_INDEX(2, 2));
+    Get(MAT_INDEX(3, 1)) = tmp.Get(MAT_INDEX(3, 2));
+
+    Get(MAT_INDEX(0, 2)) = tmp.Get(MAT_INDEX(0, 3));
+    Get(MAT_INDEX(1, 2)) = tmp.Get(MAT_INDEX(1, 3));
+    Get(MAT_INDEX(2, 2)) = tmp.Get(MAT_INDEX(2, 3));
+    Get(MAT_INDEX(3, 2)) = tmp.Get(MAT_INDEX(3, 3));
+
+    Get(MAT_INDEX(0, 3)) = tmp.Get(MAT_INDEX(0, 0));
+    Get(MAT_INDEX(1, 3)) = tmp.Get(MAT_INDEX(1, 0));
+    Get(MAT_INDEX(2, 3)) = tmp.Get(MAT_INDEX(2, 0));
+    Get(MAT_INDEX(3, 3)) = tmp.Get(MAT_INDEX(3, 0));
+
+    return;
+  }
+
+  Block Block::ShiftColumnsLeft() const {
+    Block b;
+
+    b.Get(MAT_INDEX(0, 0)) = Get(MAT_INDEX(0, 1));
+    b.Get(MAT_INDEX(1, 0)) = Get(MAT_INDEX(1, 1));
+    b.Get(MAT_INDEX(2, 0)) = Get(MAT_INDEX(2, 1));
+    b.Get(MAT_INDEX(3, 0)) = Get(MAT_INDEX(3, 1));
+
+    b.Get(MAT_INDEX(0, 1)) = Get(MAT_INDEX(0, 2));
+    b.Get(MAT_INDEX(1, 1)) = Get(MAT_INDEX(1, 2));
+    b.Get(MAT_INDEX(2, 1)) = Get(MAT_INDEX(2, 2));
+    b.Get(MAT_INDEX(3, 1)) = Get(MAT_INDEX(3, 2));
+
+    b.Get(MAT_INDEX(0, 2)) = Get(MAT_INDEX(0, 3));
+    b.Get(MAT_INDEX(1, 2)) = Get(MAT_INDEX(1, 3));
+    b.Get(MAT_INDEX(2, 2)) = Get(MAT_INDEX(2, 3));
+    b.Get(MAT_INDEX(3, 2)) = Get(MAT_INDEX(3, 3));
+
+    b.Get(MAT_INDEX(0, 3)) = Get(MAT_INDEX(0, 0));
+    b.Get(MAT_INDEX(1, 3)) = Get(MAT_INDEX(1, 0));
+    b.Get(MAT_INDEX(2, 3)) = Get(MAT_INDEX(2, 0));
+    b.Get(MAT_INDEX(3, 3)) = Get(MAT_INDEX(3, 0));
+
+    return b;
+  }
+
+  void Block::ShiftColumnsRightInplace() {
+    Block tmp = *this;
+
+    Get(MAT_INDEX(0, 1)) = tmp.Get(MAT_INDEX(0, 0));
+    Get(MAT_INDEX(1, 1)) = tmp.Get(MAT_INDEX(1, 0));
+    Get(MAT_INDEX(2, 1)) = tmp.Get(MAT_INDEX(2, 0));
+    Get(MAT_INDEX(3, 1)) = tmp.Get(MAT_INDEX(3, 0));
+
+    Get(MAT_INDEX(0, 2)) = tmp.Get(MAT_INDEX(0, 1));
+    Get(MAT_INDEX(1, 2)) = tmp.Get(MAT_INDEX(1, 1));
+    Get(MAT_INDEX(2, 2)) = tmp.Get(MAT_INDEX(2, 1));
+    Get(MAT_INDEX(3, 2)) = tmp.Get(MAT_INDEX(3, 1));
+
+    Get(MAT_INDEX(0, 3)) = tmp.Get(MAT_INDEX(0, 2));
+    Get(MAT_INDEX(1, 3)) = tmp.Get(MAT_INDEX(1, 2));
+    Get(MAT_INDEX(2, 3)) = tmp.Get(MAT_INDEX(2, 2));
+    Get(MAT_INDEX(3, 3)) = tmp.Get(MAT_INDEX(3, 2));
+
+    Get(MAT_INDEX(0, 0)) = tmp.Get(MAT_INDEX(0, 3));
+    Get(MAT_INDEX(1, 0)) = tmp.Get(MAT_INDEX(1, 3));
+    Get(MAT_INDEX(2, 0)) = tmp.Get(MAT_INDEX(2, 3));
+    Get(MAT_INDEX(3, 0)) = tmp.Get(MAT_INDEX(3, 3));
+
+    return;
+  }
+
+  Block Block::ShiftColumnsRight() const {
+    Block b;
+
+    b.Get(MAT_INDEX(0, 1)) = Get(MAT_INDEX(0, 0));
+    b.Get(MAT_INDEX(1, 1)) = Get(MAT_INDEX(1, 0));
+    b.Get(MAT_INDEX(2, 1)) = Get(MAT_INDEX(2, 0));
+    b.Get(MAT_INDEX(3, 1)) = Get(MAT_INDEX(3, 0));
+
+    b.Get(MAT_INDEX(0, 2)) = Get(MAT_INDEX(0, 1));
+    b.Get(MAT_INDEX(1, 2)) = Get(MAT_INDEX(1, 1));
+    b.Get(MAT_INDEX(2, 2)) = Get(MAT_INDEX(2, 1));
+    b.Get(MAT_INDEX(3, 2)) = Get(MAT_INDEX(3, 1));
+
+    b.Get(MAT_INDEX(0, 3)) = Get(MAT_INDEX(0, 2));
+    b.Get(MAT_INDEX(1, 3)) = Get(MAT_INDEX(1, 2));
+    b.Get(MAT_INDEX(2, 3)) = Get(MAT_INDEX(2, 2));
+    b.Get(MAT_INDEX(3, 3)) = Get(MAT_INDEX(3, 2));
+
+    b.Get(MAT_INDEX(0, 0)) = Get(MAT_INDEX(0, 3));
+    b.Get(MAT_INDEX(1, 0)) = Get(MAT_INDEX(1, 3));
+    b.Get(MAT_INDEX(2, 0)) = Get(MAT_INDEX(2, 3));
+    b.Get(MAT_INDEX(3, 0)) = Get(MAT_INDEX(3, 3));
+
+    return b;
+  }
+
+  void Block::ShiftCellsLeftInplace() {
+    Block tmp = *this;
+
+    Get(15) = tmp.Get(0);
+
+    for (std::size_t i = 0; i < 15; i++) {
+      Get(i) = tmp.Get(i+1);
+    }
+
+    return;
+  }
+
+  Block Block::ShiftCellsLeft() const {
+    Block b;
+
+    b.Get(15) = Get(0);
+
+    for (std::size_t i = 0; i < 15; i++) {
+      b.Get(i) = Get(i+1);
+    }
+
+    return b;
+  }
+
+  void Block::ShiftCellsRightInplace() {
+    Block tmp = *this;
+
+    Get(0) = tmp.Get(15);
+
+    for (std::size_t i = 1; i < 16; i++) {
+      Get(i) = tmp.Get(i-1);
+    }
+
+    return;
+  }
+
+  Block Block::ShiftCellsRight() const {
+    Block b;
+
+    b.Get(0) = Get(15);
+
+    for (std::size_t i = 1; i < 16; i++) {
+      b.Get(i) = Get(i-1);
+    }
+
+    return b;
   }
 
   Block& Block::operator=(const Block& other) {
@@ -162,11 +448,11 @@ namespace Leonetienne::GCrypt {
   }
 
   std::uint32_t& Block::Get(const std::uint8_t row, const std::uint8_t column){
-    return data[column*4 + row];
+    return data[MAT_INDEX(row, column)];
   }
 
   const std::uint32_t& Block::Get(const std::uint8_t row, const std::uint8_t column) const {
-    return data[column*4 + row];
+    return data[MAT_INDEX(row, column)];
   }
 
   std::uint32_t& Block::Get(const std::uint8_t index) {
@@ -221,4 +507,6 @@ namespace Leonetienne::GCrypt {
 #endif
 
 }
+
+#undef MAT_INDEX
 

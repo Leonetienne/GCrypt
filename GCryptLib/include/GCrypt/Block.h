@@ -35,8 +35,8 @@ namespace Leonetienne::GCrypt {
       //! Since the matrices values are pretty much sudo-random,
       //! they will most likely integer-overflow.
       //! So see this as a one-way function.
-      Block MMul(const Block& other) const;
-      Block operator*(const Block& other) const;
+      [[nodiscard]] Block MMul(const Block& other) const;
+      [[nodiscard]] Block operator*(const Block& other) const;
 
       //! Will matrix-multiply two blocks together,
       //! and directly write into this same block.
@@ -47,67 +47,98 @@ namespace Leonetienne::GCrypt {
       Block& operator*=(const Block& other);
 
       //! Will xor two blocks together
-      Block Xor(const Block& other) const;
+      [[nodiscard]] Block Xor(const Block& other) const;
       //! Will xor two blocks together
-      Block operator^(const Block& other) const;
+      [[nodiscard]] Block operator^(const Block& other) const;
 
       //! Will xor two blocks together, inplace
       void XorInplace(const Block& other);
       //! Will xor two blocks together, inplace
       Block& operator^=(const Block& other);
 
-      // # TO BE IMPLEMENTED
-      //! Will shift rows upwards by n
-      void ShiftRowsUp(const std::size_t n);
+      //! Will add all the integer making up this block, one by one
+      [[nodiscard]] Block Add(const Block& other) const;
+      //! Will add all the integer making up this block, one by one
+      [[nodiscard]] Block operator+(const Block& other) const;
 
-      // # TO BE IMPLEMENTED
-      //! Will shift matrix rows downwards by n
-      void ShiftRowsDown(const std::size_t n);
+      //! Will add all the integer making up this block, one by one, inplace
+      void AddInplace(const Block& other);
+      //! Will add all the integer making up this block, one by one, inplace
+      Block& operator+=(const Block& other);
 
-      // # TO BE IMPLEMENTED
-      //! Will shift matrix columns to the left by n
-      void ShiftColumnsLeft(const std::size_t n);
+      //! Will subtract all the integer making up this block, one by one
+      [[nodiscard]] Block Sub(const Block& other) const;
+      //! Will subtract all the integer making up this block, one by one
+      [[nodiscard]] Block operator-(const Block& other) const;
 
-      // # TO BE IMPLEMENTED
-      //! Will shift matrix columns to the right by n
-      void ShiftColumnsRight(const std::size_t n);
+      //! Will subtract all the integer making up this block, one by one, inplace
+      void SubInplace(const Block& other);
+      //! Will subtract all the integer making up this block, one by one, inplace
+      Block& operator-=(const Block& other);
 
-      // # TO BE IMPLEMENTED
-      //! Will shift array cells to the left by n
-      void ShiftCellsLeft(const std::size_t n);
+      //! Will shift rows upwards by 1
+      [[nodiscard]] Block ShiftRowsUp() const;
 
-      // # TO BE IMPLEMENTED
-      //! Will shift array cells to the right by n
-      void ShiftCellsRight(const std::size_t n);
+      //! Will shift rows upwards by 1
+      void ShiftRowsUpInplace();
+
+      //! Will shift matrix rows downwards by 1
+      [[nodiscard]] Block ShiftRowsDown() const;
+
+      //! Will shift matrix rows downwards by 1
+      void ShiftRowsDownInplace();
+
+      //! Will shift matrix columns to the left by 1
+      [[nodiscard]] Block ShiftColumnsLeft() const;
+
+      //! Will shift matrix columns to the left by 1
+      void ShiftColumnsLeftInplace();
+
+      //! Will shift matrix columns to the right by 1
+      [[nodiscard]] Block ShiftColumnsRight() const;
+
+      //! Will shift matrix columns to the right by 1
+      void ShiftColumnsRightInplace();
+
+      //! Will shift array cells to the left by 1
+      [[nodiscard]] Block ShiftCellsLeft() const;
+
+      //! Will shift array cells to the left by 1
+      void ShiftCellsLeftInplace();
+
+      //! Will shift array cells to the right by 1
+      [[nodiscard]] Block ShiftCellsRight() const;
+
+      //! Will shift array cells to the right by 1
+      void ShiftCellsRightInplace();
 
       //! Will copy a block
       Block& operator=(const Block& other);
 
       //! Will compare whether or not two blocks are equal
-      bool operator==(const Block& other) const;
+      [[nodiscard]] bool operator==(const Block& other) const;
       //! Will compare whether or not two blocks are unequal
-      bool operator!=(const Block& other) const;
+      [[nodiscard]] bool operator!=(const Block& other) const;
 
       //! Will zero all data
       void Reset();
 
-
       //! Returns 32-bit chunks of data, indexed by matrix coordinates (0-3)
-      std::uint32_t& Get(const std::uint8_t row, const std::uint8_t column);
+      [[nodiscard]] std::uint32_t& Get(const std::uint8_t row, const std::uint8_t column);
       //! Returns 32-bit chunks of data, indexed by matrix coordinates (0-3)
-      const std::uint32_t& Get(const std::uint8_t row, const std::uint8_t column) const;
+      [[nodiscard]] const std::uint32_t& Get(const std::uint8_t row, const std::uint8_t column) const;
 
       //! Returns 32-bit chunks of data, indexed by a 1d-index (0-16)
-      std::uint32_t& Get(const std::uint8_t index);
+      [[nodiscard]] std::uint32_t& Get(const std::uint8_t index);
 
       //! Returns 32-bit chunks of data, indexed by a 1d-index (0-16)
-      const std::uint32_t& Get(const std::uint8_t index) const;
+      [[nodiscard]] const std::uint32_t& Get(const std::uint8_t index) const;
 
       //! Returns 32-bit chunks of data, indexed by a 1d-index (0-16)
-      std::uint32_t& operator[](const std::uint8_t index);
+      [[nodiscard]] std::uint32_t& operator[](const std::uint8_t index);
 
       //! Returns 32-bit chunks of data, indexed by a 1d-index (0-16)
-      const std::uint32_t& operator[](const std::uint8_t index) const;
+      [[nodiscard]] const std::uint32_t& operator[](const std::uint8_t index) const;
 
       static constexpr std::size_t CHUNK_SIZE = sizeof(std::uint32_t);
       static constexpr std::size_t CHUNK_SIZE_BITS = CHUNK_SIZE * 8;
