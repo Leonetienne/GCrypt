@@ -1,6 +1,6 @@
 #include "GCrypt/Block.h"
-#include <iostream>
 #include "GCrypt/Config.h"
+#include "GCrypt/Util.h"
 #include <sstream>
 #include <bitset>
 #include <cassert>
@@ -134,9 +134,7 @@ namespace Leonetienne::GCrypt {
 
   Block& Block::operator^=(const Block& other) {
     XorInplace(other);
-    return *this;
-  }
-
+    return *this; }
   Block Block::Add(const Block& other) const {
 
     Block m;
@@ -494,6 +492,132 @@ namespace Leonetienne::GCrypt {
     const std::size_t bitmask = 1 << (CHUNK_SIZE_BITS - relBitIndex - 1);
 
     data[intIndex] ^= bitmask;
+
+    return;
+  }
+
+  Block Block::ShiftBitsLeft() const {
+    Block b;
+
+    // First, copy this block over
+    b = *this;
+
+    // Then, shift all integers individually
+    for (std::size_t i = 0; i < data.size(); i++) {
+      b.data[i] <<= 1;
+    }
+
+    // Current state: the LSB is zero everywhere. We have to carry
+    // it over manually from the previous state.
+
+    // Carry over the MSB of data[i] to LSB of data[i-1]
+    constexpr std::size_t bitmaskMsb = 1 << (CHUNK_SIZE_BITS - 1);
+    constexpr std::size_t bitmaskLsb = 1;
+    for (int i = 0; i < data.size(); i++) {
+      const bool msb = data[i] & bitmaskMsb;
+
+      // Set the lsb
+      if (msb) {
+        b.data[Mod(i-1, data.size())] |= bitmaskLsb;
+      }
+      // Clear the lsb
+      else {
+        b.data[Mod(i-1, data.size())] &= ~bitmaskLsb;
+      }
+    }
+
+    return b;
+  }
+
+  void Block::ShiftBitsLeftInplace() {
+    Block tmp = *this;
+
+    // Then, shift all integers individually
+    for (std::size_t i = 0; i < data.size(); i++) {
+      data[i] <<= 1;
+    }
+
+    // Current state: the LSB is zero everywhere. We have to carry
+    // it over manually from the previous state.
+
+    // Carry over the MSB of data[i] to LSB of data[i-1]
+    constexpr std::size_t bitmaskMsb = 1 << (CHUNK_SIZE_BITS - 1);
+    constexpr std::size_t bitmaskLsb = 1;
+    for (int i = 0; i < data.size(); i++) {
+      const bool msb = tmp.data[i] & bitmaskMsb;
+
+      // Set the lsb
+      if (msb) {
+        data[Mod(i-1, data.size())] |= bitmaskLsb;
+      }
+      // Clear the lsb
+      else {
+        data[Mod(i-1, data.size())] &= ~bitmaskLsb;
+      }
+    }
+
+    return;
+  }
+
+  Block Block::ShiftBitsRight() const {
+    Block b;
+
+    // First, copy this block over
+    b = *this;
+
+    // Then, shift all integers individually
+    for (std::size_t i = 0; i < data.size(); i++) {
+      b.data[i] >>= 1;
+    }
+
+    // Current state: the LSB is zero everywhere. We have to carry
+    // it over manually from the previous state.
+
+    // Carry over the LSB of data[i] to MSB of data[i+1]
+    constexpr std::size_t bitmaskMsb = 1 << (CHUNK_SIZE_BITS - 1);
+    constexpr std::size_t bitmaskLsb = 1;
+    for (int i = 0; i < data.size(); i++) {
+      const bool lsb = data[i] & bitmaskLsb;
+
+      // Set the msb
+      if (lsb) {
+        b.data[Mod(i+1, data.size())] |= bitmaskMsb;
+      }
+      // Clear the msb
+      else {
+        b.data[Mod(i+1, data.size())] &= ~bitmaskMsb;
+      }
+    }
+
+    return b;
+  }
+
+  void Block::ShiftBitsRightInplace() {
+    Block tmp = *this;
+
+    // Then, shift all integers individually
+    for (std::size_t i = 0; i < data.size(); i++) {
+      data[i] >>= 1;
+    }
+
+    // Current state: the LSB is zero everywhere. We have to carry
+    // it over manually from the previous state.
+
+    // Carry over the LSB of data[i] to MSB of data[i+1]
+    constexpr std::size_t bitmaskMsb = 1 << (CHUNK_SIZE_BITS - 1);
+    constexpr std::size_t bitmaskLsb = 1;
+    for (int i = 0; i < data.size(); i++) {
+      const bool lsb = tmp.data[i] & bitmaskLsb;
+
+      // Set the msb
+      if (lsb) {
+        data[Mod(i+1, data.size())] |= bitmaskMsb;
+      }
+      // Clear the msb
+      else {
+        data[Mod(i+1, data.size())] &= ~bitmaskMsb;
+      }
+    }
 
     return;
   }
