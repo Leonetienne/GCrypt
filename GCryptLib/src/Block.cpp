@@ -656,7 +656,7 @@ namespace Leonetienne::GCrypt {
 
   std::ostream& operator<<(std::ostream& os, const Block& b) {
     for (std::size_t i = 0; i < b.data.size(); i++) {
-      os << std::bitset<b.CHUNK_SIZE_BITS>(b.data[i]).to_string();
+      os << std::bitset<Block::CHUNK_SIZE_BITS>(b.data[i]).to_string();
     }
     return os;
   }
