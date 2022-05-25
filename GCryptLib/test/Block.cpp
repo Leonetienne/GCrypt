@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <time.h>
 #include <sstream>
+#include <iostream>
 
 using namespace Leonetienne::GCrypt;
 
@@ -703,5 +704,127 @@ TEST_CASE(__FILE__"/flip-bit", "[Block]") {
 
   // Verify
   REQUIRE(a.ToString() == compare);
+}
+
+// Tests that bitshifts (to the left) work
+TEST_CASE(__FILE__"/bitshift-left", "[Block]") {
+
+  // Setup
+  srand(time(0));
+  std::stringstream ss;
+
+  for (std::size_t i = 0; i < 512; i++) {
+    ss << (rand()%2 == 0 ? '1' : '0');
+  }
+  const std::string originalBits = ss.str();
+  ss.str("");
+
+  // Shift string manually
+  std::string shiftedBits = originalBits;
+  shiftedBits.erase(0, 1);
+  ss << shiftedBits << originalBits[0];
+  shiftedBits = ss.str();
+
+  // Create block of original bits
+  Block block(originalBits);
+
+  // Exercise
+  block = block.ShiftBitsLeft();
+
+  // Verify
+  REQUIRE(block.ToString().length() == shiftedBits.length());
+  REQUIRE(block.ToString() == shiftedBits);
+}
+
+// Tests that inplace-bitshifts to the left do the exact same as copy bitshifts
+TEST_CASE(__FILE__"/bitshift-left-inplace", "[Block]") {
+
+  // Setup
+  srand(time(0));
+  std::stringstream ss;
+
+  for (std::size_t i = 0; i < 512; i++) {
+    ss << (rand()%2 == 0 ? '1' : '0');
+  }
+  Block a(ss.str());
+
+  // Exercise
+  Block b = a.ShiftBitsLeft();
+  a.ShiftBitsLeftInplace();
+
+  // Verify
+  REQUIRE(a == b);
+}
+
+// Tests that bitshifts (to the right) work
+TEST_CASE(__FILE__"/bitshift-right", "[Block]") {
+
+  // Setup
+  srand(time(0));
+  std::stringstream ss;
+
+  for (std::size_t i = 0; i < 512; i++) {
+    ss << (rand()%2 == 0 ? '1' : '0');
+  }
+  const std::string originalBits = ss.str();
+  ss.str("");
+
+  // Shift string manually
+  std::string shiftedBits = originalBits;
+  shiftedBits.erase(shiftedBits.length() - 1);
+  ss << originalBits[originalBits.length()-1] << shiftedBits;
+  shiftedBits = ss.str();
+
+  // Create block of original bits
+  Block block(originalBits);
+
+  // Exercise
+  block = block.ShiftBitsRight();
+
+  // Verify
+  REQUIRE(block.ToString().length() == shiftedBits.length());
+  REQUIRE(block.ToString() == shiftedBits);
+}
+
+// Tests that inplace-bitshifts to the right do the exact same as copy bitshifts
+TEST_CASE(__FILE__"/bitshift-right-inplace", "[Block]") {
+
+  // Setup
+  srand(time(0));
+  std::stringstream ss;
+
+  for (std::size_t i = 0; i < 512; i++) {
+    ss << (rand()%2 == 0 ? '1' : '0');
+  }
+  Block a(ss.str());
+
+  // Exercise
+  Block b = a.ShiftBitsRight();
+  a.ShiftBitsRightInplace();
+
+  // Verify
+  REQUIRE(a == b);
+}
+
+// Tests that bitshifting undoes itself
+TEST_CASE(__FILE__"/bitshifting-undoes-itself", "[Block]") {
+
+  // Setup
+  Block a = Key::FromPassword("Halleluja");
+
+  const Block initial_a = a;
+
+  // Exercise (mix-up)
+  for (std::size_t i = 0; i < 100; i++) {
+    a.ShiftBitsLeftInplace();
+  }
+
+  // Exercise (un-mix)
+  for (std::size_t i = 0; i < 100; i++) {
+    a.ShiftBitsRightInplace();
+  }
+
+  // Verify
+  REQUIRE(a == initial_a);
 }
 

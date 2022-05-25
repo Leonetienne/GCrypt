@@ -132,6 +132,18 @@ namespace Leonetienne::GCrypt {
       //! Will flip the state of any given bit
       void FlipBit(const std::size_t index);
 
+      //! Will shift all bits to the left by 1
+      [[nodiscard]] Block ShiftBitsLeft() const;
+
+      //! Will shift all bits to the left by 1, inplace
+      void ShiftBitsLeftInplace();
+
+      //! Will shift all bits to the right by 1
+      [[nodiscard]] Block ShiftBitsRight() const;
+
+      //! Will shift all bits to the right by 1, inplace
+      void ShiftBitsRightInplace();
+
       //! Returns 32-bit chunks of data, indexed by matrix coordinates (0-3)
       [[nodiscard]] std::uint32_t& Get(const std::uint8_t row, const std::uint8_t column);
       //! Returns 32-bit chunks of data, indexed by matrix coordinates (0-3)
