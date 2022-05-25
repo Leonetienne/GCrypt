@@ -18,6 +18,17 @@ namespace Leonetienne::GCrypt {
     return (denominator + (numerator % denominator)) % denominator;
   }
 
+  inline Block Shiftl(const Block& bits, const std::size_t amount) {
+      std::stringstream ss;
+      const std::string bitss = bits.ToString();
+
+      for (std::size_t i = 0; i < bitss.size(); i++) {
+        ss << bitss[Mod((int)(i + amount), (int)bitss.size())];
+      }
+
+      return Block(ss.str());
+  }
+
   //! Will perform a wrapping left-bitshift on a bitset
   template <std::size_t T>
     inline SecureBitset<T> Shiftl(const SecureBitset<T>& bits, const std::size_t amount) {
