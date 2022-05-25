@@ -21,12 +21,12 @@ namespace Leonetienne::GCrypt {
 
     // Fetch BLOCK_SIZE bits
     std::stringstream ss;
-    for (std::size_t i = 0; i < BLOCK_SIZE / bitsPerCall; i++) {
+    for (std::size_t i = 0; i < Key::BLOCK_SIZE_BITS / bitsPerCall; i++) {
       ss << std::bitset<bitsPerCall>(rng());
     }
 
     // Verify that we actually have the correct size
-    assert(ss.str().length() == BLOCK_SIZE);
+    assert(ss.str().length() == Key::BLOCK_SIZE_BITS);
 
     // Return them as a key
     return Key(Block(ss.str()));
@@ -34,7 +34,7 @@ namespace Leonetienne::GCrypt {
 
   Key Key::LoadFromFile(const std::string& path) {
     // Read this many chars
-    const std::size_t maxChars = BLOCK_SIZE / 8;
+    const std::size_t maxChars = Key::BLOCK_SIZE_BITS / 8;
 
     // Open ifilestream for keyfile
     std::ifstream ifs(path, std::ios::in | std::ios::binary);
@@ -73,7 +73,7 @@ namespace Leonetienne::GCrypt {
     std::ofstream ofs(path, std::ios::out | std::ios::binary);
 
     // Write the key
-    ofs.write(keybytes.data(), BLOCK_SIZE/8);
+    ofs.write(keybytes.data(), Key::BLOCK_SIZE_BITS / 8);
 
     // Close the file handle
     ofs.close();

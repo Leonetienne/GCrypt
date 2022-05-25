@@ -28,7 +28,7 @@ namespace Leonetienne::GCrypt {
   template <typename T>
   void Basic_Block<T>::FromString(const std::string& str) {
 
-    assert(str.length() == BLOCK_SIZE);
+    assert(str.length() == BLOCK_SIZE_BITS);
 
     for (std::size_t i = 0; i < data.size(); i++) {
       data[i] = std::bitset<CHUNK_SIZE_BITS>(

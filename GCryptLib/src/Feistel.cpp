@@ -78,7 +78,7 @@ namespace Leonetienne::GCrypt {
     // Non-linearly apply subsitution boxes
     std::stringstream ss;
     const std::string m_str = m_expanded.ToString();
-    for (std::size_t i = 0; i < BLOCK_SIZE; i += 4) {
+    for (std::size_t i = 0; i < Block::BLOCK_SIZE_BITS; i += 4) {
       ss << SBox(m_str.substr(i, 4));
     }
     m_expanded = Block(ss.str());
@@ -98,12 +98,12 @@ namespace Leonetienne::GCrypt {
   }
 
   Block Feistel::FeistelCombine(const Halfblock& l, const Halfblock& r) {
-    return Block(l.to_string() + r.to_string());
+    return Block(l.ToString() + r.ToString());
   }
 
   Block Feistel::ExpansionFunction(const Halfblock& block) {
     std::stringstream ss;
-    const std::string bits = block.to_string();
+    const std::string bits = block.ToString();
 
     std::unordered_map<std::string, std::string> expansionMap;
     expansionMap["00"] = "1101";
@@ -112,7 +112,7 @@ namespace Leonetienne::GCrypt {
     expansionMap["11"] = "0111";
 
     // We have to double the bits!
-    for (std::size_t i = 0; i < HALFBLOCK_SIZE; i += 2) {
+    for (std::size_t i = 0; i < Halfblock::BLOCK_SIZE_BITS; i += 2) {
       const std::string sub = bits.substr(i, 2);
       ss << expansionMap[sub];
     }
@@ -143,7 +143,7 @@ namespace Leonetienne::GCrypt {
     compressionMap["1111"] = "01";
 
     // We have to half the bits!
-    for (std::size_t i = 0; i < BLOCK_SIZE; i += 4) {
+    for (std::size_t i = 0; i < Block::BLOCK_SIZE_BITS; i += 4) {
       const std::string sub = bits.substr(i, 4);
       ss << compressionMap[sub];
     }

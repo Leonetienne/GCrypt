@@ -21,7 +21,7 @@ namespace Leonetienne::GCrypt {
 
   bool GPrng::GetBit() {
     // If we have no more bits to go, create new ones
-    if (nextBit >= BLOCK_SIZE) {
+    if (nextBit >= Block::BLOCK_SIZE_BITS) {
       AdvanceBlock();
     }
 
@@ -51,18 +51,18 @@ namespace Leonetienne::GCrypt {
 
     // Slurp up the rest of the current block
     std::stringstream ss;
-    const std::size_t bitsLeft = BLOCK_SIZE - nextBit;
+    const std::size_t bitsLeft = Block::BLOCK_SIZE_BITS - nextBit;
     ss << hasher.GetHashsum().ToString().substr(nextBit, bitsLeft);
 
     // Now we have to advance to the next block
     AdvanceBlock();
 
     // Now, grab the remaining bits
-    const std::size_t remainingBits = BLOCK_SIZE - bitsLeft;
+    const std::size_t remainingBits = Block::BLOCK_SIZE_BITS - bitsLeft;
     ss << hasher.GetHashsum().ToString().substr(0, remainingBits);
 
     // Assert that we have the correct number of bits
-    assert(ss.str().length() == BLOCK_SIZE);
+    assert(ss.str().length() == Block::BLOCK_SIZE_BITS);
 
     // Set out bitpointer
     nextBit = remainingBits;

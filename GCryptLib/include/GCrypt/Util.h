@@ -5,7 +5,6 @@
 #include <sstream>
 #include <fstream>
 #include <cstring>
-#include "GCrypt/SecureBitset.h"
 #include "GCrypt/Block.h"
 #include "GCrypt/Flexblock.h"
 #include "GCrypt/Config.h"
@@ -17,43 +16,6 @@ namespace Leonetienne::GCrypt {
   inline int Mod(const int numerator, const int denominator) {
     return (denominator + (numerator % denominator)) % denominator;
   }
-
-  inline Block Shiftl(const Block& bits, const std::size_t amount) {
-      std::stringstream ss;
-      const std::string bitss = bits.ToString();
-
-      for (std::size_t i = 0; i < bitss.size(); i++) {
-        ss << bitss[Mod((int)(i + amount), (int)bitss.size())];
-      }
-
-      return Block(ss.str());
-  }
-
-  //! Will perform a wrapping left-bitshift on a bitset
-  template <std::size_t T>
-    inline SecureBitset<T> Shiftl(const SecureBitset<T>& bits, const std::size_t amount) {
-      std::stringstream ss;
-      const std::string bitss = bits.to_string();
-
-      for (std::size_t i = 0; i < bitss.size(); i++) {
-        ss << bitss[Mod((int)(i + amount), (int)bitss.size())];
-      }
-
-      return SecureBitset<T>(ss.str());
-    }
-
-  //! Will perform a wrapping right-bitshift on a bitset
-  template <std::size_t T>
-    inline SecureBitset<T> Shiftr(const SecureBitset<T>& bits, const  std::size_t amount) {
-      std::stringstream ss;
-      const std::string bitss = bits.to_string();
-
-      for (std::size_t i = 0; i < bitss.size(); i++) {
-        ss << bitss[Mod((i - amount), bitss.size())];
-      }
-
-      return SecureBitset<T>(ss.str());
-    }
 
   //! Will pad a string to a set length with a certain character
   std::string PadStringToLength(const std::string& str, const std::size_t len, const char pad, const bool padLeft = true);

@@ -165,6 +165,7 @@ namespace Leonetienne::GCrypt {
 
       static constexpr std::size_t CHUNK_SIZE = sizeof(T);
       static constexpr std::size_t CHUNK_SIZE_BITS = CHUNK_SIZE * 8;
+      static constexpr std::size_t BLOCK_SIZE_BITS = CHUNK_SIZE_BITS * 16;
 
       friend std::ostream& operator<<(std::ostream& os, const Basic_Block<T>& b) {
         for (std::size_t i = 0; i < b.data.size(); i++) {
@@ -180,13 +181,13 @@ namespace Leonetienne::GCrypt {
 
   // Instantiate templates
   template class Basic_Block<std::uint32_t>;
-  //template class Basic_Block<std::uint16_t>;
+  template class Basic_Block<std::uint16_t>;
 
   //! This a full-sized 512-bit block
   typedef Basic_Block<std::uint32_t> Block;
 
   //! This is a half-block used within the feistel class
-  //typedef Basic_Block<std::uint16_t> Halfblock;
+  typedef Basic_Block<std::uint16_t> Halfblock;
 }
 
 #endif
