@@ -5,24 +5,26 @@
 #include <array>
 #include <string>
 #include <ostream>
+#include <bitset>
 
 namespace Leonetienne::GCrypt {
 
   /* This class represents a block of data,
    * and provides functions to manipulate it
   */
-  class Block {
+  template <typename T>
+  class Basic_Block {
     public:
       //! Will constuct an uninitialized data block
-      Block();
+      Basic_Block();
 
       //! Will construct this block from a string like "101010".. Length MUST be 512.
-      Block(const std::string& other);
+      Basic_Block(const std::string& other);
 
       //! Copy-ctor
-      Block(const Block& other);
+      Basic_Block(const Basic_Block<T>& other);
 
-      ~Block();
+      ~Basic_Block();
 
       //! Will construct this block from a string like "011101..". Length MUST be 512.
       void FromString(const std::string& str);
@@ -35,90 +37,90 @@ namespace Leonetienne::GCrypt {
       //! Since the matrices values are pretty much sudo-random,
       //! they will most likely integer-overflow.
       //! So see this as a one-way function.
-      [[nodiscard]] Block MMul(const Block& other) const;
-      [[nodiscard]] Block operator*(const Block& other) const;
+      [[nodiscard]] Basic_Block<T> MMul(const Basic_Block<T>& other) const;
+      [[nodiscard]] Basic_Block<T> operator*(const Basic_Block<T>& other) const;
 
       //! Will matrix-multiply two blocks together,
       //! and directly write into this same block.
       //! Since the matrices values are pretty much sudo-random,
       //! they will most likely integer-overflow.
       //! So see this as a one-way function.
-      void MMulInplace(const Block& other);
-      Block& operator*=(const Block& other);
+      void MMulInplace(const Basic_Block<T>& other);
+      Basic_Block<T>& operator*=(const Basic_Block<T>& other);
 
       //! Will xor two blocks together
-      [[nodiscard]] Block Xor(const Block& other) const;
+      [[nodiscard]] Basic_Block<T> Xor(const Basic_Block<T>& other) const;
       //! Will xor two blocks together
-      [[nodiscard]] Block operator^(const Block& other) const;
+      [[nodiscard]] Basic_Block<T> operator^(const Basic_Block<T>& other) const;
 
       //! Will xor two blocks together, inplace
-      void XorInplace(const Block& other);
+      void XorInplace(const Basic_Block<T>& other);
       //! Will xor two blocks together, inplace
-      Block& operator^=(const Block& other);
+      Basic_Block<T>& operator^=(const Basic_Block<T>& other);
 
       //! Will add all the integer making up this block, one by one
-      [[nodiscard]] Block Add(const Block& other) const;
+      [[nodiscard]] Basic_Block<T> Add(const Basic_Block<T>& other) const;
       //! Will add all the integer making up this block, one by one
-      [[nodiscard]] Block operator+(const Block& other) const;
+      [[nodiscard]] Basic_Block<T> operator+(const Basic_Block<T>& other) const;
 
       //! Will add all the integer making up this block, one by one, inplace
-      void AddInplace(const Block& other);
+      void AddInplace(const Basic_Block<T>& other);
       //! Will add all the integer making up this block, one by one, inplace
-      Block& operator+=(const Block& other);
+      Basic_Block<T>& operator+=(const Basic_Block<T>& other);
 
       //! Will subtract all the integer making up this block, one by one
-      [[nodiscard]] Block Sub(const Block& other) const;
+      [[nodiscard]] Basic_Block<T> Sub(const Basic_Block<T>& other) const;
       //! Will subtract all the integer making up this block, one by one
-      [[nodiscard]] Block operator-(const Block& other) const;
+      [[nodiscard]] Basic_Block<T> operator-(const Basic_Block<T>& other) const;
 
       //! Will subtract all the integer making up this block, one by one, inplace
-      void SubInplace(const Block& other);
+      void SubInplace(const Basic_Block<T>& other);
       //! Will subtract all the integer making up this block, one by one, inplace
-      Block& operator-=(const Block& other);
+      Basic_Block<T>& operator-=(const Basic_Block<T>& other);
 
       //! Will shift rows upwards by 1
-      [[nodiscard]] Block ShiftRowsUp() const;
+      [[nodiscard]] Basic_Block<T> ShiftRowsUp() const;
 
       //! Will shift rows upwards by 1
       void ShiftRowsUpInplace();
 
       //! Will shift matrix rows downwards by 1
-      [[nodiscard]] Block ShiftRowsDown() const;
+      [[nodiscard]] Basic_Block<T> ShiftRowsDown() const;
 
       //! Will shift matrix rows downwards by 1
       void ShiftRowsDownInplace();
 
       //! Will shift matrix columns to the left by 1
-      [[nodiscard]] Block ShiftColumnsLeft() const;
+      [[nodiscard]] Basic_Block<T> ShiftColumnsLeft() const;
 
       //! Will shift matrix columns to the left by 1
       void ShiftColumnsLeftInplace();
 
       //! Will shift matrix columns to the right by 1
-      [[nodiscard]] Block ShiftColumnsRight() const;
+      [[nodiscard]] Basic_Block<T> ShiftColumnsRight() const;
 
       //! Will shift matrix columns to the right by 1
       void ShiftColumnsRightInplace();
 
       //! Will shift array cells to the left by 1
-      [[nodiscard]] Block ShiftCellsLeft() const;
+      [[nodiscard]] Basic_Block<T> ShiftCellsLeft() const;
 
       //! Will shift array cells to the left by 1
       void ShiftCellsLeftInplace();
 
       //! Will shift array cells to the right by 1
-      [[nodiscard]] Block ShiftCellsRight() const;
+      [[nodiscard]] Basic_Block<T> ShiftCellsRight() const;
 
       //! Will shift array cells to the right by 1
       void ShiftCellsRightInplace();
 
       //! Will copy a block
-      Block& operator=(const Block& other);
+      Basic_Block<T>& operator=(const Basic_Block<T>& other);
 
       //! Will compare whether or not two blocks are equal
-      [[nodiscard]] bool operator==(const Block& other) const;
+      [[nodiscard]] bool operator==(const Basic_Block<T>& other) const;
       //! Will compare whether or not two blocks are unequal
-      [[nodiscard]] bool operator!=(const Block& other) const;
+      [[nodiscard]] bool operator!=(const Basic_Block<T>& other) const;
 
       //! Will zero all data
       void Reset();
@@ -133,46 +135,59 @@ namespace Leonetienne::GCrypt {
       void FlipBit(const std::size_t index);
 
       //! Will shift all bits to the left by 1
-      [[nodiscard]] Block ShiftBitsLeft() const;
+      [[nodiscard]] Basic_Block<T> ShiftBitsLeft() const;
 
       //! Will shift all bits to the left by 1, inplace
       void ShiftBitsLeftInplace();
 
       //! Will shift all bits to the right by 1
-      [[nodiscard]] Block ShiftBitsRight() const;
+      [[nodiscard]] Basic_Block<T> ShiftBitsRight() const;
 
       //! Will shift all bits to the right by 1, inplace
       void ShiftBitsRightInplace();
 
       //! Returns 32-bit chunks of data, indexed by matrix coordinates (0-3)
-      [[nodiscard]] std::uint32_t& Get(const std::uint8_t row, const std::uint8_t column);
+      [[nodiscard]] T& Get(const std::uint8_t row, const std::uint8_t column);
       //! Returns 32-bit chunks of data, indexed by matrix coordinates (0-3)
-      [[nodiscard]] const std::uint32_t& Get(const std::uint8_t row, const std::uint8_t column) const;
+      [[nodiscard]] const T& Get(const std::uint8_t row, const std::uint8_t column) const;
 
       //! Returns 32-bit chunks of data, indexed by a 1d-index (0-16)
-      [[nodiscard]] std::uint32_t& Get(const std::uint8_t index);
+      [[nodiscard]] T& Get(const std::uint8_t index);
 
       //! Returns 32-bit chunks of data, indexed by a 1d-index (0-16)
-      [[nodiscard]] const std::uint32_t& Get(const std::uint8_t index) const;
+      [[nodiscard]] const T& Get(const std::uint8_t index) const;
 
       //! Returns 32-bit chunks of data, indexed by a 1d-index (0-16)
-      [[nodiscard]] std::uint32_t& operator[](const std::uint8_t index);
+      [[nodiscard]] T& operator[](const std::uint8_t index);
 
       //! Returns 32-bit chunks of data, indexed by a 1d-index (0-16)
-      [[nodiscard]] const std::uint32_t& operator[](const std::uint8_t index) const;
+      [[nodiscard]] const T& operator[](const std::uint8_t index) const;
 
-      static constexpr std::size_t CHUNK_SIZE = sizeof(std::uint32_t);
+      static constexpr std::size_t CHUNK_SIZE = sizeof(T);
       static constexpr std::size_t CHUNK_SIZE_BITS = CHUNK_SIZE * 8;
 
-      friend std::ostream& operator<<(std::ostream& os, const Block& b);
+      friend std::ostream& operator<<(std::ostream& os, const Basic_Block<T>& b) {
+        for (std::size_t i = 0; i < b.data.size(); i++) {
+          os << std::bitset<Basic_Block<T>::CHUNK_SIZE_BITS>(b.data[i]).to_string();
+        }
+        return os;
+      }
 
     private:
 
-      std::array<std::uint32_t, 16> data;
+      std::array<T, 16> data;
   };
 
-}
+  // Instantiate templates
+  template class Basic_Block<std::uint32_t>;
+  //template class Basic_Block<std::uint16_t>;
 
+  //! This a full-sizes 512-bit block
+  typedef Basic_Block<std::uint32_t> Block;
+
+  //! This is a half-block used within the feistel class
+  //typedef Basic_Block<std::uint16_t> Halfblock;
+}
 
 #endif
 
