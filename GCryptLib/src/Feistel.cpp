@@ -62,16 +62,18 @@ namespace Leonetienne::GCrypt {
   Halfblock Feistel::F(Halfblock m, const Key& key) {
 
     // Made-up F function
-
     // Expand to full bitwidth
     Block m_expanded = ExpansionFunction(m);
 
-    // Shift to left by 1
-    //m_expanded = Shiftl(m_expanded, 1);
-    m_expanded = (m_expanded);
+    // Mix up the block a bit
+    m_expanded.ShiftCellsRightInplace();
+    m_expanded.ShiftRowsUpInplace();
 
-    // Matrix-mult with key
+    // Matrix-mult with key (this is irreversible)
     m_expanded *= key;
+
+    // Now do a bitshift
+    m_expanded.ShiftBitsLeftInplace();
 
     // Non-linearly apply subsitution boxes
     std::stringstream ss;
@@ -180,65 +182,32 @@ namespace Leonetienne::GCrypt {
     ZeroKeyMemory();
     roundKeys = Keyset();
 
-    // Derive the initial two round keys
+    // Derive all round keys with simple matrix operations
+    roundKeys[0] = seedKey;
 
-    // Compress- substitute, and expand the seed key to form the initial and the second-initial round key
-    // This action is non-linear and irreversible, and thus strenghtens security.
-    Halfblock compressedSeed1 = CompressionFunction(seedKey);
-    //Halfblock compressedSeed2 = CompressionFunction(Shiftl(seedKey, 1)); // Shifting one key by 1 will result in a completely different compression
-    Halfblock compressedSeed2 = CompressionFunction((seedKey)); // Shifting one key by 1 will result in a completely different compression
-
-    // To add further confusion, let's shift seed1 by 1 aswell (after compression, but before substitution)
-    // but only if the total number of bits set are a multiple of 3
-    // if it is a multiple of 4, we'll shift it by 1 into the opposite direction
-    const std::size_t setBits1 = compressedSeed1.count();
-
-    if (setBits1 % 4 == 0) {
-      //compressedSeed1 = Shiftr(compressedSeed1, 1);
-      compressedSeed1 = (compressedSeed1);
-    }
-    else if (setBits1 % 3 == 0) {
-      compressedSeed1 = (compressedSeed1);
-    }
-
-    // Now apply substitution
-    std::stringstream ssKey1;
-    std::stringstream ssKey2;
-    const std::string bitsKey1 = compressedSeed1.to_string();
-    const std::string bitsKey2 = compressedSeed2.to_string();
-
-    for (std::size_t i = 0; i < HALFBLOCK_SIZE; i += 4) {
-      ssKey1 << SBox(bitsKey1.substr(i, 4));
-      ssKey2 << SBox(bitsKey2.substr(i, 4));
-    }
-
-    compressedSeed1 = Halfblock(ssKey1.str());
-    compressedSeed2 = Halfblock(ssKey2.str());
-
-    // Now extrapolate them to BLOCK_SIZE (key size) again
-    // Xor with the original seed key to get rid of the repititions caused by the expansion
-    roundKeys[0] = ExpansionFunction(compressedSeed1) ^ seedKey;
-    roundKeys[1] = ExpansionFunction(compressedSeed2) ^ seedKey;
-
-    // Now derive all other round keys
-
-    for (std::size_t i = 2; i < roundKeys.size(); i++) {
+    for (std::size_t i = 1; i < roundKeys.size(); i++) {
       // Initialize new round key with last round key
-      Block newKey = roundKeys[i - 1];
+      const Key& lastKey = roundKeys[i - 1];
+      roundKeys[i] = lastKey;
 
-      // Shift to left by how many bits are set, modulo 8
-      //newKey = Shiftl(newKey, newKey.count() % 8); // This action is irreversible
-      newKey = (newKey); // This action is irreversible
+      // Stir it good
+      roundKeys[i].ShiftRowsUpInplace();
 
-      // Split into two halfblocks,
-      // apply F() to one halfblock with rk[i-2],
-      // xor the other one with it
-      // and put them back together
-      auto halfkeys = FeistelSplit(newKey);
-      Halfblock halfkey1 = F(halfkeys.first, roundKeys[i - 2]);
-      Halfblock halfkey2 = halfkeys.second ^ halfkey1; // I know this is reversible, but it helps to diffuse future round keys.
+      // Bitshift and matrix-mult 3 times
+      // (each time jumbles it up pretty good)
+      // This is irreversible
+      roundKeys[i].ShiftBitsRightInplace();
+      roundKeys[i] *= lastKey;
+      roundKeys[i].ShiftBitsRightInplace();
+      roundKeys[i] *= lastKey;
+      roundKeys[i].ShiftBitsRightInplace();
+      roundKeys[i] *= lastKey;
 
-      roundKeys[i] = Key(FeistelCombine(halfkey1, halfkey2));
+      // Lastly, do apply some cell shifting, and other mutations
+      roundKeys[i].ShiftCellsRightInplace();
+      roundKeys[i] += lastKey;
+      roundKeys[i].ShiftColumnsRightInplace();
+      roundKeys[i] ^= lastKey;
     }
 
     return;
