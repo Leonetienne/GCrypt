@@ -182,7 +182,7 @@ namespace Leonetienne::GCrypt {
   template class Basic_Block<std::uint32_t>;
   //template class Basic_Block<std::uint16_t>;
 
-  //! This a full-sizes 512-bit block
+  //! This a full-sized 512-bit block
   typedef Basic_Block<std::uint32_t> Block;
 
   //! This is a half-block used within the feistel class
