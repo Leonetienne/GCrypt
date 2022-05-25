@@ -4,7 +4,6 @@
 #include "GCrypt/Keyset.h"
 #include "GCrypt/Block.h"
 #include "GCrypt/Key.h"
-#include "GCrypt/Halfblock.h"
 
 namespace Leonetienne::GCrypt {
   /** Class to perform a feistel block chipher

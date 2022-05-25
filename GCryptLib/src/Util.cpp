@@ -37,7 +37,7 @@ namespace Leonetienne::GCrypt {
     }
 
     // Pad rest with zeores
-    return Block(PadStringToLength(ss.str(), BLOCK_SIZE, '0', padLeft));
+    return Block(PadStringToLength(ss.str(), Block::BLOCK_SIZE_BITS, '0', padLeft));
   }
 
   Flexblock StringToBits(const std::string& s) {
@@ -55,7 +55,7 @@ namespace Leonetienne::GCrypt {
 
     const std::string bitstring = bits.ToString();
 
-    for (std::size_t i = 0; i < BLOCK_SIZE; i += 8) {
+    for (std::size_t i = 0; i < Block::BLOCK_SIZE_BITS; i += 8) {
       ss << (char)std::bitset<8>(bitstring.substr(i, 8)).to_ulong();
     }
 

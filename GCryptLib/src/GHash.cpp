@@ -1,6 +1,7 @@
 #include "GCrypt/GHash.h"
 #include "GCrypt/Util.h"
 #include "GCrypt/InitializationVector.h"
+#include <vector>
 
 namespace Leonetienne::GCrypt {
 
@@ -34,9 +35,9 @@ namespace Leonetienne::GCrypt {
     // Split input into blocks
     std::vector<Block> blocks;
 
-    for (std::size_t i = 0; i < data.size(); i += BLOCK_SIZE) {
+    for (std::size_t i = 0; i < data.size(); i += Block::BLOCK_SIZE_BITS) {
       blocks.push_back(Block(
-        PadStringToLength(data.substr(i, BLOCK_SIZE), BLOCK_SIZE, '0', false))
+        PadStringToLength(data.substr(i, Block::BLOCK_SIZE_BITS), Block::BLOCK_SIZE_BITS, '0', false))
       );
     }
 
