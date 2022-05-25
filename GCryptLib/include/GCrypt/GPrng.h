@@ -32,7 +32,7 @@ namespace Leonetienne::GCrypt {
         // Pull the required amount of bits
         std::stringstream ss;
         for (std::size_t i = 0; i < sizeof(T)*8; i++) {
-          ss << GetBit() ? '1' : '0';
+          ss << (GetBit() ? '1' : '0');
         }
 
         // Transform to bytes
