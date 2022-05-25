@@ -2,7 +2,6 @@
 #include "GCrypt/Config.h"
 #include "GCrypt/Util.h"
 #include <sstream>
-#include <bitset>
 #include <cassert>
 #include <cstring>
 
@@ -12,18 +11,22 @@
 
 namespace Leonetienne::GCrypt {
 
-  Block::Block() {
+  template <typename T>
+  Basic_Block<T>::Basic_Block() {
   }
 
-  Block::Block(const std::string& str) {
+  template <typename T>
+  Basic_Block<T>::Basic_Block(const std::string& str) {
     FromString(str);
   }
 
-  Block::Block(const Block& other) {
+  template <typename T>
+  Basic_Block<T>::Basic_Block(const Basic_Block<T>& other) {
     data = other.data;
   }
 
-  void Block::FromString(const std::string& str) {
+  template <typename T>
+  void Basic_Block<T>::FromString(const std::string& str) {
 
     assert(str.length() == BLOCK_SIZE);
 
@@ -36,7 +39,8 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  std::string Block::ToString() const {
+  template <typename T>
+  std::string Basic_Block<T>::ToString() const {
 
     std::stringstream ss;
     for (std::size_t i = 0; i < data.size(); i++) {
@@ -45,9 +49,10 @@ namespace Leonetienne::GCrypt {
     return ss.str();
   }
 
-  Block Block::MMul(const Block& o) const {
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::MMul(const Basic_Block<T>& o) const {
 
-    Block m;
+    Basic_Block<T> m;
 
     // Maybe pre-calculate the 1d-index...?
 
@@ -74,13 +79,15 @@ namespace Leonetienne::GCrypt {
     return m;
   }
 
-  Block Block::operator*(const Block& other) const {
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::operator*(const Basic_Block<T>& other) const {
     return this->MMul(other);
   }
 
-  void Block::MMulInplace(const Block& o) {
+  template <typename T>
+  void Basic_Block<T>::MMulInplace(const Basic_Block<T>& o) {
 
-    Block m = *this;
+    Basic_Block<T> m = *this;
 
     // Maybe pre-calculate the 1d-index...?
 
@@ -107,86 +114,102 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  Block& Block::operator*=(const Block& other) {
+  template <typename T>
+  Basic_Block<T>& Basic_Block<T>::operator*=(const Basic_Block<T>& other) {
     MMulInplace(other);
     return *this;
   }
 
-  Block Block::Xor(const Block& other) const {
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::Xor(const Basic_Block<T>& other) const {
 
-    Block m;
+    Basic_Block<T> m;
     for (std::size_t i = 0; i < data.size(); i++) {
       m.Get(i) = this->Get(i) ^ other.Get(i);
     }
     return m;
   }
 
-  Block Block::operator^(const Block& other) const {
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::operator^(const Basic_Block<T>& other) const {
     return Xor(other);
   }
 
-  void Block::XorInplace(const Block& other) {
+  template <typename T>
+  void Basic_Block<T>::XorInplace(const Basic_Block<T>& other) {
     for (std::size_t i = 0; i < data.size(); i++) {
       this->Get(i) ^= other.Get(i);
     }
     return;
   }
 
-  Block& Block::operator^=(const Block& other) {
+  template <typename T>
+  Basic_Block<T>& Basic_Block<T>::operator^=(const Basic_Block<T>& other) {
     XorInplace(other);
-    return *this; }
-  Block Block::Add(const Block& other) const {
+    return *this;
+  }
 
-    Block m;
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::Add(const Basic_Block<T>& other) const {
+
+    Basic_Block<T> m;
     for (std::size_t i = 0; i < data.size(); i++) {
       m.Get(i) = this->Get(i) + other.Get(i);
     }
     return m;
   }
 
-  Block Block::operator+(const Block& other) const {
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::operator+(const Basic_Block<T>& other) const {
     return Add(other);
   }
 
-  void Block::AddInplace(const Block& other) {
+  template <typename T>
+  void Basic_Block<T>::AddInplace(const Basic_Block<T>& other) {
     for (std::size_t i = 0; i < data.size(); i++) {
       this->Get(i) += other.Get(i);
     }
     return;
   }
 
-  Block& Block::operator+=(const Block& other) {
+  template <typename T>
+  Basic_Block<T>& Basic_Block<T>::operator+=(const Basic_Block<T>& other) {
     AddInplace(other);
     return *this;
   }
 
-  Block Block::Sub(const Block& other) const {
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::Sub(const Basic_Block<T>& other) const {
 
-    Block m;
+    Basic_Block<T> m;
     for (std::size_t i = 0; i < data.size(); i++) {
       m.Get(i) = this->Get(i) - other.Get(i);
     }
     return m;
   }
 
-  Block Block::operator-(const Block& other) const {
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::operator-(const Basic_Block<T>& other) const {
     return Sub(other);
   }
 
-  void Block::SubInplace(const Block& other) {
+  template <typename T>
+  void Basic_Block<T>::SubInplace(const Basic_Block<T>& other) {
     for (std::size_t i = 0; i < data.size(); i++) {
       this->Get(i) -= other.Get(i);
     }
     return;
   }
 
-  Block& Block::operator-=(const Block& other) {
+  template <typename T>
+  Basic_Block<T>& Basic_Block<T>::operator-=(const Basic_Block<T>& other) {
     SubInplace(other);
     return *this;
   }
 
-  void Block::ShiftRowsUpInplace() {
-    Block tmp = *this;
+  template <typename T>
+  void Basic_Block<T>::ShiftRowsUpInplace() {
+    Basic_Block<T> tmp = *this;
 
     Get(MAT_INDEX(0, 0)) = tmp.Get(MAT_INDEX(1, 0));
     Get(MAT_INDEX(0, 1)) = tmp.Get(MAT_INDEX(1, 1));
@@ -211,8 +234,9 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  Block Block::ShiftRowsUp() const {
-    Block b;
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::ShiftRowsUp() const {
+    Basic_Block<T> b;
 
     b.Get(MAT_INDEX(0, 0)) = Get(MAT_INDEX(1, 0));
     b.Get(MAT_INDEX(0, 1)) = Get(MAT_INDEX(1, 1));
@@ -237,8 +261,9 @@ namespace Leonetienne::GCrypt {
     return b;
   }
 
-  void Block::ShiftRowsDownInplace() {
-    Block tmp = *this;
+  template <typename T>
+  void Basic_Block<T>::ShiftRowsDownInplace() {
+    Basic_Block<T> tmp = *this;
 
     Get(MAT_INDEX(0, 0)) = tmp.Get(MAT_INDEX(3, 0));
     Get(MAT_INDEX(0, 1)) = tmp.Get(MAT_INDEX(3, 1));
@@ -263,8 +288,9 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  Block Block::ShiftRowsDown() const {
-    Block b;
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::ShiftRowsDown() const {
+    Basic_Block<T> b;
 
     b.Get(MAT_INDEX(0, 0)) = Get(MAT_INDEX(3, 0));
     b.Get(MAT_INDEX(0, 1)) = Get(MAT_INDEX(3, 1));
@@ -289,8 +315,9 @@ namespace Leonetienne::GCrypt {
     return b;
   }
 
-  void Block::ShiftColumnsLeftInplace() {
-    Block tmp = *this;
+  template <typename T>
+  void Basic_Block<T>::ShiftColumnsLeftInplace() {
+    Basic_Block<T> tmp = *this;
 
     Get(MAT_INDEX(0, 0)) = tmp.Get(MAT_INDEX(0, 1));
     Get(MAT_INDEX(1, 0)) = tmp.Get(MAT_INDEX(1, 1));
@@ -315,8 +342,9 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  Block Block::ShiftColumnsLeft() const {
-    Block b;
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::ShiftColumnsLeft() const {
+    Basic_Block<T> b;
 
     b.Get(MAT_INDEX(0, 0)) = Get(MAT_INDEX(0, 1));
     b.Get(MAT_INDEX(1, 0)) = Get(MAT_INDEX(1, 1));
@@ -341,8 +369,9 @@ namespace Leonetienne::GCrypt {
     return b;
   }
 
-  void Block::ShiftColumnsRightInplace() {
-    Block tmp = *this;
+  template <typename T>
+  void Basic_Block<T>::ShiftColumnsRightInplace() {
+    Basic_Block<T> tmp = *this;
 
     Get(MAT_INDEX(0, 1)) = tmp.Get(MAT_INDEX(0, 0));
     Get(MAT_INDEX(1, 1)) = tmp.Get(MAT_INDEX(1, 0));
@@ -367,8 +396,9 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  Block Block::ShiftColumnsRight() const {
-    Block b;
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::ShiftColumnsRight() const {
+    Basic_Block<T> b;
 
     b.Get(MAT_INDEX(0, 1)) = Get(MAT_INDEX(0, 0));
     b.Get(MAT_INDEX(1, 1)) = Get(MAT_INDEX(1, 0));
@@ -393,8 +423,9 @@ namespace Leonetienne::GCrypt {
     return b;
   }
 
-  void Block::ShiftCellsLeftInplace() {
-    Block tmp = *this;
+  template <typename T>
+  void Basic_Block<T>::ShiftCellsLeftInplace() {
+    Basic_Block<T> tmp = *this;
 
     Get(15) = tmp.Get(0);
 
@@ -405,8 +436,9 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  Block Block::ShiftCellsLeft() const {
-    Block b;
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::ShiftCellsLeft() const {
+    Basic_Block<T> b;
 
     b.Get(15) = Get(0);
 
@@ -417,8 +449,9 @@ namespace Leonetienne::GCrypt {
     return b;
   }
 
-  void Block::ShiftCellsRightInplace() {
-    Block tmp = *this;
+  template <typename T>
+  void Basic_Block<T>::ShiftCellsRightInplace() {
+    Basic_Block<T> tmp = *this;
 
     Get(0) = tmp.Get(15);
 
@@ -429,8 +462,9 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  Block Block::ShiftCellsRight() const {
-    Block b;
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::ShiftCellsRight() const {
+    Basic_Block<T> b;
 
     b.Get(0) = Get(15);
 
@@ -441,12 +475,14 @@ namespace Leonetienne::GCrypt {
     return b;
   }
 
-  Block& Block::operator=(const Block& other) {
+  template <typename T>
+  Basic_Block<T>& Basic_Block<T>::operator=(const Basic_Block<T>& other) {
     data = other.data;
     return *this;
   }
 
-  bool Block::GetBit(const std::size_t index) const {
+  template <typename T>
+  bool Basic_Block<T>::GetBit(const std::size_t index) const {
     // Fetch index of integer the bit is located in
     const std::size_t intIndex = index / CHUNK_SIZE_BITS;
 
@@ -459,7 +495,8 @@ namespace Leonetienne::GCrypt {
     return data[intIndex] & bitmask;
   }
 
-  void Block::SetBit(const std::size_t index, const bool state) {
+  template <typename T>
+  void Basic_Block<T>::SetBit(const std::size_t index, const bool state) {
     // Fetch index of integer the bit is located in
     const std::size_t intIndex = index / CHUNK_SIZE_BITS;
 
@@ -481,7 +518,8 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  void Block::FlipBit(const std::size_t index) {
+  template <typename T>
+  void Basic_Block<T>::FlipBit(const std::size_t index) {
     // Fetch index of integer the bit is located in
     const std::size_t intIndex = index / CHUNK_SIZE_BITS;
 
@@ -496,8 +534,9 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  Block Block::ShiftBitsLeft() const {
-    Block b;
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::ShiftBitsLeft() const {
+    Basic_Block<T> b;
 
     // First, copy this block over
     b = *this;
@@ -529,8 +568,9 @@ namespace Leonetienne::GCrypt {
     return b;
   }
 
-  void Block::ShiftBitsLeftInplace() {
-    Block tmp = *this;
+  template <typename T>
+  void Basic_Block<T>::ShiftBitsLeftInplace() {
+    Basic_Block<T> tmp = *this;
 
     // Then, shift all integers individually
     for (std::size_t i = 0; i < data.size(); i++) {
@@ -559,8 +599,9 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  Block Block::ShiftBitsRight() const {
-    Block b;
+  template <typename T>
+  Basic_Block<T> Basic_Block<T>::ShiftBitsRight() const {
+    Basic_Block<T> b;
 
     // First, copy this block over
     b = *this;
@@ -592,8 +633,9 @@ namespace Leonetienne::GCrypt {
     return b;
   }
 
-  void Block::ShiftBitsRightInplace() {
-    Block tmp = *this;
+  template <typename T>
+  void Basic_Block<T>::ShiftBitsRightInplace() {
+    Basic_Block<T> tmp = *this;
 
     // Then, shift all integers individually
     for (std::size_t i = 0; i < data.size(); i++) {
@@ -622,43 +664,44 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  std::uint32_t& Block::Get(const std::uint8_t row, const std::uint8_t column){
+  template <typename T>
+  T& Basic_Block<T>::Get(const std::uint8_t row, const std::uint8_t column){
     return data[MAT_INDEX(row, column)];
   }
 
-  const std::uint32_t& Block::Get(const std::uint8_t row, const std::uint8_t column) const {
+  template <typename T>
+  const T& Basic_Block<T>::Get(const std::uint8_t row, const std::uint8_t column) const {
     return data[MAT_INDEX(row, column)];
   }
 
-  std::uint32_t& Block::Get(const std::uint8_t index) {
+  template <typename T>
+  T& Basic_Block<T>::Get(const std::uint8_t index) {
     return data[index];
   }
 
-  const std::uint32_t& Block::Get(const std::uint8_t index) const {
+  template <typename T>
+  const T& Basic_Block<T>::Get(const std::uint8_t index) const {
     return data[index];
   }
 
-  std::uint32_t& Block::operator[](const std::uint8_t index) {
+  template <typename T>
+  T& Basic_Block<T>::operator[](const std::uint8_t index) {
     return data[index];
   }
 
-  const std::uint32_t& Block::operator[](const std::uint8_t index) const {
+  template <typename T>
+  const T& Basic_Block<T>::operator[](const std::uint8_t index) const {
     return data[index];
   }
 
-  bool Block::operator==(const Block& other) const {
+  template <typename T>
+  bool Basic_Block<T>::operator==(const Basic_Block<T>& other) const {
     return data == other.data;
   }
 
-  bool Block::operator!=(const Block& other) const {
+  template <typename T>
+  bool Basic_Block<T>::operator!=(const Basic_Block<T>& other) const {
     return data != other.data;
-  }
-
-  std::ostream& operator<<(std::ostream& os, const Block& b) {
-    for (std::size_t i = 0; i < b.data.size(); i++) {
-      os << std::bitset<Block::CHUNK_SIZE_BITS>(b.data[i]).to_string();
-    }
-    return os;
   }
 
 #if defined _WIN32 || defined _WIN64
@@ -667,11 +710,13 @@ namespace Leonetienne::GCrypt {
 #pragma GCC push_options
 #pragma GCC optimize ("O0")
 #endif
-  Block::~Block() {
+  template <typename T>
+  Basic_Block<T>::~Basic_Block() {
     Reset();
   }
 
-  void Block::Reset() {
+  template <typename T>
+  void Basic_Block<T>::Reset() {
     memset(data.data(), 0, CHUNK_SIZE*data.size());
     return;
   }
