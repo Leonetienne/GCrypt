@@ -15,10 +15,10 @@ namespace Leonetienne::GCrypt {
     key.FromByteString("nsoCZfvdqpRkeVTt9wzvPR3TT26peOW9E2kTHh3pdPCq2M7BpskvUljJHSrobUTI");
 
     cipher = GCipher(
-        // The key really does not matter, as it gets changed
-        // each time before digesting anything.
-        key,
-        GCipher::DIRECTION::ENCIPHER
+      // The key really does not matter, as it gets changed
+      // each time before digesting anything.
+      key,
+      GCipher::DIRECTION::ENCIPHER
     );
 
     return;
@@ -26,10 +26,11 @@ namespace Leonetienne::GCrypt {
 
   void GHash::DigestBlock(const Block& data) {
     // Set the cipher key to the current data to be hashed
-    cipher.SetKey(Key(data));
+    cipher.SetKey(data);
 
-    // Encipher the current block, and xor it on the current hashsum
+    // Encipher the current block, and matrix-mult it with the current hashsum
     block ^= cipher.Digest(data);
+
     return;
   }
 
