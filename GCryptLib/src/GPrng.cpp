@@ -26,7 +26,7 @@ namespace Leonetienne::GCrypt {
     }
 
     // Return the next bit.
-    return hasher.GetHashsum()[nextBit++];
+    return hasher.GetHashsum().GetBit(nextBit++);
   }
 
   void GPrng::AdvanceBlock() {
@@ -50,8 +50,6 @@ namespace Leonetienne::GCrypt {
     // 1) Fetch complete current hashsum (it might have been partially given out already)
     // 2) Bitshift it, and matrix-mult it with the seed (that is irreversible)
     //    That should be a one-way function, and create a new unique block.
-    //    We don't even have to AdvanceBlock(), because we've only given out
-    //    hashsum', not hashsum.
 
     // Performance improvement over the previous method:
     // (generating 100.000 blocks):
@@ -64,6 +62,9 @@ namespace Leonetienne::GCrypt {
     hashsum *= seed;
     hashsum.ShiftBitsLeftInplace();
     hashsum *= seed;
+
+    // Advance the block, so that the following block will be a new block
+    AdvanceBlock();
 
     // Return our hashsum
     return hashsum;
