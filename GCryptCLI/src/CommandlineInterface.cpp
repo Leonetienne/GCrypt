@@ -2,14 +2,13 @@
 #include <iostream>
 #include <sstream>
 #include <GCrypt/Version.h>
-#include <GCrypt/Config.h>
+#include <GCrypt/Block.h>
 #include "Version.h"
 
 using namespace Hazelnp;
-using namespace Leonetienne;
+using namespace Leonetienne::GCrypt;
 
-void CommandlineInterface::Init(int argc, const char* const* argv)
-{
+void CommandlineInterface::Init(int argc, const char* const* argv) {
   /* General information */
   std::stringstream ss;
   ss << "CLI for the GCrypt cipher/obfuscator" << std::endl
@@ -23,20 +22,20 @@ void CommandlineInterface::Init(int argc, const char* const* argv)
   nupp.SetCrashOnFail("true");
 
   /* Builtin documentation */
-  nupp.RegisterDescription("--encrypt", "Use the encryption routine.");
+  nupp.RegisterDescription("--encrypt", "Use the encryption module.");
   nupp.RegisterConstraint("--encrypt", ParamConstraint(true, DATA_TYPE::VOID, {}, false,  {"--decrypt", "--hash" }));
   nupp.RegisterAbbreviation("-e", "--encrypt");
 
-  nupp.RegisterDescription("--decrypt", "Use decryption routine.");
+  nupp.RegisterDescription("--decrypt", "Use decryption module.");
   nupp.RegisterConstraint("--decrypt", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--encrypt", "--hash", "--generate-keyfile" }));
   nupp.RegisterAbbreviation("-d", "--decrypt");
 
-  nupp.RegisterDescription("--hash", "Use the GHash hash function to calculate a hashsum.");
+  nupp.RegisterDescription("--hash", "Use the GHash hash module to calculate a hashsum.");
   nupp.RegisterConstraint("--hash", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--encrypt", "--decrypt", "--generate-keyfile" }));
   nupp.RegisterAbbreviation("-h", "--hash");
 
-  nupp.RegisterDescription("--generate-keyfile", "Will generate a random keyfile, and exit.");
-  nupp.RegisterConstraint("--generate-keyfile", ParamConstraint(true, DATA_TYPE::STRING, { "--encrypt", "--decrypt", "--hash" }, false, {}));
+  nupp.RegisterDescription("--generate-keyfile", "Use the Keyfile module. Will generate a random keyfile, and exit.");
+  nupp.RegisterConstraint("--generate-keyfile", ParamConstraint(true, DATA_TYPE::STRING, {}, false, { "--encrypt", "--decrypt", "--hash" }));
 
   nupp.RegisterDescription("--intext", "Encrypt this string.");
   nupp.RegisterConstraint("--intext", ParamConstraint(true, DATA_TYPE::STRING, {}, false, { "--infile" }));
@@ -55,7 +54,7 @@ void CommandlineInterface::Init(int argc, const char* const* argv)
   nupp.RegisterConstraint("--key", ParamConstraint(true, DATA_TYPE::STRING, {}, false, { "--keyfile", "--keyask", "--hash" }));
   nupp.RegisterAbbreviation("-k", "--key");
 
-  ss << "Read in the first {KEYSIZE}(=" << GCrypt::BLOCK_SIZE << ") bits of this file and use that as an encryption key. WARNING: Arguments may be logged by the system!";
+  ss << "Read in the first {KEYSIZE}(=" << Block::BLOCK_SIZE_BITS << ") bits of this file and use that as an encryption key. WARNING: Arguments may be logged by the system!";
   nupp.RegisterDescription("--keyfile", ss.str());
   ss.str("");
   nupp.RegisterConstraint("--keyfile", ParamConstraint(true, DATA_TYPE::STRING, {}, false, { "--key", "--keyask", "--hash" }));
@@ -73,25 +72,25 @@ void CommandlineInterface::Init(int argc, const char* const* argv)
   nupp.RegisterConstraint("--iobase-bytes", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-16", "--iobase-64", "--iobase-uwu", "--iobase-ugh" }));
 
   nupp.RegisterDescription("--iobase-2", "Interpret and format ciphertexts in base2");
-  nupp.RegisterConstraint("--iobase-2", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-bytes", "--iobase-8", "--iobase-10", "--iobase-16",, "--iobase-64", "--iobase-uwu", "--iobase-ugh" }));
+  nupp.RegisterConstraint("--iobase-2", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-bytes", "--iobase-8", "--iobase-10", "--iobase-16", "--iobase-64", "--iobase-uwu", "--iobase-ugh" }));
 
   nupp.RegisterDescription("--iobase-8", "Interpret and format ciphertexts in base8");
-  nupp.RegisterConstraint("--iobase-8", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-bytes", "--iobase-2", "--iobase-10", "--iobase-16",, "--iobase-64", "--iobase-uwu", "--iobase-ugh" }));
+  nupp.RegisterConstraint("--iobase-8", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-bytes", "--iobase-2", "--iobase-10", "--iobase-16", "--iobase-64", "--iobase-uwu", "--iobase-ugh" }));
 
   nupp.RegisterDescription("--iobase-10", "Interpret and format ciphertexts in base10");
-  nupp.RegisterConstraint("--iobase-10", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-bytes", "--iobase-2", "--iobase-8", "--iobase-16",, "--iobase-64", "--iobase-uwu", "--iobase-ugh" }));
+  nupp.RegisterConstraint("--iobase-10", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-bytes", "--iobase-2", "--iobase-8", "--iobase-16", "--iobase-64", "--iobase-uwu", "--iobase-ugh" }));
 
   nupp.RegisterDescription("--iobase-16", "Interpret and format ciphertexts in base16 (hex)");
   nupp.RegisterConstraint("--iobase-16", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-bytes", "--iobase-2", "--iobase-8", "--iobase-64", "--iobase-uwu", "--iobase-ugh" }));
 
   nupp.RegisterDescription("--iobase-64", "Interpret and format ciphertexts in base64");
-  nupp.RegisterConstraint("--iobase-64", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-bytes", "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-16",, "--iobase-uwu", "--iobase-ugh" }));
+  nupp.RegisterConstraint("--iobase-64", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-bytes", "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-16", "--iobase-uwu", "--iobase-ugh" }));
 
   nupp.RegisterDescription("--iobase-uwu", "Interpret and format ciphertexts in base uwu");
-  nupp.RegisterConstraint("--iobase-uwu", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-bytes", "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-16",, "--iobase-64", "--iobase-ugh" }));
+  nupp.RegisterConstraint("--iobase-uwu", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-bytes", "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-16", "--iobase-64", "--iobase-ugh" }));
 
   nupp.RegisterDescription("--iobase-ugh", "Interpret and format ciphertexts in base ugh");
-  nupp.RegisterConstraint("--iobase-ugh", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-bytes", "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-16",, "--iobase-64", "--iobase-uwu" }));
+  nupp.RegisterConstraint("--iobase-ugh", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-bytes", "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-16", "--iobase-64", "--iobase-uwu" }));
 
   nupp.RegisterDescription("--lib-version", "Will supply the version of GCryptLib used.");
   nupp.RegisterConstraint("--lib-version", ParamConstraint(true, DATA_TYPE::VOID, {}, false, {}));
@@ -115,13 +114,23 @@ void CommandlineInterface::Init(int argc, const char* const* argv)
   return;
 }
 
-Hazelnp::CmdArgsInterface& CommandlineInterface::Get()
-{
+Hazelnp::CmdArgsInterface& CommandlineInterface::Get() {
   return nupp;
 }
 
-void CommandlineInterface::SpecialCompatibilityChecking()
-{
+void CommandlineInterface::SpecialCompatibilityChecking() {
+
+  // Active module
+  // Do we have EITHER --encrypt or --decrypt or --hash?
+  if (
+    (!nupp.HasParam("--generate-keyfile")) &&
+    (!nupp.HasParam("--hash")) &&
+    (!nupp.HasParam("--encrypt")) &&
+    (!nupp.HasParam("--decrypt"))
+  ) {
+    CrashWithMsg("No module supplied! Please supply either --encrypt, --decrypt, --hash, or --generate-keyfile!");
+  }
+
   // Encryption key
   // Do we have EITHER --hash (no key required), --generate-keyfile (no key required), --key, --keyask or --keyfile given?
   if (
@@ -130,23 +139,43 @@ void CommandlineInterface::SpecialCompatibilityChecking()
     (!nupp.HasParam("--key")) &&
     (!nupp.HasParam("--keyfile")) &&
     (!nupp.HasParam("--keyask"))
-    )
+  ) {
     CrashWithMsg("No encryption key supplied! Please supply either --key, --keyfile, or --keyask!");
+  }
 
-  // Digestion mode
-  // Do we have EITHER --encrypt or --decrypt or --hash?
+  // Check that, if supplied, filename strings are not empty.
   if (
-    (!nupp.HasParam("--hash")) &&
-    (!nupp.HasParam("--encrypt")) &&
-    (!nupp.HasParam("--decrypt"))
-    )
-    CrashWithMsg("No digestion mode supplied! Please supply either --encrypt, --decrypt, or --hash!");
+    (nupp.HasParam("--ofile")) &&
+    (nupp["--ofile"].GetString().length() == 0)
+  ) {
+    CrashWithMsg("Length of --ofile is zero! That can't be a valid path!");
+  }
+
+  if (
+    (nupp.HasParam("--ifile")) &&
+    (nupp["--ifile"].GetString().length() == 0)
+  ) {
+    CrashWithMsg("Length of --ifile is zero! That can't be a valid path!");
+  }
+
+  if (
+    (nupp.HasParam("--keyfile")) &&
+    (nupp["--keyfile"].GetString().length() == 0)
+  ) {
+    CrashWithMsg("Length of --keyfile is zero! That can't be a valid path!");
+  }
+
+  if (
+    (nupp.HasParam("--generate-keyfile")) &&
+    (nupp["--generate-keyfile"].GetString().length() == 0)
+  ) {
+    CrashWithMsg("Length of --generate-keyfile is zero! That can't be a valid path!");
+  }
 
   return;
 }
 
-void CommandlineInterface::CrashWithMsg(const std::string& msg)
-{
+void CommandlineInterface::CrashWithMsg(const std::string& msg) {
   std::cerr
     << nupp.GetBriefDescription()
     << std::endl
@@ -156,11 +185,10 @@ void CommandlineInterface::CrashWithMsg(const std::string& msg)
   exit(-1);
 }
 
-void CommandlineInterface::CatchVersionQueries()
-{
+void CommandlineInterface::CatchVersionQueries() {
   if (
       (nupp.HasParam("--version")) ||
-      (nupp.HasParam("--cli-version")
+      (nupp.HasParam("--cli-version"))
   ) {
     std::cout << GCRYPTCLI_VERSION << std::endl;
     exit(0);

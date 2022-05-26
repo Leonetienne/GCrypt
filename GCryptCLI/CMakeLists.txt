@@ -42,3 +42,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   ${gcrypt_include}
 )
 
+target_compile_options(${PROJECT_NAME} PRIVATE
+  -Werror
+  -fdiagnostics-color=always
+)
+
