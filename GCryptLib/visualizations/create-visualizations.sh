@@ -1,6 +1,6 @@
 #!zsh
 
-echo "Make sure to have run all visualization scripts in!"
+echo "Make sure to have run all visualization executables in ../build/ (cmake -B build)!"
 echo "These generate the base images!"
 
 # Copy all images over, but as pngs, and a bit larger
