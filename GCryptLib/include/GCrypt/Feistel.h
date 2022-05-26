@@ -32,7 +32,7 @@ namespace Leonetienne::GCrypt {
   private:
     //! Will run the feistel rounds, with either regular key
     //! order or reversed key order
-    Block Run(const Block& data, bool reverseKeys);
+    Block Run(const Block& data, bool modeEncrypt);
 
     //! Arbitrary cipher function
     static Halfblock F(Halfblock m, const Key& key);
