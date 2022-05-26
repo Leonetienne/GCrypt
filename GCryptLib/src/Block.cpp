@@ -828,7 +828,11 @@ namespace Leonetienne::GCrypt {
 #pragma GCC pop_options
 #endif
 
+  // Instantiate templates
+  template class Basic_Block<std::uint32_t>;
+  template class Basic_Block<std::uint16_t>;
 }
+
 
 #undef MAT_INDEX
 
