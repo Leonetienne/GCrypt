@@ -1,16 +1,46 @@
 #include <GCrypt/GWrapper.h>
-#include <GCrypt/Flexblock.h>
 #include <GCrypt/Util.h>
 #include "Catch2.h"
 
 using namespace Leonetienne::GCrypt;
 
-// Tests that encrypting and decrypting strings using the wrapper works.
+// Tests that encrypting and decrypting short strings using the wrapper works.
 // This test will start from scratch after encryption, to ensure EVERYTHING has to be re-calculated.
-TEST_CASE(__FILE__"/Encrypting and decrypting strings works", "[Wrapper]") {
+TEST_CASE(__FILE__"/Encrypting and decrypting strings works, Single block", "[Wrapper]") {
 
   // Setup
   const std::string plaintext = "Hello, World!";
+  const Key key = Key::FromPassword("Der Affe will Zucker");
+
+  std::string ciphertext;
+  std::string decrypted;
+
+  // Encryption
+  ciphertext = GWrapper::EncryptString(plaintext, key);
+
+  // Decryption
+  decrypted = GWrapper::DecryptString(ciphertext, key);
+
+  // Assertion
+  REQUIRE(plaintext == decrypted);
+}
+
+// Tests that encrypting and decrypting very long strings using the wrapper works.
+// This test will start from scratch after encryption, to ensure EVERYTHING has to be re-calculated.
+TEST_CASE(__FILE__"/Encrypting and decrypting strings works, Many blocks block", "[Wrapper]") {
+
+  // Setup
+
+  // Read an not-multiple-of-blocksize amount of random chars, that's very large (about 200kb long string)
+  srand(time(0));
+
+  std::stringstream ss;
+  const std::string charset = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  for (std::size_t i = 0; i < 198273; i++) {
+    ss << charset[rand() % charset.length()];
+  }
+
+  const std::string plaintext = ss.str();
   const Key key = Key::FromPassword("Der Affe will Zucker");
 
   std::string ciphertext;

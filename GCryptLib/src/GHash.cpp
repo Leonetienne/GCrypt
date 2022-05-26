@@ -5,17 +5,23 @@
 
 namespace Leonetienne::GCrypt {
 
-  GHash::GHash() :
+  GHash::GHash() {
     // Initialize our cipher with a static, but randomly distributed key.
-    cipher(
+    Block ivSeed;
+    ivSeed.FromByteString("3J7IipfQTDJbO8jtasz9PgWui6faPaEMOuVuAqyhB1S2CRcLw5caawewgDUEG1WN");
+    block = InitializationVector(ivSeed);
+
+    Key key;
+    key.FromByteString("nsoCZfvdqpRkeVTt9wzvPR3TT26peOW9E2kTHh3pdPCq2M7BpskvUljJHSrobUTI");
+
+    cipher = GCipher(
         // The key really does not matter, as it gets changed
         // each time before digesting anything.
-        Key(StringToBitblock("nsoCZfvdqpRkeVTt9wzvPR3TT26peOW9E2kTHh3pdPCq2M7BpskvUljJHSrobUTI")),
+        key,
         GCipher::DIRECTION::ENCIPHER
-    ) {
-      block = InitializationVector(StringToBitblock("3J7IipfQTDJbO8jtasz9PgWui6faPaEMOuVuAqyhB1S2CRcLw5caawewgDUEG1WN"));
+    );
 
-      return;
+    return;
   }
 
   void GHash::DigestBlock(const Block& data) {
@@ -64,7 +70,8 @@ namespace Leonetienne::GCrypt {
 
     std::stringstream ss;
     ss << n_bytes;
-    const Block lengthBlock = StringToBitblock(ss.str());
+    Block lengthBlock;
+    lengthBlock.FromTextString(ss.str());
 
     // Digest the length block
     hasher.DigestBlock(lengthBlock);

@@ -36,7 +36,12 @@ namespace Leonetienne::GCrypt {
         }
 
         // Transform to bytes
-        const std::string bytes = BitsToBytes(ss.str());
+        const std::string bits = ss.str();
+        ss.str("");
+        for (std::size_t i = 0; i < bits.size(); i += 8) {
+            ss << (char)std::bitset<8>(bits.substr(i, 8)).to_ulong();
+        }
+        const std::string bytes = ss.str();
 
         // Cram bytes into type
         T t;

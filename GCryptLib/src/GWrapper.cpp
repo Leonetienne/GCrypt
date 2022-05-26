@@ -134,35 +134,25 @@ namespace Leonetienne::GCrypt {
     }
   }
 
-  Flexblock GWrapper::CipherFlexblock(
-      const Flexblock& data,
+  std::vector<Block> GWrapper::CipherBlocks(
+      const std::vector<Block>& data,
       const Key& key,
       const GCipher::DIRECTION direction)
   {
-    // Split input into blocks
-    std::vector<Block> blocks;
-
-    for (std::size_t i = 0; i < data.size(); i += Block::BLOCK_SIZE_BITS) {
-      blocks.push_back(Block(
-        PadStringToLength(data.substr(i, Block::BLOCK_SIZE_BITS), Block::BLOCK_SIZE_BITS, '0', false))
-      );
-    }
-
     // Create cipher instance
     GCipher cipher(key, direction);
 
-    for (Block& block : blocks) {
-      block = cipher.Digest(block);
-    }
+    std::vector<Block> digested;
+    digested.reserve(data.size());
 
-    // Concatenate ciphertext blocks back into a flexblock
-    std::stringstream ss;
-    for (Block& b : blocks) {
-      ss << b;
+    // Digest all our blocks
+    for (const Block& block : data) {
+      Block digestedBlock = cipher.Digest(block);
+      digested.emplace_back(digestedBlock);
     }
 
     // Return it
-    return ss.str();
+    return digested;
   }
 }
 

@@ -6,20 +6,20 @@
 
 namespace Leonetienne::GCrypt {
 
+  Feistel::Feistel() {
+  }
+
   Feistel::Feistel(const Key& key) {
     SetKey(key);
-    return;
   }
 
   Feistel::~Feistel() {
     ZeroKeyMemory();
-
-    return;
   }
 
   void Feistel::SetKey(const Key& key) {
     GenerateRoundKeys(key);
-    return;
+    isInitialized = true;
   }
 
   Block Feistel::Encipher(const Block& data) {
@@ -31,6 +31,10 @@ namespace Leonetienne::GCrypt {
   }
 
   Block Feistel::Run(const Block& data, bool modeEncrypt) {
+    if (!isInitialized) {
+      throw std::runtime_error("Attempted to digest data on uninitialized GCipher!");
+    }
+
     const auto splitData = FeistelSplit(data);
     Halfblock l = splitData.first;
     Halfblock r = splitData.second;
@@ -245,6 +249,7 @@ namespace Leonetienne::GCrypt {
 
   void Feistel::operator=(const Feistel& other) {
     roundKeys = other.roundKeys;
+    isInitialized = other.isInitialized;
 
     return;
   }

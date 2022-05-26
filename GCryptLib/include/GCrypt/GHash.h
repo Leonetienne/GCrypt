@@ -1,7 +1,6 @@
 #ifndef GCRYPT_GHASH_H
 #define GCRYPT_GHASH_H
 
-#include "GCrypt/Flexblock.h"
 #include "GCrypt/Block.h"
 #include "GCrypt/GCipher.h"
 #include <vector>
