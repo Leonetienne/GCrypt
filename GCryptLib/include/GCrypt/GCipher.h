@@ -2,7 +2,6 @@
 #define GCRYPT_GCIPHER_H
 
 #include "GCrypt/Feistel.h"
-#include "GCrypt/Flexblock.h"
 
 namespace Leonetienne::GCrypt {
   /** Class to apply a block/-stream cipher to messages of arbitrary length in a distributed manner
@@ -14,6 +13,9 @@ namespace Leonetienne::GCrypt {
       ENCIPHER,
       DECIPHER
     };
+
+    //! Empty initializer. If you use this, you must call Initialize()!
+    GCipher();
 
     //! Will initialize this cipher with a key
     explicit GCipher(const Key& key, const DIRECTION direction);
@@ -30,6 +32,11 @@ namespace Leonetienne::GCrypt {
 
     void operator=(const GCipher& other);
 
+
+    //! Will initialize the cipher with a key, and a mode.
+    //! If called on an existing object, it will reset its state.
+    void Initialize(const Key& key, const DIRECTION direction);
+
   private:
     DIRECTION direction;
 
@@ -38,6 +45,8 @@ namespace Leonetienne::GCrypt {
 
     //! The last block, required for CBC.
     Block lastBlock;
+
+    bool isInitialized = false;
   };
 }
 

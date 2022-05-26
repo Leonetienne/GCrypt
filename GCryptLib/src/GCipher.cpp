@@ -7,16 +7,32 @@
 
 namespace Leonetienne::GCrypt {
 
+  GCipher::GCipher() {
+  }
+
   GCipher::GCipher(const Key& key, const DIRECTION direction) :
     direction { direction },
     lastBlock(InitializationVector(key)), // Initialize our lastBlock with some deterministic initial value, based on the key
     feistel(key)
   {
+    isInitialized = true;
+    return;
+  }
+
+  void GCipher::Initialize(const Key& key, const DIRECTION direction) {
+    feistel = Feistel(key);
+    lastBlock = InitializationVector(key);
+    this->direction = direction;
+    isInitialized = true;
 
     return;
   }
 
   Block GCipher::Digest(const Block& input) {
+
+    if (!isInitialized) {
+      throw std::runtime_error("Attempted to digest data on uninitialized GCipher!");
+    }
 
     switch (direction) {
       case DIRECTION::ENCIPHER: {
@@ -52,6 +68,11 @@ namespace Leonetienne::GCrypt {
   }
 
   void GCipher::SetKey(const Key& key) {
+
+    if (!isInitialized) {
+      throw std::runtime_error("Attempted to set key on uninitialized GCipher!");
+    }
+
     feistel.SetKey(key);
 
     return;
@@ -61,6 +82,7 @@ namespace Leonetienne::GCrypt {
     direction = other.direction;
     feistel = other.feistel;
     lastBlock = other.lastBlock;
+    isInitialized = other.isInitialized;
 
     return;
   }

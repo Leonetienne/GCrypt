@@ -1,10 +1,11 @@
-#pragma once
-#include <string>
-#include "GCrypt/Flexblock.h"
+#ifndef GCRYPT_GWRAPPER_H
+#define GCRYPT_GWRAPPER_H
+
 #include "GCrypt/Block.h"
 #include "GCrypt/GCipher.h"
 #include "GCrypt/Key.h"
-
+#include <string>
+#include <vector>
 
 namespace Leonetienne::GCrypt {
   /** This class is a wrapper to make working with the GhettoCipher
@@ -31,7 +32,7 @@ namespace Leonetienne::GCrypt {
     static bool DecryptFile(const std::string& filename_in, const std::string& filename_out, const Key& key, bool printProgressReport = false);
 
     //! Will enncrypt or decrypt an entire flexblock of binary data, given a key.
-    static Flexblock CipherFlexblock(const Flexblock& data, const Key& key, const GCipher::DIRECTION direction);
+    static std::vector<Block> CipherBlocks(const std::vector<Block>& data, const Key& key, const GCipher::DIRECTION direction);
 
   private:
 
@@ -39,4 +40,6 @@ namespace Leonetienne::GCrypt {
     GWrapper();
   };
 }
+
+#endif
 

@@ -10,6 +10,10 @@ namespace Leonetienne::GCrypt {
   */
   class Feistel {
   public:
+    //! Empty initializer. If you use this, you must call SetKey()!
+    Feistel();
+
+    //! Will initialize the feistel cipher with a key
     explicit Feistel(const Key& key);
 
     Feistel(const Feistel& other) = delete;
@@ -59,6 +63,8 @@ namespace Leonetienne::GCrypt {
     void ZeroKeyMemory();
 
     Keyset roundKeys;
+
+    bool isInitialized = false;
   };
 }
 
