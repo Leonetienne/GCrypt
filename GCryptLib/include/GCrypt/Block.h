@@ -205,10 +205,6 @@ namespace Leonetienne::GCrypt {
       std::array<T, 16> data;
   };
 
-  // Instantiate templates
-  template class Basic_Block<std::uint32_t>;
-  template class Basic_Block<std::uint16_t>;
-
   //! This a full-sized 512-bit block
   typedef Basic_Block<std::uint32_t> Block;
 
