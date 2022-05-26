@@ -695,6 +695,16 @@ namespace Leonetienne::GCrypt {
   }
 
   template <typename T>
+  T* Basic_Block<T>::Data() noexcept {
+    return data.data();
+  }
+
+  template <typename T>
+  const T* Basic_Block<T>::Data() const noexcept {
+    return data.data();
+  }
+
+  template <typename T>
   bool Basic_Block<T>::operator==(const Basic_Block<T>& other) const {
     return data == other.data;
   }

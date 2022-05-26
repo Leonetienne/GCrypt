@@ -163,8 +163,15 @@ namespace Leonetienne::GCrypt {
       //! Returns 32-bit chunks of data, indexed by a 1d-index (0-16)
       [[nodiscard]] const T& operator[](const std::uint8_t index) const;
 
+      //! Will return a reference to the data array
+      T* Data() noexcept;
+
+      //! Will return a reference to the data array
+      const T* Data() const noexcept;
+
       static constexpr std::size_t CHUNK_SIZE = sizeof(T);
       static constexpr std::size_t CHUNK_SIZE_BITS = CHUNK_SIZE * 8;
+      static constexpr std::size_t BLOCK_SIZE = CHUNK_SIZE * 16;
       static constexpr std::size_t BLOCK_SIZE_BITS = CHUNK_SIZE_BITS * 16;
 
       friend std::ostream& operator<<(std::ostream& os, const Basic_Block<T>& b) {
