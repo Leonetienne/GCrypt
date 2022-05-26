@@ -46,11 +46,11 @@ namespace Leonetienne::GCrypt {
     //! Will expand a halfblock to a fullblock
     static Block ExpansionFunction(const Halfblock& block);
 
-    //! Will compress a fullblock to a halfblock
-    static Halfblock CompressionFunction(const Block& block);
+    //! Will reduce a fullblock to a halfblock
+    static Halfblock ReductionFunction(const Block& block);
 
-    //! Substitutes four bits by static random others
-    static std::string SBox(const std::string& in);
+    //! Substitutes eight bits by static random others, inplace
+    static void SBox(Block& block);
 
     //! Will generate a the round keys
     void GenerateRoundKeys(const Key& seedKey);

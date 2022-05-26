@@ -2,6 +2,7 @@
 #include "GCrypt/Feistel.h"
 #include "GCrypt/Util.h"
 #include "GCrypt/Config.h"
+#include "GCrypt/SBoxLookup.h"
 
 namespace Leonetienne::GCrypt {
 
@@ -54,14 +55,14 @@ namespace Leonetienne::GCrypt {
 
     // Block has finished de*ciphering.
     // Let's generate a new set of round keys.
-    GenerateRoundKeys((Key)roundKeys.back());
+    GenerateRoundKeys(roundKeys.back());
 
     return FeistelCombine(r, l);
   }
 
   Halfblock Feistel::F(Halfblock m, const Key& key) {
 
-    // Made-up F function
+    // Made-up F function:
     // Expand to full bitwidth
     Block m_expanded = ExpansionFunction(m);
 
@@ -75,82 +76,86 @@ namespace Leonetienne::GCrypt {
     // Now do a bitshift
     m_expanded.ShiftBitsLeftInplace();
 
-    // Non-linearly apply subsitution boxes
-    std::stringstream ss;
-    const std::string m_str = m_expanded.ToString();
-    for (std::size_t i = 0; i < Block::BLOCK_SIZE_BITS; i += 4) {
-      ss << SBox(m_str.substr(i, 4));
-    }
-    m_expanded = Block(ss.str());
+    // Apply the sbox
+    SBox(m_expanded);
 
-    // Return the compressed version, shifted by 3
-    //return Shiftl(CompressionFunction(m_expanded), 3);
-    return (CompressionFunction(m_expanded));
+    // Reduce back to a halfblock
+    Halfblock hb = ReductionFunction(m_expanded);
+
+    // To jumble it up a last time,
+    // matrix-multiply it with the input halfblock
+    hb *= m;
+
+    return hb;
   }
 
   std::pair<Halfblock, Halfblock> Feistel::FeistelSplit(const Block& block) {
-    const std::string bits = block.ToString();
+    Halfblock l;
+    Halfblock r;
 
-    Halfblock l(bits.substr(0, bits.size() / 2));
-    Halfblock r(bits.substr(bits.size() / 2));
+    memcpy(l.Data(), block.Data(), Halfblock::BLOCK_SIZE);
+    memcpy(r.Data(), block.Data() + 8, Halfblock::BLOCK_SIZE);
+    // +8, because 8 is HALF the number of elements in the array. We only want to copy HALF a full-sized block.
 
     return std::make_pair(l, r);
   }
 
   Block Feistel::FeistelCombine(const Halfblock& l, const Halfblock& r) {
-    return Block(l.ToString() + r.ToString());
+    Block b;
+
+    memcpy(b.Data(), l.Data(), Halfblock::BLOCK_SIZE);
+    memcpy(b.Data() + 8, r.Data(), Halfblock::BLOCK_SIZE);
+    // +8, because 8 is HALF the number of elements in the array. We only want to copy HALF a full-sized block.
+
+    return b;
   }
 
-  Block Feistel::ExpansionFunction(const Halfblock& block) {
-    std::stringstream ss;
-    const std::string bits = block.ToString();
+  Block Feistel::ExpansionFunction(const Halfblock& hb) {
+    Block b;
 
-    std::unordered_map<std::string, std::string> expansionMap;
-    expansionMap["00"] = "1101";
-    expansionMap["01"] = "1000";
-    expansionMap["10"] = "0010";
-    expansionMap["11"] = "0111";
-
-    // We have to double the bits!
-    for (std::size_t i = 0; i < Halfblock::BLOCK_SIZE_BITS; i += 2) {
-      const std::string sub = bits.substr(i, 2);
-      ss << expansionMap[sub];
+    // Copy the bits over
+    for (std::size_t i = 0; i < 16; i++) {
+      b[i] = hb[i];
     }
 
-    return Block(ss.str());
-  }
-
-  Halfblock Feistel::CompressionFunction(const Block& block) {
-    std::stringstream ss;
-    const std::string bits = block.ToString();
-
-    std::unordered_map<std::string, std::string> compressionMap;
-    compressionMap["0000"] = "10";
-    compressionMap["0001"] = "01";
-    compressionMap["0010"] = "11";
-    compressionMap["0011"] = "10";
-    compressionMap["0100"] = "11";
-    compressionMap["0101"] = "01";
-    compressionMap["0110"] = "00";
-    compressionMap["0111"] = "01";
-    compressionMap["1000"] = "11";
-    compressionMap["1001"] = "00";
-    compressionMap["1010"] = "11";
-    compressionMap["1011"] = "00";
-    compressionMap["1100"] = "11";
-    compressionMap["1101"] = "10";
-    compressionMap["1110"] = "00";
-    compressionMap["1111"] = "01";
-
-    // We have to half the bits!
-    for (std::size_t i = 0; i < Block::BLOCK_SIZE_BITS; i += 4) {
-      const std::string sub = bits.substr(i, 4);
-      ss << compressionMap[sub];
+    // Multiply the block a few tims with a bitshifted version
+    // This is irriversible, too
+    for (std::size_t i = 0; i < 3; i++) {
+      b *= b.ShiftBitsRight();
     }
 
-    return Halfblock(ss.str());
+    return b;
   }
 
+  Halfblock Feistel::ReductionFunction(const Block& block) {
+
+    // Just apply a modulo operation, remapping a 32bit integer
+    // onto 16bit space (default configuration).
+    // Without saying, modulo is irreversible.
+    Halfblock hb;
+    for (std::size_t i = 0; i < 16; i++) {
+      hb[i] = block[i] % (1 << (Halfblock::CHUNK_SIZE_BITS - 1));
+    }
+
+    return hb;
+  }
+
+  void Feistel::SBox(Block& block) {
+
+    std::uint8_t* curByte = (std::uint8_t*)(void*)block.Data();
+
+    // Iterate over all bytes in the block
+    for (std::size_t i = 0; i < Block::BLOCK_SIZE; i++) {
+      curByte++;
+
+      // Subsitute byte
+      *curByte = sboxLookup[*curByte];
+    }
+
+    return;
+  }
+
+  /*
   std::string Feistel::SBox(const std::string& in) {
     static std::unordered_map<std::string, std::string> subMap;
     static bool mapInitialized = false;
@@ -176,6 +181,7 @@ namespace Leonetienne::GCrypt {
 
     return subMap[in];
   }
+  */
 
   void Feistel::GenerateRoundKeys(const Key& seedKey) {
     // Clear initial key memory
