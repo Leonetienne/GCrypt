@@ -40,6 +40,17 @@ and instruct your compiler to look in `GCryptLib/include` for include files.
 From there you could either hand all files in `GCryptLib/src/` to your compiler to compile, or precompile it, and link it.
 An example on how to use GCrypt in a project is right in here: GCryptCLI.
 
+### Compiling the library, tests, and example projects (in `/GCryptLib/exec/`)
+#### Prerequisites
+1) Make sure to have build-essentials, git, make, and cmake installed, and up-to-date.
+
+#### Procedure
+1) First, you have to pull all the submodules: `git submodule update --init --recursive`.
+2) Then, cd into the GCryptLib directory: `cd GCryptLib`.
+3) Run cmake: `cmake -B build`.
+4) cd into the build directory: `cd build`.
+5) Compile: `make`.
+
 ### Working with strings
 ```cpp
 using namespace Leonetienne::GCrypt;
