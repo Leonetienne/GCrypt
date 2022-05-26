@@ -46,29 +46,23 @@ namespace Leonetienne::GCrypt {
   }
 
   Block GPrng::GetBlock() {
-    // Getting a block is a bit troublesome.
-    // Just fetching 512 bits would be too much of a performance hog.
+    // Tactic on efficiently generating a new block:
+    // 1) Fetch complete current hashsum (it might have been partially given out already)
+    // 2) Bitshift it, and matrix-mult it with the seed (that is irreversible)
+    //    That should be a one-way function, and create a new unique block.
+    //    We don't even have to AdvanceBlock(), because we've only given out
+    //    hashsum', not hashsum.
 
-    // Slurp up the rest of the current block
-    std::stringstream ss;
-    const std::size_t bitsLeft = Block::BLOCK_SIZE_BITS - nextBit;
-    ss << hasher.GetHashsum().ToString().substr(nextBit, bitsLeft);
+    // Fetch our current block
+    Block hashsum = hasher.GetHashsum();
 
-    // Now we have to advance to the next block
-    AdvanceBlock();
+    // Derive/'hash' it to hashsum'
+    hashsum *= seed;
+    hashsum.ShiftBitsLeftInplace();
+    hashsum *= seed;
 
-    // Now, grab the remaining bits
-    const std::size_t remainingBits = Block::BLOCK_SIZE_BITS - bitsLeft;
-    ss << hasher.GetHashsum().ToString().substr(0, remainingBits);
-
-    // Assert that we have the correct number of bits
-    assert(ss.str().length() == Block::BLOCK_SIZE_BITS);
-
-    // Set out bitpointer
-    nextBit = remainingBits;
-
-    // Return our block
-    return Block(ss.str());
+    // Return our hashsum
+    return hashsum;
   }
 
 }
