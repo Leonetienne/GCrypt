@@ -46,6 +46,9 @@ namespace Leonetienne::GCrypt {
         return t;
       }
 
+      //! Will return a random unsigned 32-bit integer
+      std::uint32_t operator()();
+
       //! Will return a random block
       Block GetBlock();
 
