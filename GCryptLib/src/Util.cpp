@@ -117,7 +117,7 @@ namespace Leonetienne::GCrypt {
   std::string BitblockToHexstring(const Block& b) {
     std::stringstream ss;
     const std::string charset = "0123456789abcdef";
-    const std::string bstr = b.ToString();
+    const std::string bstr = b.ToBinaryString();
 
     for (std::size_t i = 0; i < bstr.size(); i += 4) {
       ss << charset[std::bitset<4>(bstr.substr(i, 4)).to_ulong()];
@@ -232,8 +232,9 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  std::vector<Block> ReadFileToBlocks(const std::string& filepath) {
+  std::vector<Block> ReadFileToBlocks(const std::string& filepath, std::size_t& bytes_read) {
     // Read file
+    bytes_read = 0;
 
     // "ate" specifies that the read-pointer is already at the end of the file
     // this allows to estimate the file size
@@ -259,9 +260,10 @@ namespace Leonetienne::GCrypt {
 
       // Read data into the block
       ifs.read((char*)(void*)block.Data(), Block::BLOCK_SIZE);
-      const std::size_t n_bytes_read = ifs.gcount();
+      const std::size_t n_bytes_read_block = ifs.gcount();
+      bytes_read += n_bytes_read_block;
 
-      if (n_bytes_read > 0) {
+      if (n_bytes_read_block > 0) {
         // Append the block to our vector
         blocks.emplace_back(block);
       }
@@ -271,6 +273,11 @@ namespace Leonetienne::GCrypt {
     ifs.close();
 
     return blocks;
+  }
+
+  std::vector<Block> ReadFileToBlocks(const std::string& filepath) {
+    std::size_t bytes_read_dummy; // Create a dumme for the parameter
+    return ReadFileToBlocks(filepath, bytes_read_dummy);
   }
 
   void WriteBlocksToFile(
@@ -296,45 +303,19 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  std::vector<Block> StringToBitblocks(const std::string& s) {
+  std::vector<Block> StringToBitblocks(const std::string& str) {
 
     // Create our block vector, and reserve exactly
     // how many blocks are required to store this string
-    const std::size_t num_blocks = (s.length() / Block::BLOCK_SIZE) + 1;
+    const std::size_t num_blocks = (str.length() / Block::BLOCK_SIZE) + 1;
     std::vector<Block> blocks;
     blocks.reserve(num_blocks);
 
-    for (std::size_t i = 0; i < num_blocks; i++) {
-      // Create new block, and zero it
+    for (std::size_t i = 0; i < str.length(); i += Block::BLOCK_SIZE) {
       Block block;
-      block.Reset();
+      block.FromTextString(str.substr(i, Block::BLOCK_SIZE));
 
-      std::size_t bytes_copied = 0;
-
-      // Iterate over all bytes in the block
-      std::uint8_t* curByte = (std::uint8_t*)(void*)block.Data();
-      for (std::size_t j = 0; j < Block::BLOCK_SIZE; j++) {
-        curByte++;
-
-        // Carry our character over
-
-        const std::size_t strIdx = i*Block::BLOCK_SIZE + j;
-        // The string still has chars to give
-        if (strIdx < s.length()) {
-          *curByte = s[j];
-          bytes_copied++;
-        }
-        // We've reached the end of the string
-        else {
-          // Save our block, if it contains any bytes
-          if (bytes_copied) {
-            blocks.emplace_back(block);
-          }
-
-          // Return our blocks
-          return blocks;
-        }
-      }
+      blocks.emplace_back(block);
     }
 
     return blocks;

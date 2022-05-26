@@ -26,12 +26,31 @@ namespace Leonetienne::GCrypt {
 
       ~Basic_Block();
 
-      //! Will construct this block from a string like "011101..". Length MUST be 512.
-      void FromString(const std::string& str);
+      //! Will construct this block from a string like "011101..".
+      void FromBinaryString(const std::string& str);
+
+      //! Will construct this block from a hexstring
+      void FromHexString(const std::string& str);
+
+      //! Will construct this block from a bytestring (any characters)
+      void FromByteString(const std::string& str);
+
+      //! Will construct this block from a textstring (any length)
+      void FromTextString(const std::string& str);
 
       //! Will create a bitset-compatible string ("0101110..") representation
       //! of this block. Length will always be 512.
-      std::string ToString() const;
+      std::string ToBinaryString() const;
+
+      //! Will create a hexstring representation of this block.
+      std::string ToHexString() const;
+
+      //! Will create a bytestring representation of this block.
+      std::string ToByteString() const;
+
+      //! Will create a textstring representation of this block.
+      //! The difference to a bytestring is that it gets trimmed after a nullterminator.
+      std::string ToTextString() const;
 
       //! Will matrix-multiply two blocks together.
       //! Since the matrices values are pretty much sudo-random,

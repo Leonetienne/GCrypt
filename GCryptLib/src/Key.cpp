@@ -9,9 +9,7 @@
 namespace Leonetienne::GCrypt {
 
   Key Key::FromPassword(const std::string& password) {
-    return GHash::CalculateHashsum(
-      StringToBits(password)
-    );
+    return GHash::HashString(password);
   }
 
   Key Key::Random() {

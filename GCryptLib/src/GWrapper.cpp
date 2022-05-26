@@ -10,33 +10,64 @@ namespace Leonetienne::GCrypt {
       const Key& key)
   {
     // Recode the ascii-string to bits
-    const Flexblock cleartext_bits = StringToBits(cleartext);
+    const std::vector<Block> cleartext_blocks = StringToBitblocks(cleartext);
 
-    // Encrypt our cleartext bits
-    const Flexblock ciphertext_bits = CipherFlexblock(cleartext_bits, key, GCipher::DIRECTION::ENCIPHER);
+    // Create cipher instance
+    GCipher cipher(key, GCipher::DIRECTION::ENCIPHER);
 
-    // Recode the ciphertext bits to a hex-string
-    const std::string ciphertext = BitsToHexstring(ciphertext_bits);
+    // Encrypt all blocks
+    std::vector<Block> ciphertext_blocks;
+
+    for (const Block& clearBlock : cleartext_blocks) {
+      ciphertext_blocks.emplace_back(cipher.Digest(clearBlock));
+    }
+
+    // Recode the ciphertext blocks to a hex-string
+    std::stringstream ss;
+    for (const Block& block : ciphertext_blocks) {
+      ss << block.ToHexString();
+    }
 
     // Return it
-    return ciphertext;
+    return ss.str();
   }
 
   std::string GWrapper::DecryptString(
       const std::string& ciphertext,
       const Key& key)
   {
-    // Recode the hex-string to bits
-    const Flexblock ciphertext_bits = HexstringToBits(ciphertext);
+    // Make sure our ciphertext is a multiple of block size
+    if (ciphertext.length() % Block::BLOCK_SIZE*2 != 0) { // Two chars per byte
+      throw std::runtime_error("Leonetienne::GCrypt::GWrapper::DecryptString() received ciphertext of length not a multiple of block size.");
+    }
 
-    // Decrypt the ciphertext bits
-    const std::string cleartext_bits = CipherFlexblock(ciphertext_bits, key, GCipher::DIRECTION::DECIPHER);
+    // Recode the hex-string to blocks
+    std::vector<Block> ciphertext_blocks;
+    ciphertext_blocks.reserve(ciphertext.length() / (Block::BLOCK_SIZE*2));
+    for (std::size_t i = 0; i < ciphertext.length(); i += Block::BLOCK_SIZE*2) {
+      Block block;
+      block.FromHexString(ciphertext.substr(i, Block::BLOCK_SIZE*2));
 
-    // Recode the cleartext bits to an ascii-string
-    const std::string cleartext = BitsToString(cleartext_bits);
+      ciphertext_blocks.emplace_back(block);
+    }
+
+    // Create cipher instance
+    GCipher cipher(key, GCipher::DIRECTION::DECIPHER);
+
+    // Decrypt all blocks
+    std::vector<Block> cleartext_blocks;
+    for (const Block& cipherBlock : ciphertext_blocks) {
+      cleartext_blocks.emplace_back(cipher.Digest(cipherBlock));
+    }
+
+    // Recode the cleartext blocks to bytes
+    std::stringstream ss;
+    for (const Block& block : cleartext_blocks) {
+      ss << block.ToTextString();
+    }
 
     // Return it
-    return cleartext;
+    return ss.str();
   }
 
   bool GWrapper::EncryptFile(

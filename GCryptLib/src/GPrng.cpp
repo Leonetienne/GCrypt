@@ -78,7 +78,7 @@ namespace Leonetienne::GCrypt {
 
     // Performance improvement over the previous method:
     // (generating 1.000.000 integers):
-    // 5.26 seconds -> 3.84 seconds
+    // 5.26 seconds -> 3.75 seconds
 
 
     // Advance our pointer to the next whole uint32

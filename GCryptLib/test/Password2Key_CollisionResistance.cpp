@@ -70,7 +70,7 @@ TEST_CASE(__FILE__"/Password to key transformation collision resistance", "[Key 
     const std::string password = Base10_2_X(i, charset, 0);
 
     // Generate key
-    const std::string newKeyBits = Key::FromPassword(password).ToString();
+    const std::string newKeyBits = Key::FromPassword(password).ToBinaryString();
 
     // Check if this block is already in our map
     if (keys.find(newKeyBits) != keys.cend()) {

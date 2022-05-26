@@ -62,8 +62,8 @@ TEST_CASE(__FILE__"/operator=", "[Block]") {
   }
 }
 
-// Tests that converting to, and from, strings works
-TEST_CASE(__FILE__"/StringConversion", "[Block]") {
+// Tests that converting to, and from, binary strings works
+TEST_CASE(__FILE__"/BinaryStringConversion", "[Block]") {
 
   // Setup
   srand(time(0));
@@ -77,7 +77,60 @@ TEST_CASE(__FILE__"/StringConversion", "[Block]") {
   Block block(ss.str());
 
   // Verify
-  REQUIRE(block.ToString() == ss.str());
+  REQUIRE(block.ToBinaryString() == ss.str());
+}
+
+// Tests that converting to, and from, hexstrings works
+TEST_CASE(__FILE__"/HexStringConversion", "[Block]") {
+
+  // Setup
+  srand(time(0));
+  std::stringstream ss;
+
+  const std::string charset = "0123456789abcdef";
+  for (std::size_t i = 0; i < 128; i++) {
+    ss << charset[rand() % charset.length()];
+  }
+
+  // Exercise
+  Block block;
+  block.FromHexString(ss.str());
+
+  // Verify
+  REQUIRE(block.ToHexString() == ss.str());
+}
+
+// Tests that converting to, and from, bytestrings works
+TEST_CASE(__FILE__"/ByteStringConversion", "[Block]") {
+
+  // Setup
+  srand(time(0));
+  std::stringstream ss;
+
+  for (std::size_t i = 0; i < 64; i++) {
+    ss << (char)(rand() % 256);
+  }
+
+  // Exercise
+  Block block;
+  block.FromByteString(ss.str());
+
+  // Verify
+  REQUIRE(block.ToByteString() == ss.str());
+}
+
+// Tests that converting to, and from, textstrings works
+TEST_CASE(__FILE__"/TextStringConversion", "[Block]") {
+
+  // Setup
+  const std::string textstr = "Hello, World :3";
+
+  // Exercise
+  Block block;
+  block.FromTextString(textstr);
+
+  // Verify
+  REQUIRE(block.ToTextString() == textstr);
 }
 
 // Tests that operator* is the same as *=
@@ -646,7 +699,7 @@ TEST_CASE(__FILE__"/get-bit", "[Block]") {
   }
 
   // Verify
-  REQUIRE(ss.str() == a.ToString());
+  REQUIRE(ss.str() == a.ToBinaryString());
 }
 
 // Tests that the set-bit to-false method works
@@ -690,7 +743,7 @@ TEST_CASE(__FILE__"/flip-bit", "[Block]") {
   // Setup
   Block a = Key::FromPassword("Halleluja");
 
-  std::string compare = a.ToString();
+  std::string compare = a.ToBinaryString();
   compare[5]   = compare[5]   == '1' ? '0' : '1';
   compare[15]  = compare[15]  == '1' ? '0' : '1';
   compare[105] = compare[105] == '1' ? '0' : '1';
@@ -703,7 +756,7 @@ TEST_CASE(__FILE__"/flip-bit", "[Block]") {
   a.FlipBit(205);
 
   // Verify
-  REQUIRE(a.ToString() == compare);
+  REQUIRE(a.ToBinaryString() == compare);
 }
 
 // Tests that bitshifts (to the left) work
@@ -732,8 +785,8 @@ TEST_CASE(__FILE__"/bitshift-left", "[Block]") {
   block = block.ShiftBitsLeft();
 
   // Verify
-  REQUIRE(block.ToString().length() == shiftedBits.length());
-  REQUIRE(block.ToString() == shiftedBits);
+  REQUIRE(block.ToBinaryString().length() == shiftedBits.length());
+  REQUIRE(block.ToBinaryString() == shiftedBits);
 }
 
 // Tests that inplace-bitshifts to the left do the exact same as copy bitshifts
@@ -782,8 +835,8 @@ TEST_CASE(__FILE__"/bitshift-right", "[Block]") {
   block = block.ShiftBitsRight();
 
   // Verify
-  REQUIRE(block.ToString().length() == shiftedBits.length());
-  REQUIRE(block.ToString() == shiftedBits);
+  REQUIRE(block.ToBinaryString().length() == shiftedBits.length());
+  REQUIRE(block.ToBinaryString() == shiftedBits);
 }
 
 // Tests that inplace-bitshifts to the right do the exact same as copy bitshifts
