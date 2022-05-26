@@ -31,7 +31,7 @@ namespace Leonetienne::GCrypt {
 
   Key Key::LoadFromFile(const std::string& path) {
     // Read this many chars
-    const std::size_t maxChars = Key::BLOCK_SIZE_BITS / 8;
+    const std::size_t maxChars = Key::BLOCK_SIZE;
 
     // Open ifilestream for keyfile
     std::ifstream ifs(path, std::ios::in | std::ios::binary);
