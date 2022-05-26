@@ -2,6 +2,7 @@
 #include "Bases.h"
 #include <GeneralUtility/BaseConversion.h>
 #include <StringTools/StringTools.h>
+#include <GCrypt/Util.h>
 
 using namespace Leonetienne::GCrypt;
 using namespace Leonetienne::StringTools;
@@ -55,9 +56,84 @@ std::string ModuleDataFormatter::FormatBlock(
       );
 
     default:
-      throw std::invalid_argument("Iobase now found! Oh no. Anyway.");
+      throw std::invalid_argument("FormatBlock(): Iobase now found! Oh no. Anyway.");
   }
 }
+
+Block ModuleDataFormatter::StringToBlock(
+    const std::string& str,
+    const Configuration::IOBASE_FORMAT base
+) {
+
+  Block b;
+
+  switch (base) {
+    case Configuration::IOBASE_FORMAT::BASE_BYTES:
+      b.FromByteString(str);
+      break;
+
+    case Configuration::IOBASE_FORMAT::BASE_2:
+      b.FromBinaryString(str);
+      break;
+
+    case Configuration::IOBASE_FORMAT::BASE_8:
+      b.FromBinaryString(
+        CustomBase2Bin(
+          str,
+          BASE_8
+        )
+      );
+      break;
+
+    case Configuration::IOBASE_FORMAT::BASE_10:
+      b.FromBinaryString(
+        CustomBase2Bin(
+          str,
+          BASE_10
+        )
+      );
+      break;
+
+    case Configuration::IOBASE_FORMAT::BASE_16:
+      b.FromHexString(str);
+      break;
+
+    case Configuration::IOBASE_FORMAT::BASE_64:
+      b.FromBinaryString(
+        CustomBase2Bin(
+          str,
+          BASE_64
+        )
+      );
+      break;
+
+    case Configuration::IOBASE_FORMAT::BASE_UWU:
+      b.FromBinaryString(
+        CustomBase2Bin(
+          str,
+          BASE_UWU,
+          " "
+        )
+      );
+      break;
+
+    case Configuration::IOBASE_FORMAT::BASE_UGH:
+      b.FromBinaryString(
+        CustomBase2Bin(
+          str,
+          BASE_UGH,
+          " "
+        )
+      );
+      break;
+
+    default:
+      throw std::invalid_argument("StringToBlock(): Iobase now found! Oh no. Anyway.");
+  }
+
+  return b;
+}
+
 
 std::string ModuleDataFormatter::Bin2CustomBase(
     const std::string& bin,
@@ -93,6 +169,9 @@ std::string ModuleDataFormatter::CustomBase2Bin(
   // Translate to binary
   std::string binary =
     Leonetienne::GeneralUtility::BaseConversion::BaseX_2_Y<std::vector<std::string>, std::string>(in_symbols, customSet, std::string("01"));
+
+  // Pad to BLOCK_SIZE
+  binary = PadStringToLength(binary, Block::BLOCK_SIZE_BITS, '0', false);
 
   // Check that our string is of size BLOCK_SIZE
   if (binary.length() != Block::BLOCK_SIZE_BITS) {

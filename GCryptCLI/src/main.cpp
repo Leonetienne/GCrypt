@@ -22,7 +22,6 @@ int main(int argc, char* const* argv) {
        )
     << std::endl;
 
-
   return 0;
 }
 
