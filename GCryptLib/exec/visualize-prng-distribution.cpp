@@ -62,7 +62,7 @@ int main() {
         bmp.SetPixel(Vector2i(x, y), pixel);
       }
 
-      bmp.Write(execName+"-operator()-grayscale.bmp");
+      bmp.Write(execName+"-operator-grayscale.bmp");
     }
   );
 
@@ -102,7 +102,7 @@ int main() {
         bmp.SetPixel(Vector2i(x, y), r, g, b);
       }
 
-      bmp.Write(execName+"-operator()-color.bmp");
+      bmp.Write(execName+"-operator-color.bmp");
     }
   );
 
