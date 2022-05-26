@@ -12,6 +12,7 @@ using namespace Leonetienne::GCrypt;
 class ModuleDataFormatter {
   public:
     static std::string FormatBlock(const Block& block, const Configuration::IOBASE_FORMAT base);
+    static Block StringToBlock(const std::string& str, const Configuration::IOBASE_FORMAT base);
 
 
   private:
