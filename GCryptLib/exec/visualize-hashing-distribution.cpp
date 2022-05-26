@@ -11,7 +11,7 @@ using namespace Leonetienne::Eule;
 
 void HashAndVisualize(const Block& b, const std::string filename) {
   GHash hasher;
-  hasher.DigestBlock(b);
+  hasher.Digest(b);
   VisualizeBlock(hasher.GetHashsum(), filename);
 }
 

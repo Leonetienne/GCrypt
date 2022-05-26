@@ -5,7 +5,7 @@ namespace Leonetienne::GCrypt {
 
   GPrng::GPrng(const Block& seed) {
     this->seed = seed;
-    hasher.DigestBlock(seed);
+    hasher.Digest(seed);
   }
 
   GPrng::GPrng() {
@@ -14,7 +14,7 @@ namespace Leonetienne::GCrypt {
   void GPrng::Seed(const Block& seed) {
     hasher = GHash();
     this->seed = seed;
-    hasher.DigestBlock(seed);
+    hasher.Digest(seed);
 
     return;
   }
@@ -37,7 +37,7 @@ namespace Leonetienne::GCrypt {
     // state of the hash function, unless the seed is known.
 
     // Advance the block (Add the current hashsum XOR seed to the hasher)
-    hasher.DigestBlock(Block(hasher.GetHashsum() ^ seed));
+    hasher.Digest(Block(hasher.GetHashsum() ^ seed));
 
     // Reset the pointer
     nextBit = 0;

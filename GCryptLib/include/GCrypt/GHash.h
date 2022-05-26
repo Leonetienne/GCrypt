@@ -16,7 +16,7 @@ namespace Leonetienne::GCrypt {
     //! WARNING: If you compute hashes using this digestive method,
     //! you REALLY REALLY should add a trailing block just containing the cleartext size!
     //! You MOST LIKELY just want to use the wrapper function GHash::CalculateHashsum(Flexblock const&) instead!
-    void DigestBlock(const Block& data);
+    void Digest(const Block& data);
 
     //! Will return the current hashsum
     const Block& GetHashsum() const;
