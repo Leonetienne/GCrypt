@@ -19,17 +19,14 @@ namespace Leonetienne::GCrypt {
     std::random_device rng;
     constexpr std::size_t bitsPerCall = sizeof(std::random_device::result_type) * 8;
 
-    // Fetch BLOCK_SIZE bits
-    std::stringstream ss;
-    for (std::size_t i = 0; i < Key::BLOCK_SIZE_BITS / bitsPerCall; i++) {
-      ss << std::bitset<bitsPerCall>(rng());
+    // Create a new key, and assign 16 random values
+    Key key;
+    for (std::size_t i = 0; i < 16; i++) {
+      key[i] = rng();
     }
 
-    // Verify that we actually have the correct size
-    assert(ss.str().length() == Key::BLOCK_SIZE_BITS);
-
-    // Return them as a key
-    return Key(Block(ss.str()));
+    // Return it
+    return key;
   }
 
   Key Key::LoadFromFile(const std::string& path) {
@@ -44,36 +41,23 @@ namespace Leonetienne::GCrypt {
       throw std::runtime_error(std::string("Unable to open ifilestream for keyfile \"") + path + "\"! Aborting...");
     }
 
-    // Read these chars to buffer
-    char* ckeyfileContent = new char[maxChars];
-    memset(ckeyfileContent, 0, maxChars * sizeof(char));
-    ifs.read(ckeyfileContent, maxChars);
-    ifs.close();
+    // Create a new key, and zero it
+    Key key;
+    key.Reset();
 
-    // Convert the buffer to a bit block of key size
-    std::stringstream ss;
-    for (std::size_t i = 0; i < maxChars; i++)
-      ss << std::bitset<8>(ckeyfileContent[i]);
-
-    Block key(ss.str());
-
-    // And delete the buffer
-    delete[] ckeyfileContent;
-    ckeyfileContent = nullptr;
+    // Read into it
+    ifs.read((char*)(void*)key.Data(), Key::BLOCK_SIZE);
 
     // Return it
     return key;
   }
 
   void Key::WriteToFile(const std::string& path) {
-    // Transform key to bytes
-    const std::string keybytes = BitsToBytes(ToString());
-
     // Create an ofilestream
     std::ofstream ofs(path, std::ios::out | std::ios::binary);
 
     // Write the key
-    ofs.write(keybytes.data(), Key::BLOCK_SIZE_BITS / 8);
+    ofs.write((char*)(void*)Data(), Key::BLOCK_SIZE);
 
     // Close the file handle
     ofs.close();

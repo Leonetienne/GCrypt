@@ -46,14 +46,23 @@ namespace Leonetienne::GCrypt {
       bool printProgressReport)
   {
     try {
-      // Read the file to bits
-      const Flexblock cleartext_bits = ReadFileToBits(filename_in);
+      // Read the file to blocks
+      const std::vector<Block> cleartext_blocks = ReadFileToBlocks(filename_in);
 
-      // Encrypt our cleartext bits
-      const Flexblock ciphertext_bits = CipherFlexblock(cleartext_bits, key, GCipher::DIRECTION::ENCIPHER);
+      // Encrypt our cleartext blocks
+      std::vector<Block> ciphertext_blocks;
+      ciphertext_blocks.reserve(cleartext_blocks.size());
 
-      // Write our ciphertext bits to file
-      WriteBitsToFile(filename_out, ciphertext_bits);
+      // Create cipher instance
+      GCipher cipher(key, GCipher::DIRECTION::ENCIPHER);
+
+      // Encrypt all blocks
+      for (const Block& clearBlock : cleartext_blocks) {
+        ciphertext_blocks.emplace_back(cipher.Digest(clearBlock));
+      }
+
+      // Write our ciphertext blocks to file
+      WriteBlocksToFile(filename_out, ciphertext_blocks);
 
       return true;
     }
@@ -69,14 +78,23 @@ namespace Leonetienne::GCrypt {
       bool printProgressReport)
   {
     try {
-      // Read the file to bits
-      const Flexblock ciphertext_bits = ReadFileToBits(filename_in);
+      // Read the file to blocks
+      const std::vector<Block> ciphertext_blocks = ReadFileToBlocks(filename_in);
 
-      // Decrypt the ciphertext bits
-      const Flexblock cleartext_bits = CipherFlexblock(ciphertext_bits, key, GCipher::DIRECTION::DECIPHER);
+      // Decrypt our cleartext blocks
+      std::vector<Block> cleartext_blocks;
+      cleartext_blocks.reserve(ciphertext_blocks.size());
 
-      // Write our cleartext bits to file
-      WriteBitsToFile(filename_out, cleartext_bits);
+      // Create cipher instance
+      GCipher cipher(key, GCipher::DIRECTION::DECIPHER);
+
+      // Decrypt all blocks
+      for (const Block& cipherBlock : ciphertext_blocks) {
+        cleartext_blocks.emplace_back(cipher.Digest(cipherBlock));
+      }
+
+      // Write our cleartext blocks to file
+      WriteBlocksToFile(filename_out, cleartext_blocks);
 
       return true;
     }
