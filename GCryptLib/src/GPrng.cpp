@@ -53,6 +53,10 @@ namespace Leonetienne::GCrypt {
     //    We don't even have to AdvanceBlock(), because we've only given out
     //    hashsum', not hashsum.
 
+    // Performance improvement over the previous method:
+    // (generating 100.000 blocks):
+    // 12 seconds -> 0.12 seconds
+
     // Fetch our current block
     Block hashsum = hasher.GetHashsum();
 
@@ -63,6 +67,48 @@ namespace Leonetienne::GCrypt {
 
     // Return our hashsum
     return hashsum;
+  }
+
+  std::uint32_t GPrng::operator()() {
+    // Tactic:
+    // A block intrinsically consists of 16 32-bit uints.
+    // We'll just skip all the bits until the next whole integer,
+    // fetch this complete int, and then advance our pointer
+    // by 32 bits.
+
+    // Performance improvement over the previous method:
+    // (generating 1.000.000 integers):
+    // 5.26 seconds -> 3.84 seconds
+
+
+    // Advance our pointer to the next whole uint32
+
+    // Do we even have >= 32 bits left in our block?
+    if (nextBit > Block::BLOCK_SIZE_BITS - Block::CHUNK_SIZE_BITS) {
+      // No: Create a new block
+      AdvanceBlock();
+    }
+
+    // We don't have to do this, if our pointer is already at
+    // the beginning of a whole uint32
+    if (nextBit % Block::CHUNK_SIZE_BITS != 0) {
+      nextBit = ((nextBit / Block::CHUNK_SIZE_BITS) + 1) * Block::CHUNK_SIZE_BITS;
+    }
+
+    // Fetch our integer from the block
+    const std::uint32_t randint =
+      hasher.GetHashsum().Get(nextBit / Block::CHUNK_SIZE_BITS);
+
+    // Advance our pointer
+    nextBit += Block::CHUNK_SIZE_BITS;
+
+    // New state of the pointer:
+    // It ow may be more now than the size of a block, but that
+    // gets checked at the begin of a function.
+    // Not at the end, like here.
+
+    // Return our integer
+    return randint;
   }
 
 }
