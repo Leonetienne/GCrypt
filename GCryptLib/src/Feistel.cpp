@@ -30,7 +30,7 @@ namespace Leonetienne::GCrypt {
     return Run(data, true);
   }
 
-  Block Feistel::Run(const Block& data, bool reverseKeys) {
+  Block Feistel::Run(const Block& data, bool modeEncrypt) {
     const auto splitData = FeistelSplit(data);
     Halfblock l = splitData.first;
     Halfblock r = splitData.second;
@@ -38,19 +38,43 @@ namespace Leonetienne::GCrypt {
     Halfblock tmp;
 
     for (std::size_t i = 0; i < N_ROUNDS; i++) {
-      // Calculate key index
-      std::size_t keyIndex;
-      if (reverseKeys) {
-        keyIndex = N_ROUNDS - i - 1;
-      }
-      else {
-        keyIndex = i;
+
+      // Encryption
+      if (modeEncrypt) {
+        const std::size_t keyIndex = i;
+
+        // Do a feistel round
+        tmp = r;
+        r = l ^ F(r, roundKeys[keyIndex]);
+        l = tmp;
+
+        // Jumble it up a bit more
+        l.ShiftRowsUpInplace();
+        l.ShiftCellsRightInplace();
+        l.ShiftBitsLeftInplace();
+        l.ShiftColumnsLeftInplace();
+        // Seal all these operations with a key
+        l += ReductionFunction(roundKeys[keyIndex]);
       }
 
-      // Do a feistel round
-      tmp = r;
-      r = l ^ F(r, roundKeys[keyIndex]);
-      l = tmp;
+      // Decryption
+      else {
+        // Decryption needs keys in reverse order
+        const std::size_t keyIndex = N_ROUNDS - i - 1;
+
+        // Unjumble the jumble
+        r -= ReductionFunction(roundKeys[keyIndex]);
+        r.ShiftColumnsRightInplace();
+        r.ShiftBitsRightInplace();
+        r.ShiftCellsLeftInplace();
+        r.ShiftRowsDownInplace();
+
+        // Do a feistel round
+        tmp = r;
+        r = l ^ F(r, roundKeys[keyIndex]);
+        l = tmp;
+      }
+
     }
 
     // Block has finished de*ciphering.
