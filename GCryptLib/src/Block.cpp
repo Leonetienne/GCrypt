@@ -4,6 +4,8 @@
 #include <sstream>
 #include <cassert>
 #include <cstring>
+#include <iomanip>
+#include <ios>
 
 // Just to be sure, the compiler will optimize this
 // little formula out, let's do it in the preprocessor
@@ -17,7 +19,7 @@ namespace Leonetienne::GCrypt {
 
   template <typename T>
   Basic_Block<T>::Basic_Block(const std::string& str) {
-    FromString(str);
+    FromBinaryString(str);
   }
 
   template <typename T>
@@ -26,9 +28,13 @@ namespace Leonetienne::GCrypt {
   }
 
   template <typename T>
-  void Basic_Block<T>::FromString(const std::string& str) {
+  void Basic_Block<T>::FromBinaryString(const std::string& str) {
 
-    assert(str.length() == BLOCK_SIZE_BITS);
+    if (str.length() != BLOCK_SIZE_BITS) {
+      throw std::invalid_argument(
+        std::string("Unable to read binary block: \"") + str + "\": Length is not BLOCK_SIZE_BITS."
+      );
+    }
 
     for (std::size_t i = 0; i < data.size(); i++) {
       data[i] = std::bitset<CHUNK_SIZE_BITS>(
@@ -40,13 +46,99 @@ namespace Leonetienne::GCrypt {
   }
 
   template <typename T>
-  std::string Basic_Block<T>::ToString() const {
+  void Basic_Block<T>::FromHexString(const std::string& str) {
+
+    if (str.length() != BLOCK_SIZE*2) {
+      throw std::invalid_argument(
+        std::string("Unable to read hex block: \"") + str + "\": Length is not BLOCK_SIZE*2."
+      );
+    }
+
+    for (std::size_t i = 0; i < str.length(); i += CHUNK_SIZE*2) {
+      const std::string hexChunk = str.substr(i, CHUNK_SIZE*2);
+      try {
+          data[i / (CHUNK_SIZE*2)] = std::stoul(hexChunk, NULL, 16);
+        }
+      catch (std::invalid_argument&) {
+          throw std::invalid_argument(
+              std::string("Unable to read hex block: \"") + hexChunk + "\"."
+          );
+      }
+    }
+
+    return;
+  }
+
+  template <typename T>
+  void Basic_Block<T>::FromByteString(const std::string& str) {
+
+    if (str.length() != BLOCK_SIZE) {
+      throw std::invalid_argument(
+        std::string("Unable to read byte block: \"") + str + "\": Length is not BLOCK_SIZE."
+      );
+    }
+
+    // Iterate over all bytes in the block
+    std::uint8_t* curByte = (std::uint8_t*)(void*)Data();
+    const char* strIt = 0;
+    for (std::size_t i = 0; i < BLOCK_SIZE; i++) {
+      *curByte++ = str[i];
+    }
+
+    return;
+  }
+
+  template <typename T>
+  void Basic_Block<T>::FromTextString(const std::string& str) {
+    // Just pad the input string to lenght, and treat it as a byte string
+    FromByteString(
+        PadStringToLength(str, BLOCK_SIZE, '\0', false)
+    );
+  }
+
+  template <typename T>
+  std::string Basic_Block<T>::ToBinaryString() const {
 
     std::stringstream ss;
     for (std::size_t i = 0; i < data.size(); i++) {
       ss << std::bitset<CHUNK_SIZE_BITS>(data[i]).to_string();
     }
     return ss.str();
+  }
+
+  template <typename T>
+  std::string Basic_Block<T>::ToHexString() const {
+
+    std::stringstream ss;
+    for (std::size_t i = 0; i < data.size(); i++) {
+      ss
+        << std::setfill('0')
+        << std::setw(CHUNK_SIZE*2)
+        << std::hex
+        << data[i]
+      ;
+    }
+
+    return ss.str();
+  }
+
+  template <typename T>
+  std::string Basic_Block<T>::ToByteString() const {
+
+    std::stringstream ss;
+    ss.write((const char*)(void*)Data(), BLOCK_SIZE);
+    return ss.str();
+  }
+
+  template <typename T>
+  std::string Basic_Block<T>::ToTextString() const {
+
+    std::string bytes = ToByteString();
+
+    // Trim extra nullterminators
+    bytes.resize(strlen(bytes.data()));
+
+    return bytes;
   }
 
   template <typename T>

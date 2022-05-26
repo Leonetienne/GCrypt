@@ -31,32 +31,53 @@ namespace Leonetienne::GCrypt {
     return block;
   }
 
-  Block GHash::CalculateHashsum(const Flexblock& data) {
-    // Split input into blocks
-    std::vector<Block> blocks;
+  Block GHash::CalculateHashsum(const std::vector<Block>& data, std::size_t n_bytes) {
 
-    for (std::size_t i = 0; i < data.size(); i += Block::BLOCK_SIZE_BITS) {
-      blocks.push_back(Block(
-        PadStringToLength(data.substr(i, Block::BLOCK_SIZE_BITS), Block::BLOCK_SIZE_BITS, '0', false))
-      );
+    // If we have no supplied n_bytes, let's just assume sizeof(data).
+    if (n_bytes == std::string::npos) {
+      n_bytes = data.size() * Block::BLOCK_SIZE;
     }
-
-    // Add an additional block, containing the length of the input
-    std::stringstream ss;
-    ss << data.length();
-    const Block lengthBlock = StringToBitblock(ss.str());
-    blocks.push_back(lengthBlock);
 
     // Create hasher instance
     GHash hasher;
 
     // Digest all blocks
-    for (Block& block : blocks) {
+    for (const Block& block : data) {
       hasher.DigestBlock(block);
     }
 
+    // Add an additional block, containing the length of the input
+
+    // Here it is actually good to use a binary string ("10011"),
+    // because std::size_t is not fixed to 32-bits. It may aswell
+    // be 64 bits, depending on the platform.
+    // Then it would be BAD to just cram it into a 32-bit uint32.
+    // This way, in case of 64-bits, it would just occupy 2 uint32's.
+
+    // Also, this operation gets done ONCE per n blocks. This won't
+    // hurt performance.
+
+    // I know that we are first converting n_bytes to str(n_bytes),
+    // and then converting this to a binstring, making it unnecessarily large,
+    // but who cares. It has a whole 512 bit block to itself.
+    // The max size (2^64) would occupy 155 bits at max. (log10(2^64)*8 = 155)
+
+    std::stringstream ss;
+    ss << n_bytes;
+    const Block lengthBlock = StringToBitblock(ss.str());
+
+    // Digest the length block
+    hasher.DigestBlock(lengthBlock);
+
     // Return the total hashsum
     return hasher.GetHashsum();
+  }
+
+  Block GHash::HashString(const std::string& str) {
+    const std::vector<Block> blocks = StringToBitblocks(str);
+    const std::size_t n_bytes = str.length();
+
+    return CalculateHashsum(blocks, n_bytes);
   }
 
   void GHash::operator=(const GHash& other) {

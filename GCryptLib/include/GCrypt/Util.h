@@ -30,7 +30,7 @@ namespace Leonetienne::GCrypt {
   Flexblock StringToBits(const std::string& s);
 
   //! Will convert a string to a vector of blocks
-  std::vector<Block> StringToBitblocks(const std::string& s);
+  std::vector<Block> StringToBitblocks(const std::string& str);
 
   //! Will convert a fixed-size data block to a bytestring
   std::string BitblockToBytes(const Block& block);
@@ -70,6 +70,9 @@ namespace Leonetienne::GCrypt {
 
   //! Will save bits to a binary file
   void WriteBitsToFile(const std::string& filepath, const Flexblock& bits);
+
+  //! Will read a file directly to data blocks, and yield the amount of bytes read
+  std::vector<Block> ReadFileToBlocks(const std::string& filepath, std::size_t& bytes_read);
 
   //! Will read a file directly to data blocks
   std::vector<Block> ReadFileToBlocks(const std::string& filepath);

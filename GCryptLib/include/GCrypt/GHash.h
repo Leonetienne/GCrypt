@@ -4,6 +4,7 @@
 #include "GCrypt/Flexblock.h"
 #include "GCrypt/Block.h"
 #include "GCrypt/GCipher.h"
+#include <vector>
 
 namespace Leonetienne::GCrypt {
   /** This class implements a hash function, based on the GCrypt cipher
@@ -21,8 +22,14 @@ namespace Leonetienne::GCrypt {
     //! Will return the current hashsum
     const Block& GetHashsum() const;
 
-    //! Will calculate a hashsum for `data`.
-    static Block CalculateHashsum(const Flexblock& data);
+    //! Will calculate a hashsum for `blocks`.
+    //! Whilst n_bytes is optional, it is HIGHLY recommended to supply.
+    //! Without specifying the size of the input (doesn't always have to be 512*n bits)
+    //! b'293eff' would hash to the exact same values as b'293eff0000'
+    static Block CalculateHashsum(const std::vector<Block>& blocks, std::size_t n_bytes = std::string::npos);
+
+    //! Will calculate a hashsum for a string
+    static Block HashString(const std::string& str);
 
     void operator=(const GHash& other);
 
