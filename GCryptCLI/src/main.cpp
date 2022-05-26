@@ -1,6 +1,7 @@
 #include "CommandlineInterface.h"
 #include "Configuration.h"
 #include "ModulePrepareKey.h"
+#include "ModuleDataFormatter.h"
 #include <iostream>
 
 int main(int argc, char* const* argv) {
@@ -14,7 +15,12 @@ int main(int argc, char* const* argv) {
   // Prepare the key
   ModulePrepareKey::PrepareKey();
 
-  std::cout << ModulePrepareKey::GetKey().ToHexString() << std::endl;
+  std::cout
+    << ModuleDataFormatter::FormatBlock(
+         ModulePrepareKey::GetKey(),
+         Configuration::iobaseFormat
+       )
+    << std::endl;
 
 
   return 0;
