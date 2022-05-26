@@ -1,5 +1,7 @@
 #include "CommandlineInterface.h"
 #include "Configuration.h"
+#include "ModulePrepareKey.h"
+#include <iostream>
 
 int main(int argc, char* const* argv) {
 
@@ -8,6 +10,9 @@ int main(int argc, char* const* argv) {
 
   // Parse configuration
   Configuration::Parse();
+
+  // Prepare the key
+  ModulePrepareKey::PrepareKey();
 
   return 0;
 }
