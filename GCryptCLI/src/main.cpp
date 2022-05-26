@@ -14,6 +14,9 @@ int main(int argc, char* const* argv) {
   // Prepare the key
   ModulePrepareKey::PrepareKey();
 
+  std::cout << ModulePrepareKey::GetKey().ToHexString() << std::endl;
+
+
   return 0;
 }
 

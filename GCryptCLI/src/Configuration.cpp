@@ -10,6 +10,29 @@ void Configuration::Parse() {
   return;
 }
 
+void Configuration::DecideModule() {
+  if (CommandlineInterface::Get().HasParam("--encrypt")) {
+    activeModule = MODULE::ENCRYPT;
+    return;
+  }
+  else if (CommandlineInterface::Get().HasParam("--decrypt")) {
+    activeModule = MODULE::DECRYPT;
+    return;
+  }
+  else if (CommandlineInterface::Get().HasParam("--hash")) {
+    activeModule = MODULE::HASH;
+    return;
+  }
+  else if (CommandlineInterface::Get().HasParam("--generate-keyfile")) {
+    activeModule = MODULE::GENERATE_KEYFILE;
+    return;
+  }
+
+  throw std::runtime_error("No module option found. Is the CLI parser configuration correct?.");
+
+  return;
+}
+
 void Configuration::DecideInputFrom() {
 
   if (CommandlineInterface::Get().HasParam("--intext")) {
@@ -41,23 +64,6 @@ void Configuration::DecideOutputTo() {
   }
   else {
     outputTo = OUTPUT_TO::STDOUT;
-  }
-
-  return;
-}
-
-void Configuration::DecideModule() {
-  if (CommandlineInterface::Get().HasParam("--encrypt")) {
-    activeModule = MODULE::ENCRYPT;
-  }
-  else if (CommandlineInterface::Get().HasParam("--decrypt")) {
-    activeModule == MODULE::DECRYPT;
-  }
-  else if (CommandlineInterface::Get().HasParam("--hash")) {
-    activeModule == MODULE::HASH;
-  }
-  else if (CommandlineInterface::Get().HasParam("--generate-keyfile")) {
-    activeModule == MODULE::GENERATE_KEYFILE;
   }
 
   return;
@@ -142,6 +148,11 @@ void Configuration::DecideIOBaseFormat() {
   else if (activeModule == MODULE::GENERATE_KEYFILE) {
     iobaseFormat = IOBASE_FORMAT::BASE_BYTES;
     return;
+  }
+
+  // Fallback: Bytes
+  else {
+    iobaseFormat = IOBASE_FORMAT::BASE_BYTES;
   }
 
   return;
