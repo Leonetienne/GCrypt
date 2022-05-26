@@ -5,6 +5,7 @@
 #include <sstream>
 #include <fstream>
 #include <cstring>
+#include <vector>
 #include "GCrypt/Block.h"
 #include "GCrypt/Flexblock.h"
 #include "GCrypt/Config.h"
@@ -28,12 +29,22 @@ namespace Leonetienne::GCrypt {
   //! Will convert a string to a flexible data block
   Flexblock StringToBits(const std::string& s);
 
-  //! Will convert a fixed-size data block to a bytestring
-  std::string BitblockToBytes(const Block& bits);
+  //! Will convert a string to a vector of blocks
+  std::vector<Block> StringToBitblocks(const std::string& s);
 
-  //! Will convert a fixed-size data block to a string
+  //! Will convert a fixed-size data block to a bytestring
+  std::string BitblockToBytes(const Block& block);
+
+  //! Will convert an array of data blocks to a bytestring
+  std::string BitblocksToBytes(const std::vector<Block>& bits);
+
+  //! Will convert a fixed-size data blocks to a textstring
   //! The difference to BitblockToBytes() is, that it strips excess nullbytes
-  std::string BitblockToString(const Block& bits);
+  std::string BitblockToString(const Block& block);
+
+  //! Will convert an array of blocks to a character-string
+  //! The difference to BitblocksToBytes() is, that it strips excess nullbytes
+  std::string BitblocksToString(const std::vector<Block>& blocks);
 
   //! Will convert a flexible data block to a bytestring
   std::string BitsToBytes(const Flexblock& bits);
@@ -59,6 +70,12 @@ namespace Leonetienne::GCrypt {
 
   //! Will save bits to a binary file
   void WriteBitsToFile(const std::string& filepath, const Flexblock& bits);
+
+  //! Will read a file directly to data blocks
+  std::vector<Block> ReadFileToBlocks(const std::string& filepath);
+
+  //! Will write data blocks directly to a file
+  void WriteBlocksToFile(const std::string& filepath, const std::vector<Block>& blocks);
 }
 
 #endif

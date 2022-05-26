@@ -46,13 +46,11 @@ TEST_CASE(__FILE__"/Encrypting and decrypting files works", "[Wrapper]") {
   GWrapper::DecryptFile(filename_encrypted, filename_decrypted, key);
 
   // Read in both the base, and the decrypted file
-  const Flexblock plainfile = ReadFileToBits(filename_plain);
-  const Flexblock decryptfile = ReadFileToBits(filename_decrypted);
+  const std::vector<Block> plainfile = ReadFileToBlocks(filename_plain);
+  const std::vector<Block> decryptfile = ReadFileToBlocks(filename_decrypted);
 
   // Assertion (If this fails, maybe check if the image is even readable by an image viewer)
-  REQUIRE(
-      PadStringToLength(plainfile, decryptfile.length(), '0', false) ==
-      decryptfile
-      );
+  REQUIRE(plainfile.size() == decryptfile.size());
+  REQUIRE(plainfile == decryptfile);
 }
 
