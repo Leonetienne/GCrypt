@@ -24,7 +24,7 @@ namespace Leonetienne::GCrypt {
     return;
   }
 
-  void GHash::DigestBlock(const Block& data) {
+  void GHash::Digest(const Block& data) {
     // Set the cipher key to the current data to be hashed
     cipher.SetKey(data);
 
@@ -50,7 +50,7 @@ namespace Leonetienne::GCrypt {
 
     // Digest all blocks
     for (const Block& block : data) {
-      hasher.DigestBlock(block);
+      hasher.Digest(block);
     }
 
     // Add an additional block, containing the length of the input
@@ -75,7 +75,7 @@ namespace Leonetienne::GCrypt {
     lengthBlock.FromTextString(ss.str());
 
     // Digest the length block
-    hasher.DigestBlock(lengthBlock);
+    hasher.Digest(lengthBlock);
 
     // Return the total hashsum
     return hasher.GetHashsum();
