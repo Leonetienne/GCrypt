@@ -61,6 +61,9 @@ void ModulePrepareKey::PrepareKey() {
     return;
   }
 
+  throw std::runtime_error("No key option found. Is the CLI parser configuration correct?.");
+
+  return;
 }
 
 
