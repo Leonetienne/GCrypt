@@ -12,7 +12,7 @@
 // Here's how to calculate these numbers:
 // Print an all 1's block in this format, and check the string size.
 // That's it.
-auto blockLengthByBase =
+static auto blockLengthByBase =
   std::map<Configuration::IOBASE_FORMAT, std::size_t>({
       std::make_pair(Configuration::IOBASE_FORMAT::BASE_BYTES, 64),
       std::make_pair(Configuration::IOBASE_FORMAT::BASE_2, 512),
