@@ -189,7 +189,7 @@ std::vector<Block> ModuleDataFormatter::StringToBlocks(
     case Configuration::IOBASE_FORMAT::BASE_16:
     case Configuration::IOBASE_FORMAT::BASE_64:
       // Easy case: Each digit is exactly one char in size.
-      // We can just calculate how many bits we should take.
+      // We can just calculate how many bytes we should read.
       for (std::size_t i = 0; i < str.length(); i += blockWidth) {
 
         const std::string subs = str.substr(i, blockWidth);
@@ -204,8 +204,8 @@ std::vector<Block> ModuleDataFormatter::StringToBlocks(
       break;
 
     case Configuration::IOBASE_FORMAT::BASE_UWU:
-    case Configuration::IOBASE_FORMAT::BASE_UGH:
-      // Hard case: Each digit n digits long. Digits may vary in length.
+    case Configuration::IOBASE_FORMAT::BASE_UGH: {
+      // Hard case: Each digit is n digits long. Digits may vary in length.
       // They are seperated by spaces.
       // We have to parse them...
       std::size_t digitsPassed = 0;
@@ -217,8 +217,8 @@ std::vector<Block> ModuleDataFormatter::StringToBlocks(
 
           if (digitsPassed == blockWidth) {
             const std::string subs = str.substr(
-                blockStart,
-                i - blockStart
+              blockStart,
+              i - blockStart
             );
 
             Block newBlock = StringToBlock(
@@ -232,10 +232,15 @@ std::vector<Block> ModuleDataFormatter::StringToBlocks(
             blockStart = i+1;
           }
         }
-
-
       }
+      // Here should never be any digits left. A formatted block should ALWAYS be full length.
       break;
+    }
+
+    default:
+      throw std::invalid_argument("ModuleDataFormatter::StringToBlocks() has been passed an unknown base! No switch-case matched!");
+      break;
+
   }
 
   return blocks;
