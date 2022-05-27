@@ -3,6 +3,8 @@
 #include "KeyManager.h"
 #include "ModuleGenerateKey.h"
 
+#include "DataIngestionLayer.h"
+
 int main(int argc, char* const* argv) {
 
   // Init cli args
@@ -13,6 +15,8 @@ int main(int argc, char* const* argv) {
 
   // Prepare the key
   KeyManager::PrepareKey();
+
+  IO::DataIngestionLayer::Init();
 
   // Launch our module
   switch (Configuration::activeModule) {
