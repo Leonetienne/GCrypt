@@ -15,13 +15,13 @@ class ModuleDataFormatter {
     static std::string FormatBlock(const Block& block, const Configuration::IOBASE_FORMAT base);
 
     //! Will parse a string of a given iobase to a block
-    static Block StringToBlock(const std::string& str, const Configuration::IOBASE_FORMAT base);
+    static Block DecodeFormat(const std::string& str, const Configuration::IOBASE_FORMAT base);
 
     //! Will format a vector of blocks to a given iobase
     static std::string FormatBlocks(const std::vector<Block>& blocks, const Configuration::IOBASE_FORMAT base);
 
     //! Will format a string making up multiple block in a given iobase into a vector of block
-    static std::vector<Block> StringToBlocks(const std::string& str, const Configuration::IOBASE_FORMAT base);
+    static std::vector<Block> DecodeFormatMultiblock(const std::string& str, const Configuration::IOBASE_FORMAT base);
 
 
   private:

@@ -27,7 +27,7 @@ int main(int argc, char* const* argv) {
   std::cout << "Formatted: " << formattedBlocks << std::endl << std::endl;
 
   const std::vector<Block> retrievedBlocks =
-    ModuleDataFormatter::StringToBlocks(
+    ModuleDataFormatter::DecodeFormatMultiblock(
       formattedBlocks,
       Configuration::iobaseFormat
     );
@@ -90,7 +90,7 @@ int main(int argc, char* const* argv) {
   */
 
   std::cout
-    << ModuleDataFormatter::StringToBlock(
+    << ModuleDataFormatter::DecodeFormat(
         ModuleDataFormatter::FormatBlock(
           ModulePrepareKey::GetKey(),
           Configuration::iobaseFormat

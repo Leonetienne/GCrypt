@@ -89,7 +89,7 @@ std::string ModuleDataFormatter::FormatBlocks(
   return ss.str();
 }
 
-Block ModuleDataFormatter::StringToBlock(
+Block ModuleDataFormatter::DecodeFormat(
     const std::string& str,
     const Configuration::IOBASE_FORMAT base
 ) {
@@ -163,7 +163,7 @@ Block ModuleDataFormatter::StringToBlock(
   return b;
 }
 
-std::vector<Block> ModuleDataFormatter::StringToBlocks(
+std::vector<Block> ModuleDataFormatter::DecodeFormatMultiblock(
   const std::string& str,
   const Configuration::IOBASE_FORMAT base
 ) {
@@ -194,7 +194,7 @@ std::vector<Block> ModuleDataFormatter::StringToBlocks(
 
         const std::string subs = str.substr(i, blockWidth);
 
-        Block newBlock = StringToBlock(
+        Block newBlock = DecodeFormat(
           subs,
           base
         );
@@ -221,7 +221,7 @@ std::vector<Block> ModuleDataFormatter::StringToBlocks(
               i - blockStart
             );
 
-            Block newBlock = StringToBlock(
+            Block newBlock = DecodeFormat(
               subs,
               base
             );
