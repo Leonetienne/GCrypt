@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GCRYPTCLI_BASES_H
+#define GCRYPTCLI_BASES_H
+
 #include <vector>
 #include <string>
 #include <map>
@@ -136,3 +138,6 @@ static const std::vector<std::string> BASE_UGH = {
   "Bah!",
   "Wha-?"
 };
+
+#endif
+
