@@ -1,6 +1,6 @@
 #include "CommandlineInterface.h"
 #include "Configuration.h"
-#include "ModulePrepareKey.h"
+#include "KeyManager.h"
 
 int main(int argc, char* const* argv) {
 
@@ -11,7 +11,7 @@ int main(int argc, char* const* argv) {
   Configuration::Parse();
 
   // Prepare the key
-  ModulePrepareKey::PrepareKey();
+  KeyManager::PrepareKey();
 
   return 0;
 }

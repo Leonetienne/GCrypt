@@ -1,4 +1,4 @@
-#include "ModuleDataFormatter.h"
+#include "DataFormatter.h"
 #include "Bases.h"
 #include <GeneralUtility/BaseConversion.h>
 #include <StringTools/StringTools.h>
@@ -8,7 +8,7 @@ using namespace Leonetienne::GCrypt;
 using namespace Leonetienne::StringTools;
 using namespace Leonetienne::GeneralUtility;
 
-std::string ModuleDataFormatter::FormatBlock(
+std::string DataFormatter::FormatBlock(
     const Block& block,
     const Configuration::IOBASE_FORMAT base
 ) {
@@ -64,7 +64,7 @@ std::string ModuleDataFormatter::FormatBlock(
   }
 }
 
-std::string ModuleDataFormatter::FormatBlocks(
+std::string DataFormatter::FormatBlocks(
     const std::vector<Block>& blocks,
     const Configuration::IOBASE_FORMAT base
 ) {
@@ -89,7 +89,7 @@ std::string ModuleDataFormatter::FormatBlocks(
   return ss.str();
 }
 
-Block ModuleDataFormatter::DecodeFormat(
+Block DataFormatter::DecodeFormat(
     const std::string& str,
     const Configuration::IOBASE_FORMAT base
 ) {
@@ -163,7 +163,7 @@ Block ModuleDataFormatter::DecodeFormat(
   return b;
 }
 
-std::vector<Block> ModuleDataFormatter::DecodeFormatMultiblock(
+std::vector<Block> DataFormatter::DecodeFormatMultiblock(
   const std::string& str,
   const Configuration::IOBASE_FORMAT base
 ) {
@@ -238,7 +238,7 @@ std::vector<Block> ModuleDataFormatter::DecodeFormatMultiblock(
     }
 
     default:
-      throw std::invalid_argument("ModuleDataFormatter::StringToBlocks() has been passed an unknown base! No switch-case matched!");
+      throw std::invalid_argument("DataFormatter::StringToBlocks() has been passed an unknown base! No switch-case matched!");
       break;
 
   }
@@ -246,7 +246,7 @@ std::vector<Block> ModuleDataFormatter::DecodeFormatMultiblock(
   return blocks;
 }
 
-std::string ModuleDataFormatter::Bin2CustomBase(
+std::string DataFormatter::Bin2CustomBase(
     const std::string& bin,
     const std::vector<std::string>& customSet,
     const std::size_t minLen,
@@ -275,7 +275,7 @@ std::string ModuleDataFormatter::Bin2CustomBase(
   return ss.str();
 }
 
-std::string ModuleDataFormatter::CustomBase2Bin(
+std::string DataFormatter::CustomBase2Bin(
     const std::string& in,
     const std::vector<std::string>& customSet,
     const std::string& seperator
@@ -293,7 +293,7 @@ std::string ModuleDataFormatter::CustomBase2Bin(
     );
 
   if (binary.length() != Block::BLOCK_SIZE_BITS) {
-    throw std::invalid_argument("ModuleDataFormatter::CustomBase2Bin() received input that doesn't translate to a bitstring of length 512!");
+    throw std::invalid_argument("DataFormatter::CustomBase2Bin() received input that doesn't translate to a bitstring of length 512!");
   }
 
   return binary;
