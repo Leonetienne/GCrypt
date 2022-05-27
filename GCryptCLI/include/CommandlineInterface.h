@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GCRYPTCLI_CLIINTERFACE_H
+#define GCRYPTCLI_CLIINTERFACE_H
+
 #include <Hazelnupp/CmdArgsInterface.h>
 
 class CommandlineInterface
@@ -18,4 +20,6 @@ private:
 
   static Hazelnp::CmdArgsInterface nupp;
 };
+
+#endif
 
