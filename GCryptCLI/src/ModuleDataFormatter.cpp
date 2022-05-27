@@ -3,33 +3,10 @@
 #include <GeneralUtility/BaseConversion.h>
 #include <StringTools/StringTools.h>
 #include <GCrypt/Util.h>
-#include <map>
-#include <iostream>
 
 using namespace Leonetienne::GCrypt;
 using namespace Leonetienne::StringTools;
 using namespace Leonetienne::GeneralUtility;
-
-namespace {
-  // This lookup table holds how many digits a block is long
-  // in any iobase.
-  // This cannot be calculated on the fly, as it involves
-  // arithmetic with involving REALLY big numbers (like, 2^512).
-  // Here's how to calculate these numbers:
-  // Print an all 1's block in this format, and check the string size.
-  // That's it.
-  auto blockLengthByBase =
-    std::map<Configuration::IOBASE_FORMAT, std::size_t>({
-        std::make_pair(Configuration::IOBASE_FORMAT::BASE_BYTES, 64),
-        std::make_pair(Configuration::IOBASE_FORMAT::BASE_2, 512),
-        std::make_pair(Configuration::IOBASE_FORMAT::BASE_8, 171),
-        std::make_pair(Configuration::IOBASE_FORMAT::BASE_10, 155),
-        std::make_pair(Configuration::IOBASE_FORMAT::BASE_16, 128),
-        std::make_pair(Configuration::IOBASE_FORMAT::BASE_64, 86),
-        std::make_pair(Configuration::IOBASE_FORMAT::BASE_UWU, 125),
-        std::make_pair(Configuration::IOBASE_FORMAT::BASE_UGH, 125)
-    });
-}
 
 std::string ModuleDataFormatter::FormatBlock(
     const Block& block,
