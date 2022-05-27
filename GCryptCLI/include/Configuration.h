@@ -34,7 +34,7 @@ class Configuration {
       ENCRYPT,
       DECRYPT,
       HASH,
-      GENERATE_KEYFILE
+      GENERATE_KEY
     } activeModule;
 
     //! Will analyze the supplied cli parameters,

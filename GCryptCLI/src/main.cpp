@@ -1,7 +1,7 @@
 #include "CommandlineInterface.h"
 #include "Configuration.h"
 #include "KeyManager.h"
-#include "ModuleGenerateKeyfile.h"
+#include "ModuleGenerateKey.h"
 
 int main(int argc, char* const* argv) {
 
@@ -16,8 +16,8 @@ int main(int argc, char* const* argv) {
 
   // Launch our module
   switch (Configuration::activeModule) {
-    case Configuration::MODULE::GENERATE_KEYFILE:
-      Module::GenerateKeyfile::Run();
+    case Configuration::MODULE::GENERATE_KEY:
+      Module::GenerateKey::Run();
   }
 
   return 0;

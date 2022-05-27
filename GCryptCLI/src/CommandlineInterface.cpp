@@ -27,15 +27,15 @@ void CommandlineInterface::Init(int argc, const char* const* argv) {
   nupp.RegisterAbbreviation("-e", "--encrypt");
 
   nupp.RegisterDescription("--decrypt", "Use decryption module.");
-  nupp.RegisterConstraint("--decrypt", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--encrypt", "--hash", "--generate-keyfile" }));
+  nupp.RegisterConstraint("--decrypt", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--encrypt", "--hash", "--generate-key" }));
   nupp.RegisterAbbreviation("-d", "--decrypt");
 
   nupp.RegisterDescription("--hash", "Use the GHash hash module to calculate a hashsum.");
-  nupp.RegisterConstraint("--hash", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--encrypt", "--decrypt", "--generate-keyfile" }));
+  nupp.RegisterConstraint("--hash", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--encrypt", "--decrypt", "--generate-key" }));
   nupp.RegisterAbbreviation("-h", "--hash");
 
-  nupp.RegisterDescription("--generate-keyfile", "Use the Keyfile module. Will generate a random keyfile, and exit.");
-  nupp.RegisterConstraint("--generate-keyfile", ParamConstraint(true, DATA_TYPE::STRING, {}, false, { "--encrypt", "--decrypt", "--hash" }));
+  nupp.RegisterDescription("--generate-key", "Use the key generation module. Will generate a random key based on hardware events, output it, and exit.");
+  nupp.RegisterConstraint("--generate-key", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--encrypt", "--decrypt", "--hash" }));
 
   nupp.RegisterDescription("--intext", "Encrypt this string.");
   nupp.RegisterConstraint("--intext", ParamConstraint(true, DATA_TYPE::STRING, {}, false, { "--infile" }));
@@ -123,19 +123,19 @@ void CommandlineInterface::SpecialCompatibilityChecking() {
   // Active module
   // Do we have EITHER --encrypt or --decrypt or --hash?
   if (
-    (!nupp.HasParam("--generate-keyfile")) &&
+    (!nupp.HasParam("--generate-key")) &&
     (!nupp.HasParam("--hash")) &&
     (!nupp.HasParam("--encrypt")) &&
     (!nupp.HasParam("--decrypt"))
   ) {
-    CrashWithMsg("No module supplied! Please supply either --encrypt, --decrypt, --hash, or --generate-keyfile!");
+    CrashWithMsg("No module supplied! Please supply either --encrypt, --decrypt, --hash, or --generate-key!");
   }
 
   // Encryption key
-  // Do we have EITHER --hash (no key required), --generate-keyfile (no key required), --key, --keyask or --keyfile given?
+  // Do we have EITHER --hash (no key required), --generate-key (no key required), --key, --keyask or --keyfile given?
   if (
     (!nupp.HasParam("--hash")) &&
-    (!nupp.HasParam("--generate-keyfile")) &&
+    (!nupp.HasParam("--generate-key")) &&
     (!nupp.HasParam("--key")) &&
     (!nupp.HasParam("--keyfile")) &&
     (!nupp.HasParam("--keyask"))
@@ -163,13 +163,6 @@ void CommandlineInterface::SpecialCompatibilityChecking() {
     (nupp["--keyfile"].GetString().length() == 0)
   ) {
     CrashWithMsg("Length of --keyfile is zero! That can't be a valid path!");
-  }
-
-  if (
-    (nupp.HasParam("--generate-keyfile")) &&
-    (nupp["--generate-keyfile"].GetString().length() == 0)
-  ) {
-    CrashWithMsg("Length of --generate-keyfile is zero! That can't be a valid path!");
   }
 
   return;

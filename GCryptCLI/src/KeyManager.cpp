@@ -21,8 +21,8 @@ void KeyManager::PrepareKey() {
   }
 
   // Special-case: We are generating a keyfile:
-  //   just take a random one
-  else if (Configuration::activeModule == Configuration::MODULE::GENERATE_KEYFILE) {
+  //   generate a random key from hardware events.
+  else if (Configuration::activeModule == Configuration::MODULE::GENERATE_KEY) {
     key = Key::Random();
     return;
   }
