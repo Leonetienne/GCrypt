@@ -15,9 +15,9 @@ namespace {
   // in any iobase.
   // This cannot be calculated on the fly, as it involves
   // arithmetic with involving REALLY big numbers (like, 2^512).
-  // Here's how to calculate these numbers: floor(log_setLen(2^512)).
-  // So, if our set would consist of 10 digits, it would be:
-  // floor(log10(2^512)) = 154.
+  // Here's how to calculate these numbers:
+  // Print an all 1's block in this format, and check the string size.
+  // That's it.
   auto blockLengthByBase =
     std::map<Configuration::IOBASE_FORMAT, std::size_t>({
         std::make_pair(Configuration::IOBASE_FORMAT::BASE_BYTES, 64),
