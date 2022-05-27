@@ -1,7 +1,7 @@
 #ifndef GCRYPT_VERSION_H
 #define GCRYPT_VERSION_H
 
-#define GCRYPT_VERSION 0.235
+#define GCRYPT_VERSION 0.236
 
 #endif
 

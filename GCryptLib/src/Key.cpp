@@ -50,7 +50,7 @@ namespace Leonetienne::GCrypt {
     return key;
   }
 
-  void Key::WriteToFile(const std::string& path) {
+  void Key::WriteToFile(const std::string& path) const {
     // Create an ofilestream
     std::ofstream ofs(path, std::ios::out | std::ios::binary);
 
