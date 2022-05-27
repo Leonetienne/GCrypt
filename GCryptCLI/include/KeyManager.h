@@ -1,12 +1,12 @@
-#ifndef GCRYPTCLI_MODULE_PREPAREKEY_H
-#define GCRYPTCLI_MODULE_PREPAREKEY_H
+#ifndef GCRYPTCLI_KEYMANAGER_H
+#define GCRYPTCLI_KEYMANAGER_H
 
 #include <GCrypt/Key.h>
 
 using namespace Leonetienne::GCrypt;
 
-// This class has the task to supply the encryption key.
-class ModulePrepareKey {
+// This class has the task to prepare and supply the encryption key.
+class KeyManager {
   public:
     //! Will prepare the key. Be it from cli, a file, or, random, or whatever.
     static void PrepareKey();

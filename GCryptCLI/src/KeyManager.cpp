@@ -1,4 +1,4 @@
-#include "ModulePrepareKey.h"
+#include "KeyManager.h"
 #include "CommandlineInterface.h"
 #include "Configuration.h"
 #include <cstring>
@@ -12,7 +12,7 @@
 #include <unistd.h>
 #endif
 
-void ModulePrepareKey::PrepareKey() {
+void KeyManager::PrepareKey() {
 
   // Special-case: We are hashing:
   //   no key needed.
@@ -67,11 +67,11 @@ void ModulePrepareKey::PrepareKey() {
 }
 
 
-const Key& ModulePrepareKey::GetKey() {
+const Key& KeyManager::GetKey() {
   return key;
 }
 
-std::string ModulePrepareKey::PasswordPrompt() {
+std::string KeyManager::PasswordPrompt() {
 // Disable stdin-echo
 #if defined _WIN32 || defined _WIN64
   HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
@@ -103,5 +103,5 @@ std::string ModulePrepareKey::PasswordPrompt() {
   return password;
 }
 
-Key ModulePrepareKey::key;
+Key KeyManager::key;
 

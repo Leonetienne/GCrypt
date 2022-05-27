@@ -1,4 +1,4 @@
-#include <ModuleDataFormatter.h>
+#include <DataFormatter.h>
 #include <GCrypt/Key.h>
 #include <GCrypt/GPrng.h>
 #include "Catch2.h"
@@ -8,7 +8,7 @@ using namespace Leonetienne::GCrypt;
 // Tests that recoding iobase formats works for individual blocks, with random data
 TEMPLATE_TEST_CASE_SIG(
     __FILE__"Data formats can be converted, without changing in value, with indivudual blocks, with random data",
-    "[ModuleDataFormatter]",
+    "[DataFormatter]",
     ((Configuration::IOBASE_FORMAT formatUnderTest), formatUnderTest),
     Configuration::IOBASE_FORMAT::BASE_BYTES,
     Configuration::IOBASE_FORMAT::BASE_2,
@@ -34,13 +34,13 @@ TEMPLATE_TEST_CASE_SIG(
 
     // Exercise
     // Convert to a custom base
-    const std::string b_format = ModuleDataFormatter::FormatBlock(
+    const std::string b_format = DataFormatter::FormatBlock(
       b_initial,
       formatUnderTest
     );
 
     // Convert back to a block
-    const Block b_retrieved = ModuleDataFormatter::DecodeFormat(
+    const Block b_retrieved = DataFormatter::DecodeFormat(
       b_format,
       formatUnderTest
     );
@@ -54,7 +54,7 @@ TEMPLATE_TEST_CASE_SIG(
 // Tests that recoding iobase format works
 TEMPLATE_TEST_CASE_SIG(
     __FILE__"Data formats can be converted, without changing in value, with indivudual blocks, with very little data (lots of nullbytes)",
-    "[ModuleDataFormatter]",
+    "[DataFormatter]",
     ((Configuration::IOBASE_FORMAT formatUnderTest), formatUnderTest),
     Configuration::IOBASE_FORMAT::BASE_BYTES,
     Configuration::IOBASE_FORMAT::BASE_2,
@@ -72,13 +72,13 @@ TEMPLATE_TEST_CASE_SIG(
 
   // Exercise
   // Convert to a custom base
-  const std::string b_format = ModuleDataFormatter::FormatBlock(
+  const std::string b_format = DataFormatter::FormatBlock(
     b_initial,
     formatUnderTest
   );
 
   // Convert back to a block
-  const Block b_retrieved = ModuleDataFormatter::DecodeFormat(
+  const Block b_retrieved = DataFormatter::DecodeFormat(
     b_format,
     formatUnderTest
   );
