@@ -287,16 +287,6 @@ std::string ModuleDataFormatter::CustomBase2Bin(
       Block::BLOCK_SIZE_BITS
     );
 
-  // Pad to BLOCK_SIZE
-  //binary = PadStringToLength(binary, Block::BLOCK_SIZE_BITS, '0', false);
-
-  // Because a set may not perfectly fit a block, transcoding it back
-  // to binary may yield more than 512 bit. These other bits could never
-  // be 1. We have to trim them.
-  //if (binary.length() > Block::BLOCK_SIZE_BITS) {
-  //  binary = binary.substr(0, Block::BLOCK_SIZE_BITS);
-  //}
-
   if (binary.length() != Block::BLOCK_SIZE_BITS) {
     throw std::invalid_argument("ModuleDataFormatter::CustomBase2Bin() received input that doesn't translate to a bitstring of length 512!");
   }
