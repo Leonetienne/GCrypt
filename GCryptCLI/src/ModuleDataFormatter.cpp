@@ -25,18 +25,10 @@ namespace {
         std::make_pair(Configuration::IOBASE_FORMAT::BASE_8, 171),
         std::make_pair(Configuration::IOBASE_FORMAT::BASE_10, 155),
         std::make_pair(Configuration::IOBASE_FORMAT::BASE_16, 128),
+        std::make_pair(Configuration::IOBASE_FORMAT::BASE_64, 86),
         std::make_pair(Configuration::IOBASE_FORMAT::BASE_UWU, 125),
         std::make_pair(Configuration::IOBASE_FORMAT::BASE_UGH, 125)
     });
-}
-
-std::string ModuleDataFormatter::FormatBlocks(
-    const std::vector<Block>& blocks,
-    const Configuration::IOBASE_FORMAT base
-) {
-
-
-  return "";
 }
 
 std::string ModuleDataFormatter::FormatBlock(
@@ -54,14 +46,14 @@ std::string ModuleDataFormatter::FormatBlock(
       return Bin2CustomBase(
         block.ToBinaryString(),
         BASE_8,
-        blockLengthByBase[Configuration::IOBASE_FORMAT::BASE_8]
+        blockLengthByBase[base]
       );
 
     case Configuration::IOBASE_FORMAT::BASE_10:
       return Bin2CustomBase(
         block.ToBinaryString(),
         BASE_10,
-        blockLengthByBase[Configuration::IOBASE_FORMAT::BASE_10]
+        blockLengthByBase[base]
       );
 
     case Configuration::IOBASE_FORMAT::BASE_16:
@@ -71,14 +63,14 @@ std::string ModuleDataFormatter::FormatBlock(
       return Bin2CustomBase(
         block.ToBinaryString(),
         BASE_64,
-        blockLengthByBase[Configuration::IOBASE_FORMAT::BASE_64]
+        blockLengthByBase[base]
       );
 
     case Configuration::IOBASE_FORMAT::BASE_UWU:
       return Bin2CustomBase(
         block.ToBinaryString(),
         BASE_UWU,
-        blockLengthByBase[Configuration::IOBASE_FORMAT::BASE_UWU],
+        blockLengthByBase[base],
         " "
       );
 
@@ -86,13 +78,38 @@ std::string ModuleDataFormatter::FormatBlock(
       return Bin2CustomBase(
         block.ToBinaryString(),
         BASE_UGH,
-        blockLengthByBase[Configuration::IOBASE_FORMAT::BASE_UGH],
+        blockLengthByBase[base],
         " "
       );
 
     default:
       throw std::invalid_argument("FormatBlock(): Iobase now found! Oh no. Anyway.");
   }
+}
+
+std::string ModuleDataFormatter::FormatBlocks(
+    const std::vector<Block>& blocks,
+    const Configuration::IOBASE_FORMAT base
+) {
+  std::stringstream ss;
+
+  std::size_t i = 0;
+  for (const Block& block : blocks) {
+    ss << FormatBlock(block, base);
+
+    // If we are dealing with a multichar base, we must append a
+    // seperator (space), but only if its not the last block.
+    if (
+        (base == Configuration::IOBASE_FORMAT::BASE_UWU) ||
+        (base == Configuration::IOBASE_FORMAT::BASE_UGH)
+    ) {
+      if (i++ != blocks.size()) {
+        ss << " ";
+      }
+    }
+  }
+
+  return ss.str();
 }
 
 Block ModuleDataFormatter::StringToBlock(
@@ -169,6 +186,84 @@ Block ModuleDataFormatter::StringToBlock(
   return b;
 }
 
+std::vector<Block> ModuleDataFormatter::StringToBlocks(
+  const std::string& str,
+  const Configuration::IOBASE_FORMAT base
+) {
+  std::vector<Block> blocks;
+
+  // A block is this many digits wide, in encoding
+  const std::size_t blockWidth = blockLengthByBase[base];
+  //std::cout << "blockWidth is: " << blockWidth << std::endl;
+
+  // How many blocks are we dealing with here?
+  const std::size_t n_blocks = (str.length() / blockWidth) + 1;
+  blocks.reserve(n_blocks);
+  //std::cout << "n_blocks is: " << n_blocks << std::endl;
+
+  // Iterate over the string, and parse all blocks
+  // We now have to differentiate between single-char digit sets (hex),
+  // and multi-char digit sets (uwu):
+  switch (base) {
+    case Configuration::IOBASE_FORMAT::BASE_BYTES:
+    case Configuration::IOBASE_FORMAT::BASE_2:
+    case Configuration::IOBASE_FORMAT::BASE_8:
+    case Configuration::IOBASE_FORMAT::BASE_10:
+    case Configuration::IOBASE_FORMAT::BASE_16:
+    case Configuration::IOBASE_FORMAT::BASE_64:
+      // Easy case: Each digit is exactly one char in size.
+      // We can just calculate how many bits we should take.
+      for (std::size_t i = 0; i < str.length(); i += blockWidth) {
+
+        const std::string subs = str.substr(i, blockWidth);
+
+        Block newBlock = StringToBlock(
+          subs,
+          base
+        );
+
+        blocks.emplace_back(newBlock);
+      }
+      break;
+
+    case Configuration::IOBASE_FORMAT::BASE_UWU:
+    case Configuration::IOBASE_FORMAT::BASE_UGH:
+      // Hard case: Each digit n digits long. Digits may vary in length.
+      // They are seperated by spaces.
+      // We have to parse them...
+      std::size_t digitsPassed = 0;
+      std::size_t blockStart = 0;
+      for (std::size_t i = 0; i < str.length(); i++) {
+
+        if (str[i] == ' ') {
+          digitsPassed++;
+
+          if (digitsPassed == blockWidth) {
+            const std::string subs = str.substr(
+                blockStart,
+                i - blockStart
+            );
+
+            Block newBlock = StringToBlock(
+              subs,
+              base
+            );
+
+            blocks.emplace_back(newBlock);
+
+            digitsPassed = 0;
+            blockStart = i+1;
+          }
+        }
+
+
+      }
+      break;
+  }
+
+  return blocks;
+}
+
 std::string ModuleDataFormatter::Bin2CustomBase(
     const std::string& bin,
     const std::vector<std::string>& customSet,
@@ -221,13 +316,11 @@ std::string ModuleDataFormatter::CustomBase2Bin(
   // Because a set may not perfectly fit a block, transcoding it back
   // to binary may yield more than 512 bit. These other bits could never
   // be 1. We have to trim them.
-  std::cout << binary << std::endl << std::endl;
-  if (binary.length() > Block::BLOCK_SIZE_BITS) {
-    binary = binary.substr(0, Block::BLOCK_SIZE_BITS);
-  }
+  //if (binary.length() > Block::BLOCK_SIZE_BITS) {
+  //  binary = binary.substr(0, Block::BLOCK_SIZE_BITS);
+  //}
 
   if (binary.length() != Block::BLOCK_SIZE_BITS) {
-    std::cout << binary.length() << std::endl;
     throw std::invalid_argument("ModuleDataFormatter::CustomBase2Bin() received input that doesn't translate to a bitstring of length 512!");
   }
 
