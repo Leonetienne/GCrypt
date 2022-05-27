@@ -1,31 +1,54 @@
 #include <ModuleDataFormatter.h>
 #include <GCrypt/Key.h>
+#include <GCrypt/GPrng.h>
 #include "Catch2.h"
 
 using namespace Leonetienne::GCrypt;
 
-// Tests that recoding byte iobase works
-TEST_CASE(__FILE__"RecodingSingleBlock-bytes", "[ModuleDataFormatter]") {
+// Tests that recoding iobase format works
+TEMPLATE_TEST_CASE_SIG(
+    __FILE__"Data formats can be converted, without changing in value",
+    "[ModuleDataFormatter]",
+    ((Configuration::IOBASE_FORMAT formatUnderTest), formatUnderTest),
+    Configuration::IOBASE_FORMAT::BASE_BYTES,
+    Configuration::IOBASE_FORMAT::BASE_2,
+    Configuration::IOBASE_FORMAT::BASE_8,
+    Configuration::IOBASE_FORMAT::BASE_10,
+    Configuration::IOBASE_FORMAT::BASE_16,
+    Configuration::IOBASE_FORMAT::BASE_64,
+    Configuration::IOBASE_FORMAT::BASE_UWU,
+    Configuration::IOBASE_FORMAT::BASE_UGH
+) {
 
-  // Setup
-  Block b_initial;
-  b_initial = Key::Random();
+  // Let's use a GPrng instead of Key::Random,
+  // because Key::Random is rather slow (because it's using hardware events).
+  // We just want randomized data for tests...
 
-  // Exercise
-  // Convert to bytes
-  const std::string b_format = ModuleDataFormatter::FormatBlock(
-    b_initial,
-    Configuration::IOBASE_FORMAT::BASE_BYTES
-  );
+  GPrng prng(Key::Random());
 
-  // Convert back to a block
-  const Block b_retrieved = ModuleDataFormatter::DecodeFormat(
-    b_format,
-    Configuration::IOBASE_FORMAT::BASE_BYTES
-  );
+  // Let's try 50 different random blocks per test
+  for (std::size_t i = 0; i < 50; i++) {
 
-  // Verify
-  // Do b_initial and b_retrieved match?
-  REQUIRE(b_initial == b_retrieved);
+    // Setup
+    Block b_initial;
+    b_initial = prng.GetBlock();
+
+    // Exercise
+    // Convert to a custom base
+    const std::string b_format = ModuleDataFormatter::FormatBlock(
+      b_initial,
+      formatUnderTest
+    );
+
+    // Convert back to a block
+    const Block b_retrieved = ModuleDataFormatter::DecodeFormat(
+      b_format,
+      formatUnderTest
+    );
+
+    // Verify
+    // Do b_initial and b_retrieved match?
+    REQUIRE(b_initial == b_retrieved);
+  }
 }
 
