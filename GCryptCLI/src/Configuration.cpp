@@ -23,8 +23,8 @@ void Configuration::DecideModule() {
     activeModule = MODULE::HASH;
     return;
   }
-  else if (CommandlineInterface::Get().HasParam("--generate-keyfile")) {
-    activeModule = MODULE::GENERATE_KEYFILE;
+  else if (CommandlineInterface::Get().HasParam("--generate-key")) {
+    activeModule = MODULE::GENERATE_KEY;
     return;
   }
 
@@ -51,13 +51,6 @@ void Configuration::DecideInputFrom() {
 
 void Configuration::DecideOutputTo() {
 
-  // If module is "generate keyfile", we'll always write to a file.
-  if (activeModule == MODULE::GENERATE_KEYFILE) {
-    outputTo = OUTPUT_TO::FILE;
-    outputFilename = CommandlineInterface::Get()["--generate-keyfile"].GetString();
-  }
-
-  // Else, check if we have an --ofile defined.
   if (CommandlineInterface::Get().HasParam("--ofile")) {
     outputTo = OUTPUT_TO::FILE;
     outputFilename = CommandlineInterface::Get()["--ofile"].GetString();
@@ -71,7 +64,7 @@ void Configuration::DecideOutputTo() {
 
 void Configuration::DecideIOBaseFormat() {
 
-  // Do we have any iobase specified?
+  // Do we have any iobase explicitly specified?
   if (CommandlineInterface::Get().HasParam("--iobase-bytes")) {
     iobaseFormat = IOBASE_FORMAT::BASE_BYTES;
     return;
@@ -113,7 +106,8 @@ void Configuration::DecideIOBaseFormat() {
       (activeModule == MODULE::HASH)
   ) {
     // and input comes from a parameter,
-    // and output goes to stdout, let's assume base-16.
+    // and output goes to stdout,
+    // let's assume base-16.
     if (
         (inputFrom == INPUT_FROM::PARAMETER) &&
         (outputTo == OUTPUT_TO::STDOUT)
@@ -144,8 +138,13 @@ void Configuration::DecideIOBaseFormat() {
     }
   }
 
-  // Else, if we are generating a keyfile, iobase format is bytes.
-  else if (activeModule == MODULE::GENERATE_KEYFILE) {
+  // Else, if we are generating a key,
+  else if (activeModule == MODULE::GENERATE_KEY) {
+    // and we're outputting to stdout, we'll use base-16.
+    if (outputTo == OUTPUT_TO::STDOUT) {
+      iobaseFormat = IOBASE_FORMAT::BASE_16;
+    }
+    // else, we're outputting to a file, use base-bytes.
     iobaseFormat = IOBASE_FORMAT::BASE_BYTES;
     return;
   }
