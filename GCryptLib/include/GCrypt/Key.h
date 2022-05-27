@@ -21,7 +21,7 @@ namespace Leonetienne::GCrypt {
       static Key LoadFromFile(const std::string& path);
 
       //! Will save a keyfile
-      void WriteToFile(const std::string& path);
+      void WriteToFile(const std::string& path) const;
 
       Key();
       Key(const Key& k);
