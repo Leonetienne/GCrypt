@@ -60,7 +60,7 @@ std::string DataFormatter::FormatBlock(
       );
 
     default:
-      throw std::invalid_argument("FormatBlock(): Iobase now found! Oh no. Anyway.");
+      throw std::invalid_argument("FormatBlock(): Iobase not found! Oh no. Anyway.");
   }
 }
 
