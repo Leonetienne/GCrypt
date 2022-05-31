@@ -32,15 +32,15 @@ void DataIngestionLayer::Init() {
 
       // A little bit of error handling
       if (!ifs.good()) {
-        throw std::runtime_error( "Unable to open infilestream!");
+        throw std::runtime_error("Unable to open infilestream!");
       }
 
       // Redirect our istream to this infilestream
       in = &ifs;
       break;
 
-      // Are we reading from a parameter?
-      case Configuration::INPUT_FROM::PARAMETER:
+    // Are we reading from a parameter?
+    case Configuration::INPUT_FROM::PARAMETER:
 
       // Create an instringstream with our parameter
       iss = std::istringstream(
