@@ -75,7 +75,6 @@ void DataOutputLayer::WriteBlock() {
         (reachedEof)
       )
   ) {
-
     // Fetch the block to write
     const Block block = blocks.front();
     blocks.pop();
@@ -88,7 +87,8 @@ void DataOutputLayer::WriteBlock() {
       );
 
     // Dump it
-    *out << formattedBlock;
+    // This way we avoid zerobytes getting trimmed off...
+    out->write(formattedBlock.data(), formattedBlock.length());
 
     // If this is not the last block, and the used iobase set
     // requires it, append a seperator
@@ -102,15 +102,8 @@ void DataOutputLayer::WriteBlock() {
       *out << " ";
     }
 
-    // If we are finished, and are outputting to stdout,
-    // and the user didn't specifically opt out, print a newline
-    if (
-      (IsFinished()) &&
-      (Configuration::outputTo == Configuration::OUTPUT_TO::STDOUT) &&
-      (!CommandlineInterface::Get().HasParam("--no-newline"))
-    ) {
-      *out << std::endl;
-    }
+    AddTrailingLinebreakIfRequired();
+    out->flush();
 
   }
 
@@ -119,11 +112,33 @@ void DataOutputLayer::WriteBlock() {
 
 void DataOutputLayer::ReachedEOF() {
   reachedEof = true;
+
+  // Add the trailing linebreak here aswell, as, if input is ciphertext,
+  // ReachedEOF() may only be called after all blocks are already written
+  AddTrailingLinebreakIfRequired();
+
   return;
 }
 
 bool DataOutputLayer::IsFinished() {
   return (reachedEof) && (blocks.size() == 0);
+}
+
+void DataOutputLayer::AddTrailingLinebreakIfRequired() {
+  // If we are finished, and are outputting to stdout,
+  // and input format is not bytes,
+  // and the user didn't specifically opt out, print a newline
+  if (
+    (IsFinished()) &&
+    (Configuration::outputTo == Configuration::OUTPUT_TO::STDOUT) &&
+    (Configuration::formatIn != Configuration::IOBASE_FORMAT::BASE_BYTES) &&
+    (!CommandlineInterface::Get().HasParam("--no-newline"))
+  ) {
+    *out << std::endl;
+    out->flush();
+  }
+
+  return;
 }
 
 std::ostream* DataOutputLayer::out;

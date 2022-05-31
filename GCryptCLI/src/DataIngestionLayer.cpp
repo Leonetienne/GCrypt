@@ -1,5 +1,6 @@
 #include "DataIngestionLayer.h"
 #include "CommandlineInterface.h"
+#include "DataFormatter.h"
 #include "Bases.h"
 #include <iostream>
 #include <istream>
@@ -53,6 +54,16 @@ void DataIngestionLayer::Init() {
       break;
   }
 
+  // Derive from our the current module if we're reading ciphertext or not
+  if (
+    (Configuration::activeModule == Configuration::MODULE::DECRYPTION)
+  ) {
+    isReadingCiphertext = true;
+  }
+  else {
+    isReadingCiphertext = false;
+  }
+
   initialized = true;
   reachedEof = false;
 
@@ -74,33 +85,93 @@ void DataIngestionLayer::ReadBlock() {
   }
 
   if (!reachedEof) {
-    // This should really account for iobase recoding!
+    // A block is this many digits wide, in encoding
+    const std::size_t blockWidth = blockLengthByBase[Configuration::formatIn];
 
-    // Create buffer to read into
-    char buf[Block::BLOCK_SIZE];
-    memset(buf, 0, sizeof(buf));
+    // Iterate over the string, and parse all blocks
+    // We now have to differentiate between single-char digit sets (like hex),
+    // and multi-char digit sets (like uwu):
+    switch (Configuration::formatIn) {
+      case Configuration::IOBASE_FORMAT::BASE_BYTES:
+      case Configuration::IOBASE_FORMAT::BASE_2:
+      case Configuration::IOBASE_FORMAT::BASE_8:
+      case Configuration::IOBASE_FORMAT::BASE_10:
+      case Configuration::IOBASE_FORMAT::BASE_16:
+      case Configuration::IOBASE_FORMAT::BASE_64:
+        // Easy case: Each digit is exactly one char in size.
+        // We can just calculate how many bytes we have to read.
 
-    // Read
-    in->read(buf, sizeof(buf));
+        // bytesRead is always of the correct length, 0-padded.
+        std::size_t n_bytes_read;
+        const std::string dataRead = ReadBytes(blockWidth, n_bytes_read);
 
-    // Fetch how much we've read
-    const std::size_t n_bytes_read = in->gcount();
+        // If we've read 0 bytes, this was the last block
+        // and it's completely empty. We can abort without doing anything.
+        // The ReadBytes function takes care of setting the reachedEof flag.
+        if (n_bytes_read == 0) {
+          return;
+        }
 
-    // Is this fewer bytes than we requested?
-    if (n_bytes_read < sizeof(buf)) {
-      // Yes: EOF reached.
-      reachedEof = true;
-    }
+        // If we are reading ciphertext
+        // make sure we've read enough bytes to compose a block.
+        if (
+          (isReadingCiphertext) &&
+          (n_bytes_read < blockWidth)
+        ) {
+          throw std::runtime_error("DataIngestionLayer::ReadBlock() read an input-data fragment that is smaller than a data block should be. Is your cipher text incomplete?");
+        }
 
-    // Construct a Block from this buf
-    Block block;
-    block.FromByteString(std::string(buf, sizeof(buf)));
+        // This should decode to a block just like this.
+        Block newBlock;
 
-    // Enqueue it
-    blocks.emplace(block);
+        // Special-case: We are reading cleartext (no ciphertext)
+        // cleartext is always base_bytes
+        if (!isReadingCiphertext) {
+          // When just reading cleartext-bytes, we also allow shorter strings
+          // than BLOCK_SIZE. These will just get zero-padded.
+          newBlock.FromTextString(dataRead);
+        }
+        else {
+          // Else: recode to a block.
+          newBlock = DataFormatter::DecodeFormat(
+            dataRead,
+            Configuration::formatIn
+          );
+        }
+
+        blocks.emplace(newBlock);
+        break;
+      }
+
   }
 
   return;
+}
+
+std::string DataIngestionLayer::ReadBytes(const std::size_t n, std::size_t& out_bytes_read) {
+
+  // Prepare a buffer to read to
+  char* buf = new char[n+1];
+  memset(buf, 0, (n+1) * sizeof(buf[0]));
+
+  // Read
+  in->read(buf, n * sizeof(buf[0]));
+
+  // Fetch how much we've read
+  out_bytes_read = in->gcount();
+
+  // Is this fewer bytes than got requested?
+  if (out_bytes_read < n) {
+    // Yes: EOF reached.
+    reachedEof = true;
+  }
+
+  // Translate buffer to a standard string
+  const std::string sbuf(buf, n);
+  delete[] buf;
+
+  // Return our buffer
+  return sbuf;
 }
 
 bool DataIngestionLayer::ReachedEOF() {
@@ -142,5 +213,6 @@ std::ifstream DataIngestionLayer::ifs;
 std::istringstream DataIngestionLayer::iss;
 bool DataIngestionLayer::reachedEof = false;
 bool DataIngestionLayer::initialized = false;
+bool DataIngestionLayer::isReadingCiphertext;
 std::queue<Block> DataIngestionLayer::blocks;
 

@@ -32,6 +32,10 @@ namespace IO {
       static bool IsFinished();
 
     private:
+      //! If we are finished, and are outputting to stdout,
+      //! and the user didn't specifically opt out, print a newline
+      static void AddTrailingLinebreakIfRequired();
+
       static std::ostream* out;
 
       // We have to hold on to a reference to a filestream,
