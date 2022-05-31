@@ -44,7 +44,7 @@ void DataIngestionLayer::Init() {
         CommandlineInterface::Get()["--intext"].GetString()
       );
 
-      // Redirect our istream t this instringstream
+      // Redirect our istream to this instringstream
       in = &iss;
 
       break;
