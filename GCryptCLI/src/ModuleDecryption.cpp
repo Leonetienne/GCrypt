@@ -1,4 +1,4 @@
-#include "ModuleEncryption.h"
+#include "ModuleDecryption.h"
 #include "DataIngestionLayer.h"
 #include "DataOutputLayer.h"
 #include "KeyManager.h"
@@ -7,7 +7,7 @@
 using namespace Module;
 using namespace Leonetienne::GCrypt;
 
-void Encryption::Run() {
+void Decryption::Run() {
 
   // Initialize the data ingestion layer
   IO::DataIngestionLayer::Init();
@@ -18,7 +18,7 @@ void Encryption::Run() {
   // Initialize a cipher
   GCipher cipher(
     KeyManager::GetKey(),
-    GCipher::DIRECTION::ENCIPHER
+    GCipher::DIRECTION::DECIPHER
   );
 
   while (!IO::DataOutputLayer::IsFinished()) {
@@ -36,7 +36,7 @@ void Encryption::Run() {
       IO::DataOutputLayer::Enqueue(ciphertext);
     }
 
-    // Tell the data output layer that it just received the
+    // Tell the data output layer that it received the
     // last block, if it did
     if (IO::DataIngestionLayer::IsFinished()) {
       IO::DataOutputLayer::ReachedEOF();

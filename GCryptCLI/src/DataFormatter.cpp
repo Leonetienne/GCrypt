@@ -171,16 +171,14 @@ std::vector<Block> DataFormatter::DecodeFormatMultiblock(
 
   // A block is this many digits wide, in encoding
   const std::size_t blockWidth = blockLengthByBase[base];
-  //std::cout << "blockWidth is: " << blockWidth << std::endl;
 
   // How many blocks are we dealing with here?
   const std::size_t n_blocks = (str.length() / blockWidth) + 1;
   blocks.reserve(n_blocks);
-  //std::cout << "n_blocks is: " << n_blocks << std::endl;
 
   // Iterate over the string, and parse all blocks
-  // We now have to differentiate between single-char digit sets (hex),
-  // and multi-char digit sets (uwu):
+  // We now have to differentiate between single-char digit sets (like hex),
+  // and multi-char digit sets (like uwu):
   switch (base) {
     case Configuration::IOBASE_FORMAT::BASE_BYTES:
     case Configuration::IOBASE_FORMAT::BASE_2:

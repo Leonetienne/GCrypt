@@ -38,6 +38,11 @@ namespace IO {
     private:
       static std::istream* in;
 
+      // Will read n bytes from the input.
+      // If EOF is reached, it will return a string of length <= 5
+      // and will set the approriate flags.
+      static std::string ReadBytes(const std::size_t n, std::size_t& out_bytes_read);
+
       // We have to hold on to a reference to a filestream,
       // even if we're always just reading from in.
       // We still have to CLOSE the file handle afterwards!
@@ -48,6 +53,9 @@ namespace IO {
       static bool reachedEof;
       // Indicates whether this class has been initialized
       static bool initialized;
+
+      // Are we reading ciphertext or regular text?
+      static bool isReadingCiphertext;
 
       // All read blocks, that haven't been given out yet
       static std::queue<Block> blocks;

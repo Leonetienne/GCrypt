@@ -3,6 +3,7 @@
 #include "KeyManager.h"
 #include "ModuleGenerateKey.h"
 #include "ModuleEncryption.h"
+#include "ModuleDecryption.h"
 
 int main(int argc, char* const* argv) {
 
@@ -23,6 +24,10 @@ int main(int argc, char* const* argv) {
 
     case Configuration::MODULE::ENCRYPTION:
       Module::Encryption::Run();
+      break;
+
+    case Configuration::MODULE::DECRYPTION:
+      Module::Decryption::Run();
       break;
   }
 
