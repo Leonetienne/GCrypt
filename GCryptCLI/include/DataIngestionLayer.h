@@ -44,6 +44,9 @@ namespace IO {
 
       // All read blocks, that haven't been given out yet
       static std::queue<Block> blocks;
+
+      // No instanciation! >:(
+      DataIngestionLayer();
   };
 }
 

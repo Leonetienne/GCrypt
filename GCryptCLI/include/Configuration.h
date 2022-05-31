@@ -46,6 +46,9 @@ class Configuration {
     static void DecideOutputTo();
     static void DecideIOBaseFormat();
     static void DecideModule();
+
+    // No instanciation! >:(
+    Configuration() {};
 };
 
 #endif
