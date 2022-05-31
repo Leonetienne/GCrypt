@@ -49,7 +49,7 @@ namespace IO {
 
       // Indicates whether EOF has been reached
       static bool reachedEof;
-      // Indicates whether this class is initialized
+      // Indicates whether this class has been initialized
       static bool initialized;
 
       // All read blocks, that haven't been given out yet
