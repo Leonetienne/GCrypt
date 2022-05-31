@@ -4,6 +4,7 @@
 #include <iosfwd>
 #include <queue>
 #include <GCrypt/Block.h>
+#include "Configuration.h"
 
 using namespace Leonetienne::GCrypt;
 
@@ -15,6 +16,9 @@ namespace IO {
       //! Will initialize the ingestion
       static void Init();
 
+      //! Will destruct the ingestion layer (like, closing file handles)
+      static void Destruct();
+
       //! Will attempt to read a data block.
       //! Requires Init() to have been called
       static void ReadBlock();
@@ -22,14 +26,20 @@ namespace IO {
       //! Have we read in all available blocks?
       static bool ReachedEOF();
 
-      //! Will return true if there is at least one block to be GetBlock()'ed
+      //! Returns true if there are blocks to be fetched (GetNextBlock())
       static bool IsBlockReady();
 
       //! Will return the next block in the queue
       static Block GetNextBlock();
 
+      //! Returns true, if EOF is reached, and there are no more blocks to fetch (GetNextBlock())
+      static bool IsFinished();
+
     private:
       static std::istream* in;
+
+      // The format to read data in
+      static Configuration::IOBASE_FORMAT inFormat;
 
       // We have to hold on to a reference to a filestream,
       // even if we're always just reading from in.

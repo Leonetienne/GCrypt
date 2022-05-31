@@ -31,8 +31,8 @@ class Configuration {
     static std::string outputFilename;
 
     static enum class MODULE {
-      ENCRYPT,
-      DECRYPT,
+      ENCRYPTION,
+      DECRYPTION,
       HASH,
       GENERATE_KEY
     } activeModule;

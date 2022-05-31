@@ -1,6 +1,6 @@
 #include "DataIngestionLayer.h"
 #include "CommandlineInterface.h"
-#include "Configuration.h"
+#include "Bases.h"
 #include <iostream>
 #include <istream>
 #include <fstream>
@@ -53,20 +53,27 @@ void DataIngestionLayer::Init() {
       break;
   }
 
+  // Determine which iobase format to read in
+  // If we are decrypting, input is formatted.
+  if (Configuration::activeModule == Configuration::MODULE::DECRYPTION) {
+    inFormat = Configuration::iobaseFormat;
+  }
+  // If we are doing anything else, input is raw bytes.
+  else {
+    inFormat = Configuration::IOBASE_FORMAT::BASE_BYTES;
+  }
+
   initialized = true;
   reachedEof = false;
 
-  // Temporary
-  std::size_t n_last_bytes_read = 0;
-  char buf[64];
-  do {
-    memset(buf, 0, sizeof(buf));
-    in->read(buf, sizeof(buf));
-    n_last_bytes_read = in->gcount();
-    std::cout << buf;
+  return;
+}
 
-  } while(n_last_bytes_read == 64);
+void DataIngestionLayer::Destruct() {
 
+  if (Configuration::inputFrom == Configuration::INPUT_FROM::FILE) {
+    ifs.close();
+  }
 
   return;
 }
@@ -77,6 +84,8 @@ void DataIngestionLayer::ReadBlock() {
   }
 
   if (!reachedEof) {
+    // This should really account for iobase recoding!
+
     // Create buffer to read into
     char buf[Block::BLOCK_SIZE];
     memset(buf, 0, sizeof(buf));
@@ -95,7 +104,7 @@ void DataIngestionLayer::ReadBlock() {
 
     // Construct a Block from this buf
     Block block;
-    block.FromByteString(std::string(buf));
+    block.FromByteString(std::string(buf, sizeof(buf)));
 
     // Enqueue it
     blocks.emplace(block);
@@ -109,7 +118,22 @@ bool DataIngestionLayer::ReachedEOF() {
 }
 
 bool DataIngestionLayer::IsBlockReady() {
+  // We're not ready, if we haven't reached EOF, if we should puffer
+  // the input.
+  if (
+      (CommandlineInterface::Get().HasParam("--puffer-input")) &&
+      (!reachedEof)
+  ) {
+    return false;
+  }
+
+  // If we're not puffering, just return whether or not
+  // we have any blocks...
   return blocks.size() > 0;
+}
+
+bool DataIngestionLayer::IsFinished() {
+  return (reachedEof) && (blocks.size() == 0);
 }
 
 Block DataIngestionLayer::GetNextBlock() {
@@ -128,5 +152,6 @@ std::ifstream DataIngestionLayer::ifs;
 std::istringstream DataIngestionLayer::iss;
 bool DataIngestionLayer::reachedEof = false;
 bool DataIngestionLayer::initialized = false;
+Configuration::IOBASE_FORMAT DataIngestionLayer::inFormat;
 std::queue<Block> DataIngestionLayer::blocks;
 
