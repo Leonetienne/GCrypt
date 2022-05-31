@@ -24,7 +24,7 @@ void DataOutputLayer::Init() {
 
       // Open the file
       ofs.open(
-        Configuration::inputFilename,
+        Configuration::outputFilename,
         std::ios::out | std::ios::binary
       );
 
@@ -100,6 +100,16 @@ void DataOutputLayer::WriteBlock() {
         )
     ) {
       *out << " ";
+    }
+
+    // If we are finished, and are outputting to stdout,
+    // and the user didn't specifically opt out, print a newline
+    if (
+      (IsFinished()) &&
+      (Configuration::outputTo == Configuration::OUTPUT_TO::STDOUT) &&
+      (!CommandlineInterface::Get().HasParam("--no-newline"))
+    ) {
+      *out << std::endl;
     }
 
   }
