@@ -131,7 +131,7 @@ void DataOutputLayer::AddTrailingLinebreakIfRequired() {
   if (
     (IsFinished()) &&
     (Configuration::outputTo == Configuration::OUTPUT_TO::STDOUT) &&
-    (Configuration::formatIn != Configuration::IOBASE_FORMAT::BASE_BYTES) &&
+    (Configuration::formatOut != Configuration::IOBASE_FORMAT::BASE_BYTES) &&
     (!CommandlineInterface::Get().HasParam("--no-newline"))
   ) {
     *out << std::endl;
