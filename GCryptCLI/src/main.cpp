@@ -19,8 +19,11 @@ int main(int argc, char* const* argv) {
   switch (Configuration::activeModule) {
     case Configuration::MODULE::GENERATE_KEY:
       Module::GenerateKey::Run();
+      break;
+
     case Configuration::MODULE::ENCRYPTION:
       Module::Encryption::Run();
+      break;
   }
 
   return 0;
