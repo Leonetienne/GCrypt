@@ -12,11 +12,11 @@ void Configuration::Parse() {
 
 void Configuration::DecideModule() {
   if (CommandlineInterface::Get().HasParam("--encrypt")) {
-    activeModule = MODULE::ENCRYPT;
+    activeModule = MODULE::ENCRYPTION;
     return;
   }
   else if (CommandlineInterface::Get().HasParam("--decrypt")) {
-    activeModule = MODULE::DECRYPT;
+    activeModule = MODULE::DECRYPTION;
     return;
   }
   else if (CommandlineInterface::Get().HasParam("--hash")) {
@@ -102,7 +102,7 @@ void Configuration::DecideIOBaseFormat() {
 
   // If we are encrypting or hashing,
   if (
-      (activeModule == MODULE::ENCRYPT) ||
+      (activeModule == MODULE::ENCRYPTION) ||
       (activeModule == MODULE::HASH)
   ) {
     // and input comes from a parameter,
@@ -125,7 +125,7 @@ void Configuration::DecideIOBaseFormat() {
   }
 
   // Else, if we are decrypting,
-  else if (activeModule == MODULE::DECRYPT) {
+  else if (activeModule == MODULE::DECRYPTION) {
     // and input comes from a parameter, we'll assume base-16.
     if (inputFrom == INPUT_FROM::PARAMETER) {
       iobaseFormat = IOBASE_FORMAT::BASE_16;
