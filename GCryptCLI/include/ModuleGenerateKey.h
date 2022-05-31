@@ -8,6 +8,10 @@ namespace Module {
     public:
       //! Will write the key to a file
       static void Run();
+
+    private:
+    // No instanciation! >:(
+    GenerateKey() {};
   };
 }
 

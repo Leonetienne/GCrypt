@@ -49,6 +49,9 @@ class DataFormatter {
       const std::vector<std::string>& customSet,
       const std::string& seperator = ""
     );
+
+    // No instanciation! >:(
+    DataFormatter() {};
 };
 
 #endif

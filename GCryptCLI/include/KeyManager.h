@@ -19,7 +19,11 @@ class KeyManager {
     //! hiding the input.
     static std::string PasswordPrompt();
 
+    //! The encryption key
     static Key key;
+
+    // No instanciation! >:(
+    KeyManager() {};
 };
 
 #endif

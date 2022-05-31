@@ -16,9 +16,10 @@ private:
   static void CrashWithMsg(const std::string& msg);
   static void CatchVersionQueries();
 
-  CommandlineInterface() {};
-
   static Hazelnp::CmdArgsInterface nupp;
+
+  // No instanciation! >:(
+  CommandlineInterface() {};
 };
 
 #endif
