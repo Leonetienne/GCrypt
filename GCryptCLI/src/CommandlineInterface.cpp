@@ -105,6 +105,9 @@ void CommandlineInterface::Init(int argc, const char* const* argv) {
   nupp.RegisterDescription("--puffer-output", "Will digest the entire data before initiating any output.");
   nupp.RegisterConstraint("--puffer-output", ParamConstraint(true, DATA_TYPE::VOID, {}, false, {}));
 
+  nupp.RegisterDescription("--no-newline", "Don't postfix stdout output with a newline");
+  nupp.RegisterConstraint("--no-newline", ParamConstraint(true, DATA_TYPE::VOID, {}, false, {}));
+
   /* Now parse */
   nupp.Parse(argc, argv);
 
