@@ -20,8 +20,8 @@ static auto blockLengthByBase =
       std::make_pair(Configuration::IOBASE_FORMAT::BASE_10, 155),
       std::make_pair(Configuration::IOBASE_FORMAT::BASE_16, 128),
       std::make_pair(Configuration::IOBASE_FORMAT::BASE_64, 86),
-      std::make_pair(Configuration::IOBASE_FORMAT::BASE_UWU, 125),
-      std::make_pair(Configuration::IOBASE_FORMAT::BASE_UGH, 125)
+      std::make_pair(Configuration::IOBASE_FORMAT::BASE_UWU, 81),
+      std::make_pair(Configuration::IOBASE_FORMAT::BASE_UGH, 124)
   });
 
 // Actually useful bases
