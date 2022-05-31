@@ -5,7 +5,8 @@ void Configuration::Parse() {
   DecideModule();
   DecideInputFrom();
   DecideOutputTo();
-  DecideIOBaseFormat();
+  DecideCiphertextFormat();
+  MapCiphertextFormatToIOBases();
 
   return;
 }
@@ -62,46 +63,38 @@ void Configuration::DecideOutputTo() {
   return;
 }
 
-void Configuration::DecideIOBaseFormat() {
+void Configuration::DecideCiphertextFormat() {
 
   // Do we have any iobase explicitly specified?
   if (CommandlineInterface::Get().HasParam("--iobase-bytes")) {
-    iobaseFormat = IOBASE_FORMAT::BASE_BYTES;
-    return;
+    ciphertextFormat = IOBASE_FORMAT::BASE_BYTES;
   }
   else if (CommandlineInterface::Get().HasParam("--iobase-2")) {
-    iobaseFormat = IOBASE_FORMAT::BASE_2;
-    return;
+    ciphertextFormat = IOBASE_FORMAT::BASE_2;
   }
   else if (CommandlineInterface::Get().HasParam("--iobase-8")) {
-    iobaseFormat = IOBASE_FORMAT::BASE_8;
-    return;
+    ciphertextFormat = IOBASE_FORMAT::BASE_8;
   }
   else if (CommandlineInterface::Get().HasParam("--iobase-10")) {
-    iobaseFormat = IOBASE_FORMAT::BASE_10;
-    return;
+    ciphertextFormat = IOBASE_FORMAT::BASE_10;
   }
   else if (CommandlineInterface::Get().HasParam("--iobase-16")) {
-    iobaseFormat = IOBASE_FORMAT::BASE_16;
-    return;
+    ciphertextFormat = IOBASE_FORMAT::BASE_16;
   }
   else if (CommandlineInterface::Get().HasParam("--iobase-64")) {
-    iobaseFormat = IOBASE_FORMAT::BASE_64;
-    return;
+    ciphertextFormat = IOBASE_FORMAT::BASE_64;
   }
   else if (CommandlineInterface::Get().HasParam("--iobase-uwu")) {
-    iobaseFormat = IOBASE_FORMAT::BASE_UWU;
-    return;
+    ciphertextFormat = IOBASE_FORMAT::BASE_UWU;
   }
   else if (CommandlineInterface::Get().HasParam("--iobase-ugh")) {
-    iobaseFormat = IOBASE_FORMAT::BASE_UGH;
-    return;
+    ciphertextFormat = IOBASE_FORMAT::BASE_UGH;
   }
 
   // So we have no iobase explicitly specified.. Let's default..
 
   // If we are encrypting or hashing,
-  if (
+  else if (
       (activeModule == MODULE::ENCRYPTION) ||
       (activeModule == MODULE::HASH)
   ) {
@@ -112,13 +105,12 @@ void Configuration::DecideIOBaseFormat() {
         (inputFrom == INPUT_FROM::PARAMETER) &&
         (outputTo == OUTPUT_TO::STDOUT)
     ) {
-      iobaseFormat = IOBASE_FORMAT::BASE_16;
-      return;
+      ciphertextFormat = IOBASE_FORMAT::BASE_16;
     }
 
     // Any other case whilst encrypting, we'll assume base-bytes.
     else {
-      iobaseFormat = IOBASE_FORMAT::BASE_BYTES;
+      ciphertextFormat = IOBASE_FORMAT::BASE_BYTES;
       return;
     }
 
@@ -128,13 +120,11 @@ void Configuration::DecideIOBaseFormat() {
   else if (activeModule == MODULE::DECRYPTION) {
     // and input comes from a parameter, we'll assume base-16.
     if (inputFrom == INPUT_FROM::PARAMETER) {
-      iobaseFormat = IOBASE_FORMAT::BASE_16;
-      return;
+      ciphertextFormat = IOBASE_FORMAT::BASE_16;
     }
     // Any other case whilst decrypting, we'll assume base-bytes.
     else {
-      iobaseFormat = IOBASE_FORMAT::BASE_BYTES;
-      return;
+      ciphertextFormat = IOBASE_FORMAT::BASE_BYTES;
     }
   }
 
@@ -142,16 +132,41 @@ void Configuration::DecideIOBaseFormat() {
   else if (activeModule == MODULE::GENERATE_KEY) {
     // and we're outputting to stdout, we'll use base-16.
     if (outputTo == OUTPUT_TO::STDOUT) {
-      iobaseFormat = IOBASE_FORMAT::BASE_16;
+      ciphertextFormat = IOBASE_FORMAT::BASE_16;
     }
     // else, we're outputting to a file, use base-bytes.
-    iobaseFormat = IOBASE_FORMAT::BASE_BYTES;
-    return;
+    else {
+      ciphertextFormat = IOBASE_FORMAT::BASE_BYTES;
+    }
   }
 
   // Fallback: Bytes
   else {
-    iobaseFormat = IOBASE_FORMAT::BASE_BYTES;
+    ciphertextFormat = IOBASE_FORMAT::BASE_BYTES;
+  }
+
+  return;
+}
+
+void Configuration::MapCiphertextFormatToIOBases() {
+
+  // Now, map the ciphertextFormat to either formatIn or formatOut.
+  switch (activeModule) {
+    // For encryption, keygen, and hashing:
+    // input is bytes and output is ciphertext
+    case MODULE::ENCRYPTION:
+    case MODULE::HASH:
+    case MODULE::GENERATE_KEY:
+      formatIn = IOBASE_FORMAT::BASE_BYTES;
+      formatOut = ciphertextFormat;
+      break;
+
+    // For decryption:
+    // input is ciphertext and output is bytes
+    case MODULE::DECRYPTION:
+      formatIn = ciphertextFormat;
+      formatOut = IOBASE_FORMAT::BASE_BYTES;
+      break;
   }
 
   return;
@@ -160,7 +175,9 @@ void Configuration::DecideIOBaseFormat() {
 std::string Configuration::inputFilename;
 std::string Configuration::outputFilename;
 Configuration::MODULE Configuration::activeModule;
-Configuration::IOBASE_FORMAT Configuration::iobaseFormat;
+Configuration::IOBASE_FORMAT Configuration::formatIn;
+Configuration::IOBASE_FORMAT Configuration::formatOut;
+Configuration::IOBASE_FORMAT Configuration::ciphertextFormat;
 Configuration::INPUT_FROM Configuration::inputFrom;
 Configuration::OUTPUT_TO Configuration::outputTo;
 

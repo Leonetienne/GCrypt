@@ -25,7 +25,9 @@ class Configuration {
       BASE_64,
       BASE_UWU,
       BASE_UGH
-    } iobaseFormat;
+    }
+    formatIn,
+    formatOut;
 
     static std::string inputFilename;
     static std::string outputFilename;
@@ -44,8 +46,12 @@ class Configuration {
   private:
     static void DecideInputFrom();
     static void DecideOutputTo();
-    static void DecideIOBaseFormat();
+    static void DecideCiphertextFormat();
+    static void MapCiphertextFormatToIOBases();
     static void DecideModule();
+
+    // This is just an intermediary value, used between methods
+    static IOBASE_FORMAT ciphertextFormat;
 
     // No instanciation! >:(
     Configuration() {};

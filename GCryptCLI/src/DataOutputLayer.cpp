@@ -38,16 +38,6 @@ void DataOutputLayer::Init() {
       break;
   }
 
-  // Determine which iobase format to write in
-  // If we are decrypting, input is not formatted
-  if (Configuration::activeModule == Configuration::MODULE::DECRYPTION) {
-    outFormat = Configuration::IOBASE_FORMAT::BASE_BYTES;
-  }
-  // If we are doing anything else, output is the requested format
-  else {
-    outFormat = Configuration::iobaseFormat;
-  }
-
   initialized = true;
   reachedEof = false;
 
@@ -94,7 +84,7 @@ void DataOutputLayer::WriteBlock() {
     const std::string formattedBlock =
       DataFormatter::FormatBlock(
         block,
-        outFormat
+        Configuration::formatOut
       );
 
     // Dump it
@@ -105,8 +95,8 @@ void DataOutputLayer::WriteBlock() {
     if (
         (!IsFinished()) &&
         (
-         (outFormat == Configuration::IOBASE_FORMAT::BASE_UWU) ||
-         (outFormat == Configuration::IOBASE_FORMAT::BASE_UGH)
+         (Configuration::formatOut == Configuration::IOBASE_FORMAT::BASE_UWU) ||
+         (Configuration::formatOut == Configuration::IOBASE_FORMAT::BASE_UGH)
         )
     ) {
       *out << " ";
@@ -130,6 +120,5 @@ std::ostream* DataOutputLayer::out;
 std::ofstream DataOutputLayer::ofs;
 bool DataOutputLayer::reachedEof = false;
 bool DataOutputLayer::initialized = false;
-Configuration::IOBASE_FORMAT DataOutputLayer::outFormat;
 std::queue<Block> DataOutputLayer::blocks;
 
