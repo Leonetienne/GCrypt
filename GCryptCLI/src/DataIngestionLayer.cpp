@@ -53,16 +53,6 @@ void DataIngestionLayer::Init() {
       break;
   }
 
-  // Determine which iobase format to read in
-  // If we are decrypting, input is formatted.
-  if (Configuration::activeModule == Configuration::MODULE::DECRYPTION) {
-    inFormat = Configuration::iobaseFormat;
-  }
-  // If we are doing anything else, input is raw bytes.
-  else {
-    inFormat = Configuration::IOBASE_FORMAT::BASE_BYTES;
-  }
-
   initialized = true;
   reachedEof = false;
 
@@ -152,6 +142,5 @@ std::ifstream DataIngestionLayer::ifs;
 std::istringstream DataIngestionLayer::iss;
 bool DataIngestionLayer::reachedEof = false;
 bool DataIngestionLayer::initialized = false;
-Configuration::IOBASE_FORMAT DataIngestionLayer::inFormat;
 std::queue<Block> DataIngestionLayer::blocks;
 

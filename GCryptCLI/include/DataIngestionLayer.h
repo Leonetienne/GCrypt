@@ -38,9 +38,6 @@ namespace IO {
     private:
       static std::istream* in;
 
-      // The format to read data in
-      static Configuration::IOBASE_FORMAT inFormat;
-
       // We have to hold on to a reference to a filestream,
       // even if we're always just reading from in.
       // We still have to CLOSE the file handle afterwards!

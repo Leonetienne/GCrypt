@@ -34,9 +34,6 @@ namespace IO {
     private:
       static std::ostream* out;
 
-      // The format to write data in
-      static Configuration::IOBASE_FORMAT outFormat;
-
       // We have to hold on to a reference to a filestream,
       // even if we're always just reading from in.
       // We still have to CLOSE the file handle afterwards!
