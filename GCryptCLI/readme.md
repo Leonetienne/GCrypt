@@ -24,7 +24,8 @@ Have these depencies installed:
 The executable `gcrypt` should now lie in `build/`.  
 
 If you want to use this globally, you could move it to `/usr/bin/`, or some other location in your $PATH. ### Options and flags
-All arguments and flags:
+
+### All arguments and flags:
 ```
 CLI for the GCrypt cipher/obfuscator
 Copyright (c) 2022 Leon Etienne
