@@ -171,9 +171,9 @@ fe6bdfb6ec39771c4fdcdc40e52397bcd67fbfef0ad5a15ebbd8b9e4c2a815848b3984eda5ef6f72
 The hashsum will always be of size BLOCK_SIZE. That is 512 bits.  
 
 #### What version am i running?
-Depending on wether you want to know the GCryptLib version or the CLI's version,
+Depending on whether you want to know the GCryptLib version or the CLI's version,
 use either `--cli-version` or `--lib-version`.
-It will print out a floating point number.  
+It will print out a floating point number.
 You can see both in the `--help`-page.
 
 #### Streaming the output of file en/decryption.
