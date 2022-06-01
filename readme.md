@@ -12,7 +12,6 @@ This block cipher employs a few modes of operation. Read more about them [here](
 * It absolutely tanks your ram when working with files
 * Even leaves some key fragments in there✨
 * It's probably super insecure
-* 512-bit keys <sup>\*</sup>
 * But the syntax is pythonlike easy🙇
 
 It's pretty ghetto, you know?
@@ -104,7 +103,6 @@ This way you could, for example, decrypt an ecrypted file directly into memory.
 Without saying, this is more advanced and not as-easy as the methods supplied in the wrapper.
 
 ---
-<sup>\*</sup> A key is always of size `BLOCK_SIZE`. The default block size is 512 (bit), but you can easily change it in [Config.h](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/include/GCrypt/Config.h).
 
 ## The deets 🍝
 
