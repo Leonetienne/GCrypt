@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace Leonetienne::GCrypt {
-  /** This class is a wrapper to make working with the GhettoCipher
+  /** This class is a wrapper to make working with the GCipher
   *   super easy with a python-like syntax
   */
   class GWrapper {
