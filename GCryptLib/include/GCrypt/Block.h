@@ -9,8 +9,8 @@
 
 namespace Leonetienne::GCrypt {
 
-  /* This class represents a block of data,
-   * and provides functions to manipulate it
+  /** This class represents a block of data,
+  *   and provides functions to manipulate it
   */
   template <typename T>
   class Basic_Block {

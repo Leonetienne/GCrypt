@@ -5,9 +5,9 @@
 
 namespace Leonetienne::GCrypt {
 
-  /* This class represents encryption keys.
-     You can copy them, create them from data blocks,
-     or even read from files (to be implemented).
+  /** This class represents encryption keys.
+  *   You can copy them, create them from data blocks,
+  *   or even read from files.
   */
   class Key : public Block {
     public:
