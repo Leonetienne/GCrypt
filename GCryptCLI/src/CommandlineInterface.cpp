@@ -68,7 +68,7 @@ void CommandlineInterface::Init(int argc, const char* const* argv) {
   nupp.RegisterConstraint("--progress", ParamConstraint(true, DATA_TYPE::VOID, {}, false, {}));
   nupp.RegisterAbbreviation("-p", "--progress");
 
-  nupp.RegisterDescription("--progress-interval", "Print digestion progress reports every these many blocks.");
+  nupp.RegisterDescription("--progress-interval", "Print digestion progress reports every these many data blocks.");
   nupp.RegisterConstraint("--progress-interval", ParamConstraint(true, DATA_TYPE::INT, { "1000" }, true, {}));
 
   nupp.RegisterDescription("--iobase-bytes", "Interpret and output ciphertexts as raw bytes.");
