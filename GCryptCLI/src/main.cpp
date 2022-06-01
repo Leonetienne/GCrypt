@@ -4,6 +4,7 @@
 #include "ModuleGenerateKey.h"
 #include "ModuleEncryption.h"
 #include "ModuleDecryption.h"
+#include "ModuleHashing.h"
 
 int main(int argc, char* const* argv) {
 
@@ -18,16 +19,20 @@ int main(int argc, char* const* argv) {
 
   // Launch our module
   switch (Configuration::activeModule) {
-    case Configuration::MODULE::GENERATE_KEY:
-      Module::GenerateKey::Run();
-      break;
-
     case Configuration::MODULE::ENCRYPTION:
       Module::Encryption::Run();
       break;
 
     case Configuration::MODULE::DECRYPTION:
       Module::Decryption::Run();
+      break;
+
+    case Configuration::MODULE::GENERATE_KEY:
+      Module::GenerateKey::Run();
+      break;
+
+    case Configuration::MODULE::HASH:
+      Module::Hashing::Run();
       break;
   }
 
