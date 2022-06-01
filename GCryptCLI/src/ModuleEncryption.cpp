@@ -2,7 +2,9 @@
 #include "DataIngestionLayer.h"
 #include "DataOutputLayer.h"
 #include "KeyManager.h"
+#include "ProgressPrinter.h"
 #include <GCrypt/GCipher.h>
+#include <iostream>
 
 using namespace Module;
 using namespace Leonetienne::GCrypt;
@@ -21,6 +23,7 @@ void Encryption::Run() {
     GCipher::DIRECTION::ENCIPHER
   );
 
+  std::size_t nBlocksDigested = 0;
   while (!IO::DataOutputLayer::IsFinished()) {
     // Read in new blocks, if not reached eof
     if (!IO::DataIngestionLayer::ReachedEOF()) {
@@ -29,8 +32,17 @@ void Encryption::Run() {
 
     // Process a block, if one is ready
     if (IO::DataIngestionLayer::IsBlockReady()) {
+
+      // Print progress, if appropriate
+      ProgressPrinter::PrintIfAppropriate(
+        "Encrypting",
+        nBlocksDigested,
+        IO::DataIngestionLayer::NBlocksRead()
+      );
+
       const Block cleartext = IO::DataIngestionLayer::GetNextBlock();
       const Block ciphertext = cipher.Digest(cleartext);
+      nBlocksDigested++;
 
       // Enqueue the block for output
       IO::DataOutputLayer::Enqueue(ciphertext);

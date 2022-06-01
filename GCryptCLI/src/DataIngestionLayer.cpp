@@ -68,6 +68,7 @@ void DataIngestionLayer::Init() {
 
   initialized = true;
   reachedEof = false;
+  nBlocksRead = 0;
 
   return;
 }
@@ -142,6 +143,7 @@ void DataIngestionLayer::ReadBlock() {
         }
 
         blocks.emplace(newBlock);
+        nBlocksRead++;
         break;
       }
 
@@ -247,6 +249,7 @@ void DataIngestionLayer::ReadBlock() {
 
                 // Enqueue it to be processed by some module
                 blocks.emplace(newBlock);
+                nBlocksRead++;
                 foundBlock = true;
 
                 // Now we have to calculate how many bytes we've read TOO MANY.
@@ -351,11 +354,16 @@ Block DataIngestionLayer::GetNextBlock() {
   return popped;
 }
 
+std::size_t DataIngestionLayer::NBlocksRead() {
+  return nBlocksRead;
+}
+
 std::istream* DataIngestionLayer::in;
 std::ifstream DataIngestionLayer::ifs;
 std::istringstream DataIngestionLayer::iss;
 bool DataIngestionLayer::reachedEof = false;
 bool DataIngestionLayer::initialized = false;
 bool DataIngestionLayer::isReadingCiphertext;
+std::size_t DataIngestionLayer::nBlocksRead = 0;
 std::queue<Block> DataIngestionLayer::blocks;
 

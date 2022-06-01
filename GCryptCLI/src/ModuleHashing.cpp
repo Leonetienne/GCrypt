@@ -1,6 +1,7 @@
 #include "ModuleHashing.h"
 #include "DataIngestionLayer.h"
 #include "DataOutputLayer.h"
+#include "ProgressPrinter.h"
 #include "KeyManager.h"
 #include <GCrypt/GHash.h>
 
@@ -19,6 +20,7 @@ void Hashing::Run() {
   GHash hasher;
 
   // Read in new blocks, if not reached eof
+  std::size_t nBlocksDigested = 0;
   while (!IO::DataIngestionLayer::IsFinished()) {
     if (!IO::DataIngestionLayer::ReachedEOF()) {
       IO::DataIngestionLayer::ReadBlock();
@@ -26,8 +28,17 @@ void Hashing::Run() {
 
     // Process a block, if one is ready
     if (IO::DataIngestionLayer::IsBlockReady()) {
+
+      // Print progress, if appropriate
+      ProgressPrinter::PrintIfAppropriate(
+        "Hashing",
+        nBlocksDigested,
+        IO::DataIngestionLayer::NBlocksRead()
+      );
+
       const Block cleartext = IO::DataIngestionLayer::GetNextBlock();
       hasher.Digest(cleartext);
+      nBlocksDigested++;
     }
   }
 
