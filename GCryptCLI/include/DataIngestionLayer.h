@@ -35,6 +35,9 @@ namespace IO {
       //! Returns true, if EOF is reached, and there are no more blocks to fetch (GetNextBlock())
       static bool IsFinished();
 
+      //! Returns how many blocks have been read, in total
+      static std::size_t NBlocksRead();
+
     private:
       static std::istream* in;
 
@@ -56,6 +59,9 @@ namespace IO {
 
       // Are we reading ciphertext or regular text?
       static bool isReadingCiphertext;
+
+      // How many blocks have been read in total
+      static std::size_t nBlocksRead;
 
       // All read blocks, that haven't been given out yet
       static std::queue<Block> blocks;

@@ -64,9 +64,12 @@ void CommandlineInterface::Init(int argc, const char* const* argv) {
   nupp.RegisterConstraint("--keyask", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--key", "--keyfile", "--hash" }));
   nupp.RegisterAbbreviation("-ka", "--keyask");
 
-  nupp.RegisterDescription("--progress", "Print digestion progress to stdout. May be advisable for large files, as the cipher is rather slow.");
+  nupp.RegisterDescription("--progress", "Print digestion progress to stderr. May be advisable for large files, as the cipher is rather slow.");
   nupp.RegisterConstraint("--progress", ParamConstraint(true, DATA_TYPE::VOID, {}, false, {}));
   nupp.RegisterAbbreviation("-p", "--progress");
+
+  nupp.RegisterDescription("--progress-interval", "Print digestion progress reports every these many blocks.");
+  nupp.RegisterConstraint("--progress-interval", ParamConstraint(true, DATA_TYPE::INT, { "1000" }, true, {}));
 
   nupp.RegisterDescription("--iobase-bytes", "Interpret and output ciphertexts as raw bytes.");
   nupp.RegisterConstraint("--iobase-bytes", ParamConstraint(true, DATA_TYPE::VOID, {}, false, { "--iobase-2", "--iobase-8", "--iobase-10", "--iobase-16", "--iobase-64", "--iobase-uwu", "--iobase-ugh" }));
@@ -166,6 +169,14 @@ void CommandlineInterface::SpecialCompatibilityChecking() {
     (nupp["--keyfile"].GetString().length() == 0)
   ) {
     CrashWithMsg("Length of --keyfile is zero! That can't be a valid path!");
+  }
+
+  if (
+    (nupp.HasParam("--progress")) &&
+    (!nupp.HasParam("--puffer-input"))
+
+  ) {
+    CrashWithMsg("--progress requires --puffer-input to work!");
   }
 
   return;
