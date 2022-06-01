@@ -57,9 +57,7 @@ void DataIngestionLayer::Init() {
   }
 
   // Derive from our the current module if we're reading ciphertext or not
-  if (
-    (Configuration::activeModule == Configuration::MODULE::DECRYPTION)
-  ) {
+  if (Configuration::activeModule == Configuration::MODULE::DECRYPTION) {
     isReadingCiphertext = true;
   }
   else {
