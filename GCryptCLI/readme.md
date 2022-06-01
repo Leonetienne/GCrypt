@@ -23,9 +23,7 @@ Have these depencies installed:
 6) Compile: `make`.
 The executable `gcrypt` should now lie in `build/`.  
 
-If you want to use this globally, you could move it to `/usr/bin/`, or some other location in your $PATH.
-
-### Options and flags
+If you want to use this globally, you could move it to `/usr/bin/`, or some other location in your $PATH. ### Options and flags
 All arguments and flags:
 ```
 CLI for the GCrypt cipher/obfuscator
@@ -203,6 +201,14 @@ $ gcrypt -e --keyask --intext "hello, world!" --iobase-uwu
 $ gcrypt -e --keyask --intext "hello, world!" --iobase-ugh
 Grr... Wha-? Aah! Aah! Uh-huh... Aah! Grr... Aah! Aah! Uh-huh... Ah... Ugh Grr... Ugh Pft! Nu-uh... Gah! Bah! Huh...? Ah... Uh-huh... Wha-? Pft! Nu-uh... Ugh Wha-? Psh! Agh! Ah... Aah! Nu-uh... Psh! Pft! Nu-uh... Psh! Shh! Gah! Ah... Pft! Gah! Shh! Bah! Gah! Uh-huh... Gah! Duh! Aah! Uh-huh... Er- Nu-uh... Gah! Wha-? Pft! Er- Shh! Ah... Huh...? Er- Wha-? Uh-huh... Ah... Shh! Ugh Bah! Wha-? Uaah! Ah... Nu-uh... Uh-huh... Ugh Pft! Pft! Gah! Shh! Shh! Wha-? Bah! Ugh Grr... Aah! Pft! Nu-uh... Ah... Aah! Agh! Er- Psh! Uaah! Nu-uh... Ugh Wha-? Uh-huh... Shh! Pft! Aah! Agh! Grr... Agh! Agh! Grr... Pft! Wha-? Wha-? Uh-huh... Aah! Ugh Aah! Pft! Gah! Bah! Huh...? Ugh Bah! Uaah! Gah! Bah! Duh! Duh! Uh-huh... Grr... Ah... Grr... Ugh Ah... Pft!
 ```
+
+Yes, you can send these... *adventorous* texsts to your friends, and they can actually decipher them
+back to the original message :). Almost going a bit into the steganography territory here, hehe.
+  
+These weird number bases don't impact security at all. This is because they are just that.
+Number bases, to represent a bunch of bytes, that is our ciphertext.
+
+These just bring a bit more fun into the big world of cryptography :).  
 
 ## LICENSE
 ```
