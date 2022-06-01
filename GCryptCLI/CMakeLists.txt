@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(gecrypt)
+project(gcrypt)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -40,5 +40,39 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   ${generalutility_include}
   ${hazelnupp_include}
   ${gcrypt_include}
+)
+
+target_compile_options(${PROJECT_NAME} PRIVATE
+  -Werror
+  -fdiagnostics-color=always
+)
+
+#########
+# Tests #
+#########
+LIST(FILTER main_src EXCLUDE REGEX ".*/main.cpp")
+FILE(GLOB test_src test/*.cpp)
+
+add_executable(test
+  test/Catch2.h
+  ${test_src}
+  ${main_src}
+  ${stringtools_src}
+  ${generalutility_src}
+  ${hazelnupp_src}
+  ${gcrypt_src}
+)
+
+target_include_directories(test PRIVATE
+  include
+  ${stringtools_include}
+  ${generalutility_include}
+  ${hazelnupp_include}
+  ${gcrypt_include}
+)
+
+target_compile_options(test PRIVATE
+  -Werror
+  -fdiagnostics-color=always
 )
 

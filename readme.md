@@ -12,7 +12,6 @@ This block cipher employs a few modes of operation. Read more about them [here](
 * It absolutely tanks your ram when working with files
 * Even leaves some key fragments in there✨
 * It's probably super insecure
-* 512-bit keys <sup>\*</sup>
 * But the syntax is pythonlike easy🙇
 
 It's pretty ghetto, you know?
@@ -40,6 +39,17 @@ and instruct your compiler to look in `GCryptLib/include` for include files.
 From there you could either hand all files in `GCryptLib/src/` to your compiler to compile, or precompile it, and link it.
 An example on how to use GCrypt in a project is right in here: GCryptCLI.
 
+### Compiling the library, tests, and example projects (in `/GCryptLib/exec/`)
+#### Prerequisites
+1) Make sure to have build-essentials, git, make, and cmake installed, and up-to-date.
+
+#### Procedure
+1) First, you have to pull all the submodules: `git submodule update --init --recursive`.
+2) Then, cd into the GCryptLib directory: `cd GCryptLib`.
+3) Run cmake: `cmake -B build`.
+4) cd into the build directory: `cd build`.
+5) Compile: `make`.
+
 ### Working with strings
 ```cpp
 using namespace Leonetienne::GCrypt;
@@ -49,11 +59,11 @@ const std::string input = "I am a super secret message!";
 std::cout << input << std::endl;
 
 // Encrypt
-const std::string encrypted = GCryptWrapper::EncryptString(input, "password1");
+const std::string encrypted = GWrapper::EncryptString(input, Key::FromPassword("password1"));
 std::cout << encrypted << std::endl;
 
 // Decrypt
-const std::string decrypted = GCryptWrapper::DecryptString(encrypted, "password1");
+const std::string decrypted = GWrapper::DecryptString(encrypted, Key::FromPassword("password1"));
 std::cout << decrypted << std::endl;
 ```
 
@@ -62,18 +72,37 @@ std::cout << decrypted << std::endl;
 using namespace Leonetienne::GCrypt;
 
 // Encrypt
-GCryptWrapper::EncryptFile("main.cpp", "main.cpp.crypt", "password1");
+GWrapper::EncryptFile("main.cpp", "main.cpp.crypt", Key::FromPassword("password1"));
 
 // Decrypt
-GCryptWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", "password1");
+GWrapper::DecryptFile("main.cpp.crypt", "main.cpp.clear", Key::FromPassword("password1"));
 ```
 
-If you want to do more complex stuff, use the cipher-class [`GCrypt::Cipher`](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/include/GCrypt/Cipher.h) aswell as the conversion methods in [Util.h](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/include/GCrypt/Util.h). This way you can cipher on bitlevel. Examples on how to do this are in [GCryptWrapper.cpp](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/src/GCryptWrapper.cpp).
-This way you could, for example, decrypt an ecrypted file directly into memory. Or use a full-length key instead of a password.
+### Prefer keyfiles instead?
+```cpp
+using namespace Leonetienne::GCrypt;
+
+// Create a random key
+const Key newKey = Key::Random(); // Will create a key from actual randomness (like, hardware events)
+
+// Use the key
+GWrapper::EncryptFile("main.cpp", "main.cpp.crypt", newKey);
+
+// Save the key to a keyfile
+newKey.WriteToFile("/var/stuff/mykeyfile");
+
+// ...
+
+// Load the key
+const Key loadedKey = Key::LoadFromFile("/var/stuff/mykeyfile");
+```
+
+If you want to do more complex stuff, use the cipher-class [`GCrypt::GCipher`](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/include/GCrypt/GCipher.h) aswell as the conversion methods in [Util.h](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/include/GCrypt/Util.h).
+This way you can cipher on bitlevel. Examples on how to do this are in [GWrapper.cpp](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/src/GWrapper.cpp).
+This way you could, for example, decrypt an ecrypted file directly into memory.
 Without saying, this is more advanced and not as-easy as the methods supplied in the wrapper.
 
 ---
-<sup>\*</sup> A key is always of size `BLOCK_SIZE`. The default block size is 512 (bit), but you can easily change it in [Config.h](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/include/GCrypt/Config.h) or wherever it'll be put in the INCLUDE/*.cpp. `BLOCK_SIZE` is also the minimal output length!
 
 ## The deets 🍝
 
@@ -83,24 +112,92 @@ Without saying, this is more advanced and not as-easy as the methods supplied in
 * [RRKM] Never heard of a mode like this, so i've named it **R**olling**R**ound**K**ey**M**ode. This basically means that the round key extrapolation is carried out continously over EVERY round on EVERY block. So in addition to *M<sub>i</sub>* being dependent on *E(M<sub>i-1</sub>,K<sub>i-1,0</sub>)* due to CBC, so is now *K<sub>i</sub>* dependent on *K<sub>i-1,r</sub>* with *r* being the maximum number of extrapolated keys within a call of *E()*. This is handled within the feistel network class, as an instance lifecycle sees all blocks. Just in case you want to take a peek.
 
 ### Password to key
-How does *GC* transform a password to a key?  
-First up, we have to establish what requirements this transformation must fulfill:
-* A full key. Not just *len(passwd)\*8* bits and the rest zero-padded.
-* Even if *len(passwd)\*8 > KEY_SIZE*, every bit of the password should affect the key
-* Diffusion
-* Ideally good collision resistance
+How does GCrypt transform a password to a key?..
+Well, it uses the included hash function [GHash](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/feature/relaunch/GCryptLib/include/GCrypt/GHash.h).
 
-Let's be honest, I'm not a cryptographer, I have no idea how collision resistant this is.
-This means, it has to be considered *insecure*!
-I have tried a few passwords brute-forcibly, experimentally (about 1mil) and have not been able to produce a collision.
-Obviously there have to be collisions, since *|P|, len\(p\) &#8712; &#8501;  &#8811; |C|, len(c)*.
+### Hashing with GHash
+GHash is a streaming hash function based on the GCipher.  
+For all intents and purposes, it does the following:
+You have a *Block b*, which is initialized with a static random distribution.
+Once you give the GHash instance a data block to digest, it will use the GCipher to encrypt it, with itself as a key, and xor that onto *b*.
+(*b<sub>i</sub> = b<sub>i-1</sub> &#8853; E(key=b, data=b)*)
 
-How does it work? Basically, what happens is your password gets recoded to binary. It is then split into blocks of
-size KEY_SIZE, and they are combined using *c<sub>i+1</sub> = c<sub>i</sub> &xoplus; E(c=block<sub>i</sub>, k=block<sub>i</sub>)*. *c<sub>0</sub>* is a static initialization vector. The final *c* is they key corresponding to a password.
+The lastest *b* represents the current result of the hash function.
 
-This is a one-way operation. Since the key used for this operation is the cleartext itself, you cannot undo it without already
-knowing the password(=cleartext) to begin with. *You could make a hashfunction out of this.*
+GHash also supports a do-it-all wrapper method that takes a Flexblock (A block of arbitrary length), and returns a hashsum for it.
+This wrapper function adds an additional block including the length of the input. This wrapper function is used to transform Passwords to Keys.
 
+### GPrng...?
+Whilst we're at it, why not implement a pseudo-random number generator based on GHash aswell. So here it is, [GPrng](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/feature/relaunch/GCryptLib/include/GCrypt/GPrng.h).  
+GPrng is really nothing special. I just wanted to implement it, mainly to visualize the GCiphers entropy.
+
+GPrng basically does the following: It creates a GHash instance, which initially digests the prng's seed. This produces a hash result, which is one block in size.
+This block gets eaten up, as pseudo-randomness is used. Once there are no bits left, the GHash instance will digest the result of this block &#8853; the initial seed.
+The xor operation ensures that an observer will never know the internal state of the GHash instance. This is important, as to ensure an observer won't be able to predict
+future output.
+
+### Speaking of... Visualizations!
+#### Single-block diffusion
+`"Hello :3"` in binary, and it's ciphertext:
+
+!["Hello :3" in binary](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-singleblock-diffusion-input.bmp.png)
+&nbsp;&nbsp;&nbsp;
+![Ciphertext 1](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-singleblock-diffusion-output.bmp.png)
+
+Now, let's flip a single bit in the input:  
+
+One bit flipped, and again the corresponding ciphertext:  
+![One bit flipped](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-singleblock-diffusion-input-flip.bmp.png)
+&nbsp;&nbsp;&nbsp;
+![Ciphertext for flipped bit](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-singleblock-diffusion-output-flip.bmp.png)
+
+Let's gif them together, to better see the difference:  
+![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-singleblock-diffusion-input.gif)
+&nbsp;&nbsp;&nbsp;
+![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-singleblock-diffusion-output.gif)
+
+As shown, flipping even a single bit, affects the entire ciphertext.
+
+#### What about input longer than a single block?
+
+Input, and ciphertext:  
+![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-multiblock-diffusion-input.gif)
+&nbsp;&nbsp;&nbsp;
+![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-multiblock-diffusion-output.gif)
+
+Notice how the ciphertext doesn't change until the block containing the bitflip is reached? This is a limitation of cipher block chaining.
+
+### What about extreme inputs?
+How non-transparent is the cipher with extreme inputs? Even with a super problematic key?:  
+
+Input, key, and ciphertext:  
+![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-extreme-input-diffusion-input.gif)
+&nbsp;&nbsp;&nbsp;
+![Key](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-extreme-input-diffusion-key.bmp.png)
+&nbsp;&nbsp;&nbsp;
+![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-extreme-input-diffusion-output.gif)
+
+Notice how even cleartexts that are completely uniform, with a key that is almost just zeores, will still produce ambiguous ciphertexts.
+
+### What about the PRNG's distribution?
+Check it out, here are the distributions of a few different getter-methods, some in black/white, some in grayscale, some in color.
+
+Blackwhite - GetBit(), Grayscale - GetRandom<T>(), and Grayscale - operator():  
+![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-prng-distribution-blackwhite.bmp.png)
+&nbsp;&nbsp;&nbsp;
+![Key](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-prng-distribution-getrandom-grayscale.bmp.png)
+&nbsp;&nbsp;&nbsp;
+![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-prng-distribution-operator-grayscale.bmp.png)
+  
+Color - GetRandom<T>(), Color - operator(), and Color - GetBlock():  
+![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-prng-distribution-getrandom-color.bmp.png)
+&nbsp;&nbsp;&nbsp;
+![Key](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-prng-distribution-operator-color.bmp.png)
+&nbsp;&nbsp;&nbsp;
+![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-prng-distribution-getblock-color.bmp.png)
+
+## Noteworthy:
+* This is no fixed algorithm. Newer versions may very well be unable to decrypt ciphertexts encrypted with earlier versions.
 
 ## LICENSE
 ```
