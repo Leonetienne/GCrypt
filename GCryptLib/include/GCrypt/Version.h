@@ -1,3 +1,7 @@
-#pragma once
-#define GHETTOCRYPT_VERSION 0.22
+#ifndef GCRYPT_VERSION_H
+#define GCRYPT_VERSION_H
+
+#define GCRYPT_VERSION 0.236
+
+#endif
 

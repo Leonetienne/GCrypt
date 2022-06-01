@@ -7,3 +7,9 @@
 [submodule "GeneralUtility"]
 	path = GeneralUtility
 	url = https://gitea.leonetienne.de/leonetienne/GeneralUtility.git
+[submodule "GCryptLib/exec/Eule"]
+	path = GCryptLib/exec/Eule
+	url = https://gitea.leonetienne.de/leonetienne/Eule.git
+[submodule "GCryptLib/exec/BmpPP"]
+	path = GCryptLib/exec/BmpPP
+	url = https://gitea.leonetienne.de/leonetienne/BmpPP.git

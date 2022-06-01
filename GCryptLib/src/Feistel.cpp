@@ -2,242 +2,256 @@
 #include "GCrypt/Feistel.h"
 #include "GCrypt/Util.h"
 #include "GCrypt/Config.h"
+#include "GCrypt/SBoxLookup.h"
 
 namespace Leonetienne::GCrypt {
 
-  Feistel::Feistel(const Block& key) {
-      SetKey(key);
-      return;
+  Feistel::Feistel() {
+  }
+
+  Feistel::Feistel(const Key& key) {
+    SetKey(key);
   }
 
   Feistel::~Feistel() {
-      ZeroKeyMemory();
-
-      return;
+    ZeroKeyMemory();
   }
 
-  void Feistel::SetKey(const Block& key) {
-      GenerateRoundKeys(key);
-      return;
+  void Feistel::SetKey(const Key& key) {
+    GenerateRoundKeys(key);
+    isInitialized = true;
   }
 
   Block Feistel::Encipher(const Block& data) {
-      return Run(data, false);
+    return Run(data, false);
   }
 
   Block Feistel::Decipher(const Block& data) {
-      return Run(data, true);
+    return Run(data, true);
   }
 
-  Block Feistel::Run(const Block& data, bool reverseKeys) {
-      const auto splitData = FeistelSplit(data);
-      Halfblock l = splitData.first;
-      Halfblock r = splitData.second;
+  Block Feistel::Run(const Block& data, bool modeEncrypt) {
+    if (!isInitialized) {
+      throw std::runtime_error("Attempted to digest data on uninitialized GCipher!");
+    }
 
-      Halfblock tmp;
+    const auto splitData = FeistelSplit(data);
+    Halfblock l = splitData.first;
+    Halfblock r = splitData.second;
 
-      for (std::size_t i = 0; i < N_ROUNDS; i++) {
-          // Calculate key index
-          std::size_t keyIndex;
-          if (reverseKeys) {
-              keyIndex = N_ROUNDS - i - 1;
-          }
-          else {
-              keyIndex = i;
-          }
+    Halfblock tmp;
 
-          // Do a feistel round
-          tmp = r;
-          r = l ^ F(r, roundKeys[keyIndex]);
-          l = tmp;
+    for (std::size_t i = 0; i < N_ROUNDS; i++) {
+
+      // Encryption
+      if (modeEncrypt) {
+        const std::size_t keyIndex = i;
+
+        // Do a feistel round
+        tmp = r;
+        r = l ^ F(r, roundKeys[keyIndex]);
+        l = tmp;
+
+        // Jumble it up a bit more
+        l.ShiftRowsUpInplace();
+        l.ShiftCellsRightInplace();
+        l.ShiftBitsLeftInplace();
+        l.ShiftColumnsLeftInplace();
+        // Seal all these operations with a key
+        l += ReductionFunction(roundKeys[keyIndex]);
       }
 
-      // Block has finished de*ciphering.
-      // Let's generate a new set of round keys.
-      GenerateRoundKeys((Block)roundKeys.back());
+      // Decryption
+      else {
+        // Decryption needs keys in reverse order
+        const std::size_t keyIndex = N_ROUNDS - i - 1;
 
-      return FeistelCombine(r, l);
+        // Unjumble the jumble
+        r -= ReductionFunction(roundKeys[keyIndex]);
+        r.ShiftColumnsRightInplace();
+        r.ShiftBitsRightInplace();
+        r.ShiftCellsLeftInplace();
+        r.ShiftRowsDownInplace();
+
+        // Do a feistel round
+        tmp = r;
+        r = l ^ F(r, roundKeys[keyIndex]);
+        l = tmp;
+      }
+
+    }
+
+    // Block has finished de*ciphering.
+    // Let's generate a new set of round keys.
+    GenerateRoundKeys(roundKeys.back());
+
+    return FeistelCombine(r, l);
   }
 
-  Halfblock Feistel::F(Halfblock m, const Block& key) {
-      // Made-up F function
+  Halfblock Feistel::F(Halfblock m, const Key& key) {
 
-      // Expand to full bitwidth
-      Block m_expanded = ExpansionFunction(m);
+    // Made-up F function:
+    // Expand to full bitwidth
+    Block m_expanded = ExpansionFunction(m);
 
-      // Shift to left by 1
-      m_expanded = Shiftl(m_expanded, 1);
+    // Mix up the block a bit
+    m_expanded.ShiftCellsRightInplace();
+    m_expanded.ShiftRowsUpInplace();
 
-      // Xor with key
-      m_expanded ^= key;
+    // Matrix-mult with key (this is irreversible)
+    m_expanded *= key;
 
-      // Non-linearly apply subsitution boxes
-      std::stringstream ss;
-      const std::string m_str = m_expanded.to_string();
+    // Now do a bitshift
+    m_expanded.ShiftBitsLeftInplace();
 
-      for (std::size_t i = 0; i < BLOCK_SIZE; i += 4) {
-          ss << SBox(m_str.substr(i, 4));
-      }
+    // Apply the sbox
+    SBox(m_expanded);
 
-      m_expanded = Block(ss.str());
+    // Reduce back to a halfblock
+    Halfblock hb = ReductionFunction(m_expanded);
 
-      // Return the compressed version
-      return CompressionFunction(m_expanded);
+    // To jumble it up a last time,
+    // matrix-multiply it with the input halfblock
+    hb *= m;
+
+    return hb;
   }
 
   std::pair<Halfblock, Halfblock> Feistel::FeistelSplit(const Block& block) {
-      const std::string bits = block.to_string();
+    Halfblock l;
+    Halfblock r;
 
-      Halfblock l(bits.substr(0, bits.size() / 2));
-      Halfblock r(bits.substr(bits.size() / 2));
+    memcpy(l.Data(), block.Data(), Halfblock::BLOCK_SIZE);
+    memcpy(r.Data(), block.Data() + 8, Halfblock::BLOCK_SIZE);
+    // +8, because 8 is HALF the number of elements in the array. We only want to copy HALF a full-sized block.
 
-      return std::make_pair(l, r);
+    return std::make_pair(l, r);
   }
 
   Block Feistel::FeistelCombine(const Halfblock& l, const Halfblock& r) {
-      return Block(l.to_string() + r.to_string());
+    Block b;
+
+    memcpy(b.Data(), l.Data(), Halfblock::BLOCK_SIZE);
+    memcpy(b.Data() + 8, r.Data(), Halfblock::BLOCK_SIZE);
+    // +8, because 8 is HALF the number of elements in the array. We only want to copy HALF a full-sized block.
+
+    return b;
   }
 
-  Block Feistel::ExpansionFunction(const Halfblock& block) {
-      std::stringstream ss;
-      const std::string bits = block.to_string();
+  Block Feistel::ExpansionFunction(const Halfblock& hb) {
+    Block b;
 
-      std::unordered_map<std::string, std::string> expansionMap;
-      expansionMap["00"] = "1101";
-      expansionMap["01"] = "1000";
-      expansionMap["10"] = "0010";
-      expansionMap["11"] = "0111";
+    // Copy the bits over
+    for (std::size_t i = 0; i < 16; i++) {
+      b[i] = hb[i];
+    }
 
-      // We have to double the bits!
-      for (std::size_t i = 0; i < HALFBLOCK_SIZE; i += 2) {
-          const std::string sub = bits.substr(i, 2);
-          ss << expansionMap[sub];
-      }
+    // Multiply the block a few tims with a bitshifted version
+    // This is irriversible, too
+    for (std::size_t i = 0; i < 3; i++) {
+      b *= b.ShiftBitsRight();
+    }
 
-      return Block(ss.str());
+    return b;
   }
 
-  Halfblock Feistel::CompressionFunction(const Block& block) {
-      std::stringstream ss;
-      const std::string bits = block.to_string();
+  Halfblock Feistel::ReductionFunction(const Block& block) {
 
-      std::unordered_map<std::string, std::string> compressionMap;
-      compressionMap["0000"] = "10";
-      compressionMap["0001"] = "01";
-      compressionMap["0010"] = "10";
-      compressionMap["0011"] = "10";
-      compressionMap["0100"] = "11";
-      compressionMap["0101"] = "01";
-      compressionMap["0110"] = "00";
-      compressionMap["0111"] = "11";
-      compressionMap["1000"] = "01";
-      compressionMap["1001"] = "00";
-      compressionMap["1010"] = "11";
-      compressionMap["1011"] = "00";
-      compressionMap["1100"] = "11";
-      compressionMap["1101"] = "10";
-      compressionMap["1110"] = "00";
-      compressionMap["1111"] = "01";
+    // Just apply a modulo operation, remapping a 32bit integer
+    // onto 16bit space (default configuration).
+    // Without saying, modulo is irreversible.
+    Halfblock hb;
+    for (std::size_t i = 0; i < 16; i++) {
+      hb[i] = block[i] % (1 << (Halfblock::CHUNK_SIZE_BITS - 1));
+    }
 
-      // We have to half the bits!
-      for (std::size_t i = 0; i < BLOCK_SIZE; i += 4) {
-          const std::string sub = bits.substr(i, 4);
-          ss << compressionMap[sub];
-      }
-
-      return Halfblock(ss.str());
+    return hb;
   }
 
+  void Feistel::SBox(Block& block) {
+
+    std::uint8_t* curByte = (std::uint8_t*)(void*)block.Data();
+
+    // Iterate over all bytes in the block
+    for (std::size_t i = 0; i < Block::BLOCK_SIZE; i++) {
+      curByte++;
+
+      // Subsitute byte
+      *curByte = sboxLookup[*curByte];
+    }
+
+    return;
+  }
+
+  /*
   std::string Feistel::SBox(const std::string& in) {
-      static std::unordered_map<std::string, std::string> subMap;
-      static bool mapInitialized = false;
-      if (!mapInitialized) {
-          subMap["0000"] = "1100";
-          subMap["0001"] = "1000";
-          subMap["0010"] = "0001";
-          subMap["0011"] = "0111";
-          subMap["0100"] = "1011";
-          subMap["0101"] = "0011";
-          subMap["0110"] = "1101";
-          subMap["0111"] = "1111";
-          subMap["1000"] = "0000";
-          subMap["1001"] = "1010";
-          subMap["1010"] = "0100";
-          subMap["1011"] = "1001";
-          subMap["1100"] = "0010";
-          subMap["1101"] = "1110";
-          subMap["1110"] = "0101";
-          subMap["1111"] = "0110";
-          mapInitialized = true;
-      }
+    static std::unordered_map<std::string, std::string> subMap;
+    static bool mapInitialized = false;
+    if (!mapInitialized) {
+      subMap["0000"] = "1100";
+      subMap["0001"] = "1000";
+      subMap["0010"] = "0001";
+      subMap["0011"] = "0111";
+      subMap["0100"] = "1011";
+      subMap["0101"] = "0011";
+      subMap["0110"] = "1101";
+      subMap["0111"] = "1111";
+      subMap["1000"] = "0000";
+      subMap["1001"] = "1010";
+      subMap["1010"] = "0100";
+      subMap["1011"] = "1001";
+      subMap["1100"] = "0010";
+      subMap["1101"] = "1110";
+      subMap["1110"] = "0101";
+      subMap["1111"] = "0110";
+      mapInitialized = true;
+    }
 
-      return subMap[in];
+    return subMap[in];
+  }
+  */
+
+  void Feistel::GenerateRoundKeys(const Key& seedKey) {
+    // Clear initial key memory
+    ZeroKeyMemory();
+    roundKeys = Keyset();
+
+    // Derive all round keys with simple matrix operations
+    roundKeys[0] = seedKey;
+
+    for (std::size_t i = 1; i < roundKeys.size(); i++) {
+      // Initialize new round key with last round key
+      const Key& lastKey = roundKeys[i - 1];
+      roundKeys[i] = lastKey;
+
+      // Stir it good
+      roundKeys[i].ShiftRowsUpInplace();
+
+      // Bitshift and matrix-mult 3 times
+      // (each time jumbles it up pretty good)
+      // This is irreversible
+      roundKeys[i].ShiftBitsRightInplace();
+      roundKeys[i] *= lastKey;
+      roundKeys[i].ShiftBitsRightInplace();
+      roundKeys[i] *= lastKey;
+      roundKeys[i].ShiftBitsRightInplace();
+      roundKeys[i] *= lastKey;
+
+      // Lastly, do apply some cell shifting, and other mutations
+      roundKeys[i].ShiftCellsRightInplace();
+      roundKeys[i] += lastKey;
+      roundKeys[i].ShiftColumnsRightInplace();
+      roundKeys[i] ^= lastKey;
+    }
+
+    return;
   }
 
-  void Feistel::GenerateRoundKeys(const Block& seedKey) {
-      // Clear initial key memory
-      ZeroKeyMemory();
-      roundKeys = Keyset();
+  void Feistel::operator=(const Feistel& other) {
+    roundKeys = other.roundKeys;
+    isInitialized = other.isInitialized;
 
-      // Derive the initial two round keys
-
-      // Compress- substitute, and expand the seed key to form the initial and the second-initial round key
-      // This action is non-linear and irreversible, and thus strenghtens security.
-      Halfblock compressedSeed1 = CompressionFunction(seedKey);
-      Halfblock compressedSeed2 = CompressionFunction(Shiftl(seedKey, 1)); // Shifting one key by 1 will result in a completely different compression
-
-      // To add further confusion, let's shift seed1 by 1 aswell (after compression, but before substitution)
-      // but only if the total number of bits set are a multiple of 3
-      // if it is a multiple of 4, we'll shift it by 1 into the opposite direction
-      const std::size_t setBits1 = compressedSeed1.count();
-
-      if (setBits1 % 4 == 0) {
-          compressedSeed1 = Shiftr(compressedSeed1, 1);
-      }
-      else if (setBits1 % 3 == 0) {
-          compressedSeed1 = Shiftl(compressedSeed1, 1);
-      }
-
-      // Now apply substitution
-      std::stringstream ssKey1;
-      std::stringstream ssKey2;
-      const std::string bitsKey1 = compressedSeed1.to_string();
-      const std::string bitsKey2 = compressedSeed2.to_string();
-
-      for (std::size_t i = 0; i < HALFBLOCK_SIZE; i += 4) {
-          ssKey1 << SBox(bitsKey1.substr(i, 4));
-          ssKey2 << SBox(bitsKey2.substr(i, 4));
-      }
-
-      compressedSeed1 = Halfblock(ssKey1.str());
-      compressedSeed2 = Halfblock(ssKey2.str());
-
-      // Now extrapolate them to BLOCK_SIZE (key size) again
-      // Xor with the original seed key to get rid of the repititions caused by the expansion
-      roundKeys[0] = ExpansionFunction(compressedSeed1) ^ seedKey;
-      roundKeys[1] = ExpansionFunction(compressedSeed2) ^ seedKey;
-
-      // Now derive all other round keys
-
-      for (std::size_t i = 2; i < roundKeys.size(); i++) {
-          // Initialize new round key with last round key
-          Block newKey = roundKeys[i - 1];
-
-          // Shift to left by how many bits are set, modulo 8
-          newKey = Shiftl(newKey, newKey.count() % 8); // This action is irreversible
-
-          // Split into two halfblocks,
-          // apply F() to one halfblock with rk[i-2],
-          // xor the other one with it
-          // and put them back together
-          auto halfkeys = FeistelSplit(newKey);
-          Halfblock halfkey1 = F(halfkeys.first, roundKeys[i - 2]);
-          Halfblock halfkey2 = halfkeys.second ^ halfkey1; // I know this is reversible, but it helps to diffuse future round keys.
-
-          roundKeys[i] = FeistelCombine(halfkey1, halfkey2);
-      }
-
-      return;
+    return;
   }
 
   // These pragmas only work for MSVC and g++, as far as i know. Beware!!!
@@ -248,11 +262,11 @@ namespace Leonetienne::GCrypt {
 #pragma GCC optimize ("O0")
 #endif
   void Feistel::ZeroKeyMemory() {
-      for (Block& key : roundKeys) {
-          key.reset();
-      }
+    for (Key& key : roundKeys) {
+      key.Reset();
+    }
 
-      return;
+    return;
   }
 #if defined _WIN32 || defined _WIN64
 #pragma optimize("", on )
