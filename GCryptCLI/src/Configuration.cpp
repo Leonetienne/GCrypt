@@ -93,11 +93,8 @@ void Configuration::DecideCiphertextFormat() {
 
   // So we have no iobase explicitly specified.. Let's default..
 
-  // If we are encrypting or hashing,
-  else if (
-      (activeModule == MODULE::ENCRYPTION) ||
-      (activeModule == MODULE::HASH)
-  ) {
+  // If we are encrypting,
+  else if (activeModule == MODULE::ENCRYPTION) {
     // and input comes from a parameter,
     // and output goes to stdout,
     // let's assume base-16.
@@ -114,6 +111,12 @@ void Configuration::DecideCiphertextFormat() {
       return;
     }
 
+  }
+
+  // Else, if we are hashing,
+  else if (activeModule == MODULE::HASH) {
+    // output is always defaults to base 16
+    ciphertextFormat = IOBASE_FORMAT::BASE_16;
   }
 
   // Else, if we are decrypting,
