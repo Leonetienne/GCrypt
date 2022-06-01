@@ -30,8 +30,8 @@ All arguments and flags:
 ```
 CLI for the GCrypt cipher/obfuscator
 Copyright (c) 2022 Leon Etienne
-GCrypt v0.236
-GCrypt CLI v0.1241
+GCryptLib v0.236
+GCryptCLI v0.12511
 THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS TO ENCRYPT SENSITIVE DATA! READ THE README FILES ACCESSIBLE AT "https://gitea.leonetienne.de/leonetienne/GCrypt"
 
 ==== AVAILABLE PARAMETERS ====
@@ -40,7 +40,11 @@ THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS T
 
 --iobase-16   VOID   incompatibilities=[--iobase-bytes, --iobase-2, --iobase-8, --iobase-64, --iobase-uwu, --iobase-ugh]   Interpret and format ciphertexts in base16 (hex)
 
---progress   -p   VOID   Print digestion progress to stdout. May be advisable for large files, as the cipher is rather slow.
+--progress-interval   INT   default=['1000']   Print digestion progress reports every these many data blocks.
+
+--puffer-input   VOID   Will read the entire input before beginning any digestion.
+
+--progress   -p   VOID   Print digestion progress to stderr. May be advisable for large files, as the cipher is rather slow.
 
 --cli-version   -v   VOID   Will supply the version of GCryptCLI used.
 
@@ -50,19 +54,7 @@ THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS T
 
 --iobase-10   VOID   incompatibilities=[--iobase-bytes, --iobase-2, --iobase-8, --iobase-16, --iobase-64, --iobase-uwu, --iobase-ugh]   Interpret and format ciphertexts in base10
 
---ofile   -o   STRING   incompatibilities=[--ostdout, --hash]   Write output in this file.
-
---key   -k   STRING   incompatibilities=[--keyfile, --keyask, --hash]   Use this value as a password to extrapolate the encryption key. WARNING: Arguments may be logged by the system!
-
---keyask   -ka   VOID   incompatibilities=[--key, --keyfile, --hash]   Read the encryption key from stdin.
-
---no-newline   VOID   Don't postfix stdout output with a newline
-
 --puffer-output   VOID   Will digest the entire data before initiating any output.
-
---puffer-input   VOID   Will read the entire input before beginning any digestion.
-
---decrypt   -d   VOID   incompatibilities=[--encrypt, --hash, --generate-key]   Use decryption module.
 
 --lib-version   VOID   Will supply the version of GCryptLib used.
 
@@ -79,6 +71,16 @@ THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS T
 --encrypt   -e   VOID   incompatibilities=[--decrypt, --hash]   Use the encryption module.
 
 --generate-key   VOID   incompatibilities=[--encrypt, --decrypt, --hash]   Use the key generation module. Will generate a random key based on hardware events, output it, and exit.
+
+--ofile   -o   STRING   incompatibilities=[--ostdout, --hash]   Write output in this file.
+
+--key   -k   STRING   incompatibilities=[--keyfile, --keyask, --hash]   Use this value as a password to extrapolate the encryption key. WARNING: Arguments may be logged by the system!
+
+--keyask   -ka   VOID   incompatibilities=[--key, --keyfile, --hash]   Read the encryption key from stdin.
+
+--no-newline   VOID   Don't postfix stdout output with a newline
+
+--decrypt   -d   VOID   incompatibilities=[--encrypt, --hash, --generate-key]   Use decryption module.
 
 --hash   -h   VOID   incompatibilities=[--encrypt, --decrypt, --generate-key]   Use the GHash hash module to calculate a hashsum.
 
