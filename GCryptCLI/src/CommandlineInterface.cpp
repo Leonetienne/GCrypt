@@ -13,8 +13,8 @@ void CommandlineInterface::Init(int argc, const char* const* argv) {
   std::stringstream ss;
   ss << "CLI for the GCrypt cipher/obfuscator" << std::endl
     << "Copyright (c) 2022 Leon Etienne" << std::endl
-    << "GCrypt v" << GCRYPT_VERSION << std::endl
-    << "GCrypt CLI v" << GCRYPTCLI_VERSION << std::endl
+    << "GCryptLib v" << GCRYPT_VERSION << std::endl
+    << "GCryptCLI v" << GCRYPTCLI_VERSION << std::endl
     << "THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS TO ENCRYPT SENSITIVE DATA! READ THE README FILES ACCESSIBLE AT \"https://gitea.leonetienne.de/leonetienne/GCrypt\"";
   nupp.SetBriefDescription(ss.str());
   ss.str("");
