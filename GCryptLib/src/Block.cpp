@@ -9,7 +9,11 @@
 
 // Just to be sure, the compiler will optimize this
 // little formula out, let's do it in the preprocessor
-#define MAT_INDEX(row, column) (column*4 + row)
+namespace {
+  constexpr std::size_t MAT_INDEX(const std::size_t row, const std::size_t column) {
+    return column*4 + row;
+  }
+}
 
 namespace Leonetienne::GCrypt {
 
@@ -148,25 +152,25 @@ namespace Leonetienne::GCrypt {
 
     // Maybe pre-calculate the 1d-index...?
 
-    m.Get(0, 0) = (this->Get(0, 0) * o.Get(0, 0)) + (this->Get(0, 1) * o.Get(1, 0)) + (this->Get(0, 2) * o.Get(2, 0)) + (this->Get(0, 3) * o.Get(3, 0));
-    m.Get(0, 1) = (this->Get(0, 0) * o.Get(0, 1)) + (this->Get(0, 1) * o.Get(1, 1)) + (this->Get(0, 2) * o.Get(2, 1)) + (this->Get(0, 3) * o.Get(3, 1));
-    m.Get(0, 2) = (this->Get(0, 0) * o.Get(0, 2)) + (this->Get(0, 1) * o.Get(1, 2)) + (this->Get(0, 2) * o.Get(2, 2)) + (this->Get(0, 3) * o.Get(3, 2));
-    m.Get(0, 3) = (this->Get(0, 0) * o.Get(0, 3)) + (this->Get(0, 1) * o.Get(1, 3)) + (this->Get(0, 2) * o.Get(2, 3)) + (this->Get(0, 3) * o.Get(3, 3));
+    m.Get(MAT_INDEX(0, 0)) = (this->Get(MAT_INDEX(0, 0)) * o.Get(MAT_INDEX(0, 0))) + (this->Get(MAT_INDEX(0, 1)) * o.Get(MAT_INDEX(1, 0))) + (this->Get(MAT_INDEX(0, 2)) * o.Get(MAT_INDEX(2, 0))) + (this->Get(MAT_INDEX(0, 3)) * o.Get(MAT_INDEX(3, 0)));
+    m.Get(MAT_INDEX(0, 1)) = (this->Get(MAT_INDEX(0, 0)) * o.Get(MAT_INDEX(0, 1))) + (this->Get(MAT_INDEX(0, 1)) * o.Get(MAT_INDEX(1, 1))) + (this->Get(MAT_INDEX(0, 2)) * o.Get(MAT_INDEX(2, 1))) + (this->Get(MAT_INDEX(0, 3)) * o.Get(MAT_INDEX(3, 1)));
+    m.Get(MAT_INDEX(0, 2)) = (this->Get(MAT_INDEX(0, 0)) * o.Get(MAT_INDEX(0, 2))) + (this->Get(MAT_INDEX(0, 1)) * o.Get(MAT_INDEX(1, 2))) + (this->Get(MAT_INDEX(0, 2)) * o.Get(MAT_INDEX(2, 2))) + (this->Get(MAT_INDEX(0, 3)) * o.Get(MAT_INDEX(3, 2)));
+    m.Get(MAT_INDEX(0, 3)) = (this->Get(MAT_INDEX(0, 0)) * o.Get(MAT_INDEX(0, 3))) + (this->Get(MAT_INDEX(0, 1)) * o.Get(MAT_INDEX(1, 3))) + (this->Get(MAT_INDEX(0, 2)) * o.Get(MAT_INDEX(2, 3))) + (this->Get(MAT_INDEX(0, 3)) * o.Get(MAT_INDEX(3, 3)));
 
-    m.Get(1, 0) = (this->Get(1, 0) * o.Get(0, 0)) + (this->Get(1, 1) * o.Get(1, 0)) + (this->Get(1, 2) * o.Get(2, 0)) + (this->Get(1, 3) * o.Get(3, 0));
-    m.Get(1, 1) = (this->Get(1, 0) * o.Get(0, 1)) + (this->Get(1, 1) * o.Get(1, 1)) + (this->Get(1, 2) * o.Get(2, 1)) + (this->Get(1, 3) * o.Get(3, 1));
-    m.Get(1, 2) = (this->Get(1, 0) * o.Get(0, 2)) + (this->Get(1, 1) * o.Get(1, 2)) + (this->Get(1, 2) * o.Get(2, 2)) + (this->Get(1, 3) * o.Get(3, 2));
-    m.Get(1, 3) = (this->Get(1, 0) * o.Get(0, 3)) + (this->Get(1, 1) * o.Get(1, 3)) + (this->Get(1, 2) * o.Get(2, 3)) + (this->Get(1, 3) * o.Get(3, 3));
+    m.Get(MAT_INDEX(1, 0)) = (this->Get(MAT_INDEX(1, 0)) * o.Get(MAT_INDEX(0, 0))) + (this->Get(MAT_INDEX(1, 1)) * o.Get(MAT_INDEX(1, 0))) + (this->Get(MAT_INDEX(1, 2)) * o.Get(MAT_INDEX(2, 0))) + (this->Get(MAT_INDEX(1, 3)) * o.Get(MAT_INDEX(3, 0)));
+    m.Get(MAT_INDEX(1, 1)) = (this->Get(MAT_INDEX(1, 0)) * o.Get(MAT_INDEX(0, 1))) + (this->Get(MAT_INDEX(1, 1)) * o.Get(MAT_INDEX(1, 1))) + (this->Get(MAT_INDEX(1, 2)) * o.Get(MAT_INDEX(2, 1))) + (this->Get(MAT_INDEX(1, 3)) * o.Get(MAT_INDEX(3, 1)));
+    m.Get(MAT_INDEX(1, 2)) = (this->Get(MAT_INDEX(1, 0)) * o.Get(MAT_INDEX(0, 2))) + (this->Get(MAT_INDEX(1, 1)) * o.Get(MAT_INDEX(1, 2))) + (this->Get(MAT_INDEX(1, 2)) * o.Get(MAT_INDEX(2, 2))) + (this->Get(MAT_INDEX(1, 3)) * o.Get(MAT_INDEX(3, 2)));
+    m.Get(MAT_INDEX(1, 3)) = (this->Get(MAT_INDEX(1, 0)) * o.Get(MAT_INDEX(0, 3))) + (this->Get(MAT_INDEX(1, 1)) * o.Get(MAT_INDEX(1, 3))) + (this->Get(MAT_INDEX(1, 2)) * o.Get(MAT_INDEX(2, 3))) + (this->Get(MAT_INDEX(1, 3)) * o.Get(MAT_INDEX(3, 3)));
 
-    m.Get(2, 0) = (this->Get(2, 0) * o.Get(0, 0)) + (this->Get(2, 1) * o.Get(1, 0)) + (this->Get(2, 2) * o.Get(2, 0)) + (this->Get(2, 3) * o.Get(3, 0));
-    m.Get(2, 1) = (this->Get(2, 0) * o.Get(0, 1)) + (this->Get(2, 1) * o.Get(1, 1)) + (this->Get(2, 2) * o.Get(2, 1)) + (this->Get(2, 3) * o.Get(3, 1));
-    m.Get(2, 2) = (this->Get(2, 0) * o.Get(0, 2)) + (this->Get(2, 1) * o.Get(1, 2)) + (this->Get(2, 2) * o.Get(2, 2)) + (this->Get(2, 3) * o.Get(3, 2));
-    m.Get(2, 3) = (this->Get(2, 0) * o.Get(0, 3)) + (this->Get(2, 1) * o.Get(1, 3)) + (this->Get(2, 2) * o.Get(2, 3)) + (this->Get(2, 3) * o.Get(3, 3));
+    m.Get(MAT_INDEX(2, 0)) = (this->Get(MAT_INDEX(2, 0)) * o.Get(MAT_INDEX(0, 0))) + (this->Get(MAT_INDEX(2, 1)) * o.Get(MAT_INDEX(1, 0))) + (this->Get(MAT_INDEX(2, 2)) * o.Get(MAT_INDEX(2, 0))) + (this->Get(MAT_INDEX(2, 3)) * o.Get(MAT_INDEX(3, 0)));
+    m.Get(MAT_INDEX(2, 1)) = (this->Get(MAT_INDEX(2, 0)) * o.Get(MAT_INDEX(0, 1))) + (this->Get(MAT_INDEX(2, 1)) * o.Get(MAT_INDEX(1, 1))) + (this->Get(MAT_INDEX(2, 2)) * o.Get(MAT_INDEX(2, 1))) + (this->Get(MAT_INDEX(2, 3)) * o.Get(MAT_INDEX(3, 1)));
+    m.Get(MAT_INDEX(2, 2)) = (this->Get(MAT_INDEX(2, 0)) * o.Get(MAT_INDEX(0, 2))) + (this->Get(MAT_INDEX(2, 1)) * o.Get(MAT_INDEX(1, 2))) + (this->Get(MAT_INDEX(2, 2)) * o.Get(MAT_INDEX(2, 2))) + (this->Get(MAT_INDEX(2, 3)) * o.Get(MAT_INDEX(3, 2)));
+    m.Get(MAT_INDEX(2, 3)) = (this->Get(MAT_INDEX(2, 0)) * o.Get(MAT_INDEX(0, 3))) + (this->Get(MAT_INDEX(2, 1)) * o.Get(MAT_INDEX(1, 3))) + (this->Get(MAT_INDEX(2, 2)) * o.Get(MAT_INDEX(2, 3))) + (this->Get(MAT_INDEX(2, 3)) * o.Get(MAT_INDEX(3, 3)));
 
-    m.Get(3, 0) = (this->Get(3, 0) * o.Get(0, 0)) + (this->Get(3, 1) * o.Get(1, 0)) + (this->Get(3, 2) * o.Get(2, 0)) + (this->Get(3, 3) * o.Get(3, 0));
-    m.Get(3, 1) = (this->Get(3, 0) * o.Get(0, 1)) + (this->Get(3, 1) * o.Get(1, 1)) + (this->Get(3, 2) * o.Get(2, 1)) + (this->Get(3, 3) * o.Get(3, 1));
-    m.Get(3, 2) = (this->Get(3, 0) * o.Get(0, 2)) + (this->Get(3, 1) * o.Get(1, 2)) + (this->Get(3, 2) * o.Get(2, 2)) + (this->Get(3, 3) * o.Get(3, 2));
-    m.Get(3, 3) = (this->Get(3, 0) * o.Get(0, 3)) + (this->Get(3, 1) * o.Get(1, 3)) + (this->Get(3, 2) * o.Get(2, 3)) + (this->Get(3, 3) * o.Get(3, 3));
+    m.Get(MAT_INDEX(3, 0)) = (this->Get(MAT_INDEX(3, 0)) * o.Get(MAT_INDEX(0, 0))) + (this->Get(MAT_INDEX(3, 1)) * o.Get(MAT_INDEX(1, 0))) + (this->Get(MAT_INDEX(3, 2)) * o.Get(MAT_INDEX(2, 0))) + (this->Get(MAT_INDEX(3, 3)) * o.Get(MAT_INDEX(3, 0)));
+    m.Get(MAT_INDEX(3, 1)) = (this->Get(MAT_INDEX(3, 0)) * o.Get(MAT_INDEX(0, 1))) + (this->Get(MAT_INDEX(3, 1)) * o.Get(MAT_INDEX(1, 1))) + (this->Get(MAT_INDEX(3, 2)) * o.Get(MAT_INDEX(2, 1))) + (this->Get(MAT_INDEX(3, 3)) * o.Get(MAT_INDEX(3, 1)));
+    m.Get(MAT_INDEX(3, 2)) = (this->Get(MAT_INDEX(3, 0)) * o.Get(MAT_INDEX(0, 2))) + (this->Get(MAT_INDEX(3, 1)) * o.Get(MAT_INDEX(1, 2))) + (this->Get(MAT_INDEX(3, 2)) * o.Get(MAT_INDEX(2, 2))) + (this->Get(MAT_INDEX(3, 3)) * o.Get(MAT_INDEX(3, 2)));
+    m.Get(MAT_INDEX(3, 3)) = (this->Get(MAT_INDEX(3, 0)) * o.Get(MAT_INDEX(0, 3))) + (this->Get(MAT_INDEX(3, 1)) * o.Get(MAT_INDEX(1, 3))) + (this->Get(MAT_INDEX(3, 2)) * o.Get(MAT_INDEX(2, 3))) + (this->Get(MAT_INDEX(3, 3)) * o.Get(MAT_INDEX(3, 3)));
 
     return m;
   }
@@ -183,25 +187,25 @@ namespace Leonetienne::GCrypt {
 
     // Maybe pre-calculate the 1d-index...?
 
-    this->Get(0, 0) = (m.Get(0, 0) * o.Get(0, 0)) + (m.Get(0, 1) * o.Get(1, 0)) + (m.Get(0, 2) * o.Get(2, 0)) + (m.Get(0, 3) * o.Get(3, 0));
-    this->Get(0, 1) = (m.Get(0, 0) * o.Get(0, 1)) + (m.Get(0, 1) * o.Get(1, 1)) + (m.Get(0, 2) * o.Get(2, 1)) + (m.Get(0, 3) * o.Get(3, 1));
-    this->Get(0, 2) = (m.Get(0, 0) * o.Get(0, 2)) + (m.Get(0, 1) * o.Get(1, 2)) + (m.Get(0, 2) * o.Get(2, 2)) + (m.Get(0, 3) * o.Get(3, 2));
-    this->Get(0, 3) = (m.Get(0, 0) * o.Get(0, 3)) + (m.Get(0, 1) * o.Get(1, 3)) + (m.Get(0, 2) * o.Get(2, 3)) + (m.Get(0, 3) * o.Get(3, 3));
+    this->Get(MAT_INDEX(0, 0)) = (m.Get(MAT_INDEX(0, 0)) * o.Get(MAT_INDEX(0, 0))) + (m.Get(MAT_INDEX(0, 1)) * o.Get(MAT_INDEX(1, 0))) + (m.Get(MAT_INDEX(0, 2)) * o.Get(MAT_INDEX(2, 0))) + (m.Get(MAT_INDEX(0, 3)) * o.Get(MAT_INDEX(3, 0)));
+    this->Get(MAT_INDEX(0, 1)) = (m.Get(MAT_INDEX(0, 0)) * o.Get(MAT_INDEX(0, 1))) + (m.Get(MAT_INDEX(0, 1)) * o.Get(MAT_INDEX(1, 1))) + (m.Get(MAT_INDEX(0, 2)) * o.Get(MAT_INDEX(2, 1))) + (m.Get(MAT_INDEX(0, 3)) * o.Get(MAT_INDEX(3, 1)));
+    this->Get(MAT_INDEX(0, 2)) = (m.Get(MAT_INDEX(0, 0)) * o.Get(MAT_INDEX(0, 2))) + (m.Get(MAT_INDEX(0, 1)) * o.Get(MAT_INDEX(1, 2))) + (m.Get(MAT_INDEX(0, 2)) * o.Get(MAT_INDEX(2, 2))) + (m.Get(MAT_INDEX(0, 3)) * o.Get(MAT_INDEX(3, 2)));
+    this->Get(MAT_INDEX(0, 3)) = (m.Get(MAT_INDEX(0, 0)) * o.Get(MAT_INDEX(0, 3))) + (m.Get(MAT_INDEX(0, 1)) * o.Get(MAT_INDEX(1, 3))) + (m.Get(MAT_INDEX(0, 2)) * o.Get(MAT_INDEX(2, 3))) + (m.Get(MAT_INDEX(0, 3)) * o.Get(MAT_INDEX(3, 3)));
 
-    this->Get(1, 0) = (m.Get(1, 0) * o.Get(0, 0)) + (m.Get(1, 1) * o.Get(1, 0)) + (m.Get(1, 2) * o.Get(2, 0)) + (m.Get(1, 3) * o.Get(3, 0));
-    this->Get(1, 1) = (m.Get(1, 0) * o.Get(0, 1)) + (m.Get(1, 1) * o.Get(1, 1)) + (m.Get(1, 2) * o.Get(2, 1)) + (m.Get(1, 3) * o.Get(3, 1));
-    this->Get(1, 2) = (m.Get(1, 0) * o.Get(0, 2)) + (m.Get(1, 1) * o.Get(1, 2)) + (m.Get(1, 2) * o.Get(2, 2)) + (m.Get(1, 3) * o.Get(3, 2));
-    this->Get(1, 3) = (m.Get(1, 0) * o.Get(0, 3)) + (m.Get(1, 1) * o.Get(1, 3)) + (m.Get(1, 2) * o.Get(2, 3)) + (m.Get(1, 3) * o.Get(3, 3));
+    this->Get(MAT_INDEX(1, 0)) = (m.Get(MAT_INDEX(1, 0)) * o.Get(MAT_INDEX(0, 0))) + (m.Get(MAT_INDEX(1, 1)) * o.Get(MAT_INDEX(1, 0))) + (m.Get(MAT_INDEX(1, 2)) * o.Get(MAT_INDEX(2, 0))) + (m.Get(MAT_INDEX(1, 3)) * o.Get(MAT_INDEX(3, 0)));
+    this->Get(MAT_INDEX(1, 1)) = (m.Get(MAT_INDEX(1, 0)) * o.Get(MAT_INDEX(0, 1))) + (m.Get(MAT_INDEX(1, 1)) * o.Get(MAT_INDEX(1, 1))) + (m.Get(MAT_INDEX(1, 2)) * o.Get(MAT_INDEX(2, 1))) + (m.Get(MAT_INDEX(1, 3)) * o.Get(MAT_INDEX(3, 1)));
+    this->Get(MAT_INDEX(1, 2)) = (m.Get(MAT_INDEX(1, 0)) * o.Get(MAT_INDEX(0, 2))) + (m.Get(MAT_INDEX(1, 1)) * o.Get(MAT_INDEX(1, 2))) + (m.Get(MAT_INDEX(1, 2)) * o.Get(MAT_INDEX(2, 2))) + (m.Get(MAT_INDEX(1, 3)) * o.Get(MAT_INDEX(3, 2)));
+    this->Get(MAT_INDEX(1, 3)) = (m.Get(MAT_INDEX(1, 0)) * o.Get(MAT_INDEX(0, 3))) + (m.Get(MAT_INDEX(1, 1)) * o.Get(MAT_INDEX(1, 3))) + (m.Get(MAT_INDEX(1, 2)) * o.Get(MAT_INDEX(2, 3))) + (m.Get(MAT_INDEX(1, 3)) * o.Get(MAT_INDEX(3, 3)));
 
-    this->Get(2, 0) = (m.Get(2, 0) * o.Get(0, 0)) + (m.Get(2, 1) * o.Get(1, 0)) + (m.Get(2, 2) * o.Get(2, 0)) + (m.Get(2, 3) * o.Get(3, 0));
-    this->Get(2, 1) = (m.Get(2, 0) * o.Get(0, 1)) + (m.Get(2, 1) * o.Get(1, 1)) + (m.Get(2, 2) * o.Get(2, 1)) + (m.Get(2, 3) * o.Get(3, 1));
-    this->Get(2, 2) = (m.Get(2, 0) * o.Get(0, 2)) + (m.Get(2, 1) * o.Get(1, 2)) + (m.Get(2, 2) * o.Get(2, 2)) + (m.Get(2, 3) * o.Get(3, 2));
-    this->Get(2, 3) = (m.Get(2, 0) * o.Get(0, 3)) + (m.Get(2, 1) * o.Get(1, 3)) + (m.Get(2, 2) * o.Get(2, 3)) + (m.Get(2, 3) * o.Get(3, 3));
+    this->Get(MAT_INDEX(2, 0)) = (m.Get(MAT_INDEX(2, 0)) * o.Get(MAT_INDEX(0, 0))) + (m.Get(MAT_INDEX(2, 1)) * o.Get(MAT_INDEX(1, 0))) + (m.Get(MAT_INDEX(2, 2)) * o.Get(MAT_INDEX(2, 0))) + (m.Get(MAT_INDEX(2, 3)) * o.Get(MAT_INDEX(3, 0)));
+    this->Get(MAT_INDEX(2, 1)) = (m.Get(MAT_INDEX(2, 0)) * o.Get(MAT_INDEX(0, 1))) + (m.Get(MAT_INDEX(2, 1)) * o.Get(MAT_INDEX(1, 1))) + (m.Get(MAT_INDEX(2, 2)) * o.Get(MAT_INDEX(2, 1))) + (m.Get(MAT_INDEX(2, 3)) * o.Get(MAT_INDEX(3, 1)));
+    this->Get(MAT_INDEX(2, 2)) = (m.Get(MAT_INDEX(2, 0)) * o.Get(MAT_INDEX(0, 2))) + (m.Get(MAT_INDEX(2, 1)) * o.Get(MAT_INDEX(1, 2))) + (m.Get(MAT_INDEX(2, 2)) * o.Get(MAT_INDEX(2, 2))) + (m.Get(MAT_INDEX(2, 3)) * o.Get(MAT_INDEX(3, 2)));
+    this->Get(MAT_INDEX(2, 3)) = (m.Get(MAT_INDEX(2, 0)) * o.Get(MAT_INDEX(0, 3))) + (m.Get(MAT_INDEX(2, 1)) * o.Get(MAT_INDEX(1, 3))) + (m.Get(MAT_INDEX(2, 2)) * o.Get(MAT_INDEX(2, 3))) + (m.Get(MAT_INDEX(2, 3)) * o.Get(MAT_INDEX(3, 3)));
 
-    this->Get(3, 0) = (m.Get(3, 0) * o.Get(0, 0)) + (m.Get(3, 1) * o.Get(1, 0)) + (m.Get(3, 2) * o.Get(2, 0)) + (m.Get(3, 3) * o.Get(3, 0));
-    this->Get(3, 1) = (m.Get(3, 0) * o.Get(0, 1)) + (m.Get(3, 1) * o.Get(1, 1)) + (m.Get(3, 2) * o.Get(2, 1)) + (m.Get(3, 3) * o.Get(3, 1));
-    this->Get(3, 2) = (m.Get(3, 0) * o.Get(0, 2)) + (m.Get(3, 1) * o.Get(1, 2)) + (m.Get(3, 2) * o.Get(2, 2)) + (m.Get(3, 3) * o.Get(3, 2));
-    this->Get(3, 3) = (m.Get(3, 0) * o.Get(0, 3)) + (m.Get(3, 1) * o.Get(1, 3)) + (m.Get(3, 2) * o.Get(2, 3)) + (m.Get(3, 3) * o.Get(3, 3));
+    this->Get(MAT_INDEX(3, 0)) = (m.Get(MAT_INDEX(3, 0)) * o.Get(MAT_INDEX(0, 0))) + (m.Get(MAT_INDEX(3, 1)) * o.Get(MAT_INDEX(1, 0))) + (m.Get(MAT_INDEX(3, 2)) * o.Get(MAT_INDEX(2, 0))) + (m.Get(MAT_INDEX(3, 3)) * o.Get(MAT_INDEX(3, 0)));
+    this->Get(MAT_INDEX(3, 1)) = (m.Get(MAT_INDEX(3, 0)) * o.Get(MAT_INDEX(0, 1))) + (m.Get(MAT_INDEX(3, 1)) * o.Get(MAT_INDEX(1, 1))) + (m.Get(MAT_INDEX(3, 2)) * o.Get(MAT_INDEX(2, 1))) + (m.Get(MAT_INDEX(3, 3)) * o.Get(MAT_INDEX(3, 1)));
+    this->Get(MAT_INDEX(3, 2)) = (m.Get(MAT_INDEX(3, 0)) * o.Get(MAT_INDEX(0, 2))) + (m.Get(MAT_INDEX(3, 1)) * o.Get(MAT_INDEX(1, 2))) + (m.Get(MAT_INDEX(3, 2)) * o.Get(MAT_INDEX(2, 2))) + (m.Get(MAT_INDEX(3, 3)) * o.Get(MAT_INDEX(3, 2)));
+    this->Get(MAT_INDEX(3, 3)) = (m.Get(MAT_INDEX(3, 0)) * o.Get(MAT_INDEX(0, 3))) + (m.Get(MAT_INDEX(3, 1)) * o.Get(MAT_INDEX(1, 3))) + (m.Get(MAT_INDEX(3, 2)) * o.Get(MAT_INDEX(2, 3))) + (m.Get(MAT_INDEX(3, 3)) * o.Get(MAT_INDEX(3, 3)));
 
     return;
   }
@@ -832,7 +836,4 @@ namespace Leonetienne::GCrypt {
   template class Basic_Block<std::uint32_t>;
   template class Basic_Block<std::uint16_t>;
 }
-
-
-#undef MAT_INDEX
 
