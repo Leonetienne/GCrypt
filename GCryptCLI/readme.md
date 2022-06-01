@@ -103,9 +103,8 @@ hello, world!
 ```
 
 #### What about not using hex?
-> :warning: Custom bases are super imperformant. 
-> Encrypting all text in main.cpp took about two seconds.
-> Outputting it in base-64 took just over ONE MINUTE. In base-2 over SEVEN MINUTES. The general trend seems to be, the larger the base, the better it performs.
+> :warning: Custom bases are super imperformant. Please only use them for text-based input...
+> The larger the base, the exponentially longer it takes to recode.
 
 ```sh
 $ gcrypt -e --keyask --intext "hello, world!" --iobase-2
@@ -132,44 +131,34 @@ $ gcrypt -e --key "secretpassword" --intext "hello, world!"
 ```sh
 $ gcrypt -e --keyfile "dog.jpg" --intext "hello, world!"
 ```
+> :warning: Some operating systems will log cli arguments! One might find your keyfile!
 
 #### Creating keyfiles
 ```sh
 $ gcrypt --generate-key --ofile "my-keyfile.bin"
 ```
-This will generate a random 512-bit keyfile from hardware events
-> :warning: Some operating systems will log cli arguments! One might find your keyfile!
+This will generate a random 512-bit keyfile from hardware events and other random sources, if available.  
+To see how this randomness gets sourced, see [std::random_device](https://en.cppreference.com/w/cpp/numeric/random/random_device).
 
 #### Encrypting files
 ```sh
-$ gcrypt -e --keyask --infile "cat.jpg"
+$ gcrypt -e --keyask --infile "cat.jpg" --ofile "cat.jpg.crypt"
 ```
 File `cat.jpg.crypt` will be created.
 
-#### Encrypting files to a target file name
-```sh
-$ gcrypt -e --keyask --infile "cat.jpg" -o "encrypted_cat.jpg"
-```
-File `encrypted_cat.jpg` will be created.
-
 #### Decrypting files
 ```sh
-$ gcrypt -d --keyask --infile "cat.jpg.crypt"
+$ gcrypt -d --keyask --infile "cat.jpg.crypt" --ofile "decrypted_cat.jpg"
 ```
-File `cat.jpg.crypt.plain` will be created. Its contents match `cat.jpg`  
+File `decrypted_cat.jpg` will be created. You can now open it again. Its contents match `cat.jpg`. 
 > :warning: Since this is a block cipher, decrypted files may be tailpadded with a few nullbytes.
-
-#### Decrypting files to a target file name
-```sh
-$ gcrypt -d --keyask --infile "cat.jpg.crypt" -o "decrypted_cat.jpg"
-```
-File `decrypted_cat.jpg` will be created. You can now open it again.
 
 #### Encrypting large files takes time. How's the progress?
 ```sh
-$ gcrypt -e --keyask --infile "cat.jpg" --progress
+$ gcrypt -e --keyask --infile "cat.jpg" --puffer-input --progress
 ```
-Something along the lines of `Encrypting... (Block 200 / 1148 - 17.4216%)` will be regularly, but not too often, printed to stdout.
+Something along the lines of `Encrypting... (Block 200 / 1148 - 17.4216%)` will be regularly, but not too often, printed to stderr.
+Obviously, to print progress, we have to know the size of the input. Hence, it has to be puffered.
 
 #### Any cipher can also compute hashsums
 ```sh
@@ -179,15 +168,16 @@ a96f42c9d97e46b9e1ed7de5182770170d4ef9b7b8264f3fbd89b38dc60c1fe06232653f58560133
 $ gcrypt -h --infile "cat.jpg"
 fe6bdfb6ec39771c4fdcdc40e52397bcd67fbfef0ad5a15ebbd8b9e4c2a815848b3984eda5ef6f727e9e420c23500c90c42ab80ac5659048be8969357741e3e5
 ```
-The hashsum will always be of size BLOCK_SIZE. That is 512.  
+The hashsum will always be of size BLOCK_SIZE. That is 512 bits.  
 
 #### What version am i running?
-Depending on wether you want to know the GCrypt version or the CLI's version,
+Depending on wether you want to know the GCryptLib version or the CLI's version,
 use either `--cli-version` or `--lib-version`.
-It will print out a floating point number.
+It will print out a floating point number.  
+You can see both in the `--help`-page.
 
-#### I want to stream the output of file en/decryption.
-// Easily! If you do not supply any output or input, stdout and stdin will be used instead!
+#### Streaming the output of file en/decryption.
+Easily! If you do not supply any output or input, stdout and stdin will be used instead!
 ```sh
 # mpv is a media player, as an example
 $ gcrypt -d --key "123" --infile "music.mp3.crypt" | mpv -
