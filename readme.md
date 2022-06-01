@@ -146,7 +146,7 @@ future output.
 #### Single-block diffusion
 `"Hello :3"` in binary, and it's ciphertext:
 
-!["Hello :3" in binary](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-singleblock-diffusion-input.bmp.png)
+![Hello :3 in binary](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-singleblock-diffusion-input.bmp.png)
 &nbsp;&nbsp;&nbsp;
 ![Ciphertext 1](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-singleblock-diffusion-output.bmp.png)
 
