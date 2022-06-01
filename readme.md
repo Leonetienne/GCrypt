@@ -27,7 +27,7 @@ It's pretty ghetto, you know?
 
 ### I am not kidding, don't use this for critical stuff! Homebrew ciphers tend to be shit!
 Especially mine!🗡️  
-Even assumed it's a good cipher, it's implementation leaves a lot to be desired in terms of being cryptographically secure. The whole leaving partial keys in ram- thingy...
+Even assumed it's a good cipher, it's implementation leaves a lot to be desired in terms of being cryptographically secure.
 
 ## How do I use this?
 ### *"I don't care about the library. Just let me use it from the command line!"*
