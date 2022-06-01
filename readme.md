@@ -2,6 +2,9 @@
 *(GhettoCrypt), because frankly I have no idea what the fuck I'm doing*  
 <sub>*Please don't use this for anything critical*</sub>
 
+## [Documentation](https://gcrypt.rtfm.leonetienne.de/)
+  
+
 ## What the hell is this?
 An educational project on implementing a block cipher using a feistel network.  
 This block cipher employs a few modes of operation. Read more about them [here](#modes-of-operation).
@@ -101,6 +104,8 @@ If you want to do more complex stuff, use the cipher-class [`GCrypt::GCipher`](h
 This way you can cipher on bitlevel. Examples on how to do this are in [GWrapper.cpp](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/src/GWrapper.cpp).
 This way you could, for example, decrypt an ecrypted file directly into memory.
 Without saying, this is more advanced and not as-easy as the methods supplied in the wrapper.
+
+Want more documentation? See the [doxygen page](https://gcrypt.rtfm.leonetienne.de/).
 
 ---
 
