@@ -113,7 +113,7 @@ Without saying, this is more advanced and not as-easy as the methods supplied in
 
 ### Password to key
 How does GCrypt transform a password to a key?..
-Well, it uses the included hash function [GHash](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/feature/relaunch/GCryptLib/include/GCrypt/GHash.h).
+Well, it uses the included hash function [GHash](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/include/GCrypt/GHash.h).
 
 ### Hashing with GHash
 GHash is a streaming hash function based on the GCipher.  
@@ -128,7 +128,7 @@ GHash also supports a do-it-all wrapper method that takes a Flexblock (A block o
 This wrapper function adds an additional block including the length of the input. This wrapper function is used to transform Passwords to Keys.
 
 ### GPrng...?
-Whilst we're at it, why not implement a pseudo-random number generator based on GHash aswell. So here it is, [GPrng](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/feature/relaunch/GCryptLib/include/GCrypt/GPrng.h).  
+Whilst we're at it, why not implement a pseudo-random number generator based on GHash aswell. So here it is, [GPrng](https://gitea.leonetienne.de/leonetienne/GCrypt/src/branch/master/GCryptLib/include/GCrypt/GPrng.h).  
 GPrng is really nothing special. I just wanted to implement it, mainly to visualize the GCiphers entropy.
 
 GPrng basically does the following: It creates a GHash instance, which initially digests the prng's seed. This produces a hash result, which is one block in size.
@@ -140,30 +140,30 @@ future output.
 #### Single-block diffusion
 `"Hello :3"` in binary, and it's ciphertext:
 
-!["Hello :3" in binary](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-singleblock-diffusion-input.bmp.png)
+!["Hello :3" in binary](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-singleblock-diffusion-input.bmp.png)
 &nbsp;&nbsp;&nbsp;
-![Ciphertext 1](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-singleblock-diffusion-output.bmp.png)
+![Ciphertext 1](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-singleblock-diffusion-output.bmp.png)
 
 Now, let's flip a single bit in the input:  
 
 One bit flipped, and again the corresponding ciphertext:  
-![One bit flipped](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-singleblock-diffusion-input-flip.bmp.png)
+![One bit flipped](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-singleblock-diffusion-input-flip.bmp.png)
 &nbsp;&nbsp;&nbsp;
-![Ciphertext for flipped bit](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-singleblock-diffusion-output-flip.bmp.png)
+![Ciphertext for flipped bit](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-singleblock-diffusion-output-flip.bmp.png)
 
 Let's gif them together, to better see the difference:  
-![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-singleblock-diffusion-input.gif)
+![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-singleblock-diffusion-input.gif)
 &nbsp;&nbsp;&nbsp;
-![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-singleblock-diffusion-output.gif)
+![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-singleblock-diffusion-output.gif)
 
 As shown, flipping even a single bit, affects the entire ciphertext.
 
 #### What about input longer than a single block?
 
 Input, and ciphertext:  
-![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-multiblock-diffusion-input.gif)
+![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-multiblock-diffusion-input.gif)
 &nbsp;&nbsp;&nbsp;
-![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-multiblock-diffusion-output.gif)
+![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-multiblock-diffusion-output.gif)
 
 Notice how the ciphertext doesn't change until the block containing the bitflip is reached? This is a limitation of cipher block chaining.
 
@@ -171,11 +171,11 @@ Notice how the ciphertext doesn't change until the block containing the bitflip 
 How non-transparent is the cipher with extreme inputs? Even with a super problematic key?:  
 
 Input, key, and ciphertext:  
-![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-extreme-input-diffusion-input.gif)
+![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-extreme-input-diffusion-input.gif)
 &nbsp;&nbsp;&nbsp;
-![Key](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-extreme-input-diffusion-key.bmp.png)
+![Key](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-extreme-input-diffusion-key.bmp.png)
 &nbsp;&nbsp;&nbsp;
-![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-extreme-input-diffusion-output.gif)
+![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-extreme-input-diffusion-output.gif)
 
 Notice how even cleartexts that are completely uniform, with a key that is almost just zeores, will still produce ambiguous ciphertexts.
 
@@ -183,18 +183,18 @@ Notice how even cleartexts that are completely uniform, with a key that is almos
 Check it out, here are the distributions of a few different getter-methods, some in black/white, some in grayscale, some in color.
 
 Blackwhite - GetBit(), Grayscale - GetRandom<T>(), and Grayscale - operator():  
-![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-prng-distribution-blackwhite.bmp.png)
+![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-prng-distribution-blackwhite.bmp.png)
 &nbsp;&nbsp;&nbsp;
-![Key](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-prng-distribution-getrandom-grayscale.bmp.png)
+![Key](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-prng-distribution-getrandom-grayscale.bmp.png)
 &nbsp;&nbsp;&nbsp;
-![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-prng-distribution-operator-grayscale.bmp.png)
+![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-prng-distribution-operator-grayscale.bmp.png)
   
 Color - GetRandom<T>(), Color - operator(), and Color - GetBlock():  
-![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-prng-distribution-getrandom-color.bmp.png)
+![Input](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-prng-distribution-getrandom-color.bmp.png)
 &nbsp;&nbsp;&nbsp;
-![Key](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-prng-distribution-operator-color.bmp.png)
+![Key](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-prng-distribution-operator-color.bmp.png)
 &nbsp;&nbsp;&nbsp;
-![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/feature/relaunch/GCryptLib/visualizations/visualize-prng-distribution-getblock-color.bmp.png)
+![Ciphertext](https://gitea.leonetienne.de/leonetienne/GCrypt/raw/branch/master/GCryptLib/visualizations/visualize-prng-distribution-getblock-color.bmp.png)
 
 ## Noteworthy:
 * This is no fixed algorithm. Newer versions may very well be unable to decrypt ciphertexts encrypted with earlier versions.
