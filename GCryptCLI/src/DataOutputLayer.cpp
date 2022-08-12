@@ -65,13 +65,13 @@ void DataOutputLayer::WriteBlock() {
   }
 
   // Check if we have any block to write
-  // and if we should (output-puffering)
+  // and if we should (output-buffering)
   // Basically: only output if we have anything to output, and
-  //   if --puffer-output is given, only output once we have reachedEof.
+  //   if --buffer-output is given, only output once we have reachedEof.
   if (
       (blocks.size() > 0) &&
       (
-        (!CommandlineInterface::Get().HasParam("--puffer-output")) ||
+        (!CommandlineInterface::Get().HasParam("--buffer-output")) ||
         (reachedEof)
       )
   ) {

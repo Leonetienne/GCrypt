@@ -102,11 +102,11 @@ void CommandlineInterface::Init(int argc, const char* const* argv) {
   nupp.RegisterConstraint("--cli-version", ParamConstraint(true, DATA_TYPE::VOID, {}, false, {}));
   nupp.RegisterAbbreviation("-v", "--cli-version");
 
-  nupp.RegisterDescription("--puffer-input", "Will read the entire input before beginning any digestion.");
-  nupp.RegisterConstraint("--puffer-input", ParamConstraint(true, DATA_TYPE::VOID, {}, false, {}));
+  nupp.RegisterDescription("--buffer-input", "Will read the entire input before beginning any digestion.");
+  nupp.RegisterConstraint("--buffer-input", ParamConstraint(true, DATA_TYPE::VOID, {}, false, {}));
 
-  nupp.RegisterDescription("--puffer-output", "Will digest the entire data before initiating any output.");
-  nupp.RegisterConstraint("--puffer-output", ParamConstraint(true, DATA_TYPE::VOID, {}, false, {}));
+  nupp.RegisterDescription("--buffer-output", "Will digest the entire data before initiating any output.");
+  nupp.RegisterConstraint("--buffer-output", ParamConstraint(true, DATA_TYPE::VOID, {}, false, {}));
 
   nupp.RegisterDescription("--no-newline", "Don't postfix stdout output with a newline");
   nupp.RegisterConstraint("--no-newline", ParamConstraint(true, DATA_TYPE::VOID, {}, false, {}));
@@ -173,10 +173,10 @@ void CommandlineInterface::SpecialCompatibilityChecking() {
 
   if (
     (nupp.HasParam("--progress")) &&
-    (!nupp.HasParam("--puffer-input"))
+    (!nupp.HasParam("--buffer-input"))
 
   ) {
-    CrashWithMsg("--progress requires --puffer-input to work!");
+    CrashWithMsg("--progress requires --buffer-input to work!");
   }
 
   return;

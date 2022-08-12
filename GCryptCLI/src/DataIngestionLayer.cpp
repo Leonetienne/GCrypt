@@ -323,16 +323,16 @@ bool DataIngestionLayer::ReachedEOF() {
 }
 
 bool DataIngestionLayer::IsBlockReady() {
-  // We're not ready, if we haven't reached EOF, if we should puffer
+  // We're not ready, if we haven't reached EOF, if we should buffer
   // the input.
   if (
-      (CommandlineInterface::Get().HasParam("--puffer-input")) &&
+      (CommandlineInterface::Get().HasParam("--buffer-input")) &&
       (!reachedEof)
   ) {
     return false;
   }
 
-  // If we're not puffering, just return whether or not
+  // If we're not buffering, just return whether or not
   // we have any blocks...
   return blocks.size() > 0;
 }
