@@ -302,8 +302,8 @@ TEST_CASE(__FILE__"/operator-&=", "[Block]") {
 // Tests that subtraction undoes addition, and vica versa
 TEST_CASE(__FILE__"/subtraction-undoes-addition", "[Block]") {
   // Setup
-  const Block a = Key::FromPassword("Halleluja");
-  const Block b = Key::FromPassword("Ananas");
+  const Block a = Key::Random();
+  const Block b = Key::Random();
 
   // Exercise
   const Block a_plus_b = a + b;
@@ -441,7 +441,7 @@ TEST_CASE(__FILE__"/shift-rows-up", "[Block]") {
 // Tests that ShiftRowsUpInplace() does the exact same thing as ShiftRowsUp()
 TEST_CASE(__FILE__"/shift-rows-up-same-as-inplace", "[Block]") {
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
   const Block initial_a = a;
 
   // Exercise and verify
@@ -475,7 +475,7 @@ TEST_CASE(__FILE__"/shift-rows-down", "[Block]") {
 // Tests that ShiftRowsDownInplace() does the exact same thing as ShiftRowsDown()
 TEST_CASE(__FILE__"/shift-rows-down-same-as-inplace", "[Block]") {
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
   const Block initial_a = a;
 
   // Exercise and verify
@@ -509,7 +509,7 @@ TEST_CASE(__FILE__"/shift-columns-left", "[Block]") {
 // Tests that ShiftColumnsLeftInplace()() does the exact same thing as ShiftColumnsLeft()
 TEST_CASE(__FILE__"/shift-columns-left-same-as-inplace", "[Block]") {
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
   const Block initial_a = a;
 
   // Exercise and verify
@@ -543,7 +543,7 @@ TEST_CASE(__FILE__"/shift-columns-right", "[Block]") {
 // Tests that ShiftColumnsRightInplace()() does the exact same thing as ShiftColumnsRight()
 TEST_CASE(__FILE__"/shift-columns-right-same-as-inplace", "[Block]") {
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
   const Block initial_a = a;
 
   // Exercise and verify
@@ -576,7 +576,7 @@ TEST_CASE(__FILE__"/shift-cells-left", "[Block]") {
 // Tests that ShiftCellsLeftInplace()() does the exact same thing as ShiftCellsLeft()
 TEST_CASE(__FILE__"/shift-cells-left-same-as-inplace", "[Block]") {
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
   const Block initial_a = a;
 
   // Exercise and verify
@@ -609,7 +609,7 @@ TEST_CASE(__FILE__"/shift-cells-right", "[Block]") {
 // Tests that ShiftCellsRightInplace()() does the exact same thing as ShiftCellsRight()
 TEST_CASE(__FILE__"/shift-cells-right-same-as-inplace", "[Block]") {
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
   const Block initial_a = a;
 
   // Exercise and verify
@@ -620,7 +620,7 @@ TEST_CASE(__FILE__"/shift-cells-right-same-as-inplace", "[Block]") {
 // Tests that shifting down undoes shifting up, and vica versa
 TEST_CASE(__FILE__"/shift-down-undoes-shift-up", "[Block]") {
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
   const Block initial_a = a;
 
   // Exercise
@@ -634,7 +634,7 @@ TEST_CASE(__FILE__"/shift-down-undoes-shift-up", "[Block]") {
 // Tests that shifting left undoes shifting right, and vica versa
 TEST_CASE(__FILE__"/shift-left-undoes-shift-right", "[Block]") {
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
   const Block initial_a = a;
 
   // Exercise
@@ -648,7 +648,7 @@ TEST_CASE(__FILE__"/shift-left-undoes-shift-right", "[Block]") {
 // Tests that shifting cells left undoes shifting cells right, and vica versa
 TEST_CASE(__FILE__"/cellshift-left-undoes-cellshift-right", "[Block]") {
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
   const Block initial_a = a;
 
   // Exercise
@@ -662,7 +662,7 @@ TEST_CASE(__FILE__"/cellshift-left-undoes-cellshift-right", "[Block]") {
 // Tests that multiple, combined shifts and additions can be undone
 TEST_CASE(__FILE__"/multiple-combined-shifts-and-additions-can-be-undone", "[Block]") {
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
   Block key = Key::FromPassword("Papaya");
 
   const Block initial_a = a;
@@ -689,23 +689,42 @@ TEST_CASE(__FILE__"/multiple-combined-shifts-and-additions-can-be-undone", "[Blo
 
 // Tests that the get-bit method works
 TEST_CASE(__FILE__"/get-bit", "[Block]") {
-  // Setup
-  Block a = Key::FromPassword("Halleluja");
+  for (std::size_t i = 0; i < 100; i++) {
+    // Setup
+    Block a = Key::Random();
 
-  // Exercise
-  std::stringstream ss;
-  for (std::size_t i = 0; i < 512; i++) {
-    ss << a.GetBit(i);
+    // Exercise
+    std::stringstream ss;
+    for (std::size_t i = 0; i < 512; i++) {
+      ss << a.GetBit(i);
+    }
+
+    // Verify
+    REQUIRE(ss.str() == a.ToBinaryString());
   }
+}
 
-  // Verify
-  REQUIRE(ss.str() == a.ToBinaryString());
+// Tests that the set-bit method works
+TEST_CASE(__FILE__"/set-bit", "[Block]") {
+  for (std::size_t i = 0; i < 100; i++) {
+    // Setup
+    const std::string a_bits = Key::Random().ToBinaryString();
+
+    // Exercise
+    Block a;
+    for (std::size_t i = 0; i < 512; i++) {
+      a.SetBit(i, a_bits[i] == '1');
+    }
+
+    // Verify
+    REQUIRE(a_bits == a.ToBinaryString());
+  }
 }
 
 // Tests that the set-bit to-false method works
 TEST_CASE(__FILE__"/set-bit-to-false", "[Block]") {
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
 
   // Exercise
   a.SetBit(5, 0);
@@ -723,7 +742,7 @@ TEST_CASE(__FILE__"/set-bit-to-false", "[Block]") {
 // Tests that the set-bit to-true method works
 TEST_CASE(__FILE__"/set-bit-to-true", "[Block]") {
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
 
   // Exercise
   a.SetBit(5, 1);
@@ -741,7 +760,7 @@ TEST_CASE(__FILE__"/set-bit-to-true", "[Block]") {
 // Tests that the flip-bit method works
 TEST_CASE(__FILE__"/flip-bit", "[Block]") {
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
 
   std::string compare = a.ToBinaryString();
   compare[5]   = compare[5]   == '1' ? '0' : '1';
@@ -863,7 +882,7 @@ TEST_CASE(__FILE__"/bitshift-right-inplace", "[Block]") {
 TEST_CASE(__FILE__"/bitshifting-undoes-itself", "[Block]") {
 
   // Setup
-  Block a = Key::FromPassword("Halleluja");
+  Block a = Key::Random();
 
   const Block initial_a = a;
 
