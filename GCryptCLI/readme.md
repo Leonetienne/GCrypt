@@ -41,7 +41,7 @@ THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS T
 
 --progress-interval   INT   default=['1000']   Print digestion progress reports every these many data blocks.
 
---puffer-input   VOID   Will read the entire input before beginning any digestion.
+--buffer-input   VOID   Will read the entire input before beginning any digestion.
 
 --progress   -p   VOID   Print digestion progress to stderr. May be advisable for large files, as the cipher is rather slow.
 
@@ -53,7 +53,7 @@ THIS IS EXPERIMENTAL SOFTWARE AND MUST BE CONSIDERED INSECURE. DO NOT USE THIS T
 
 --iobase-10   VOID   incompatibilities=[--iobase-bytes, --iobase-2, --iobase-8, --iobase-16, --iobase-64, --iobase-uwu, --iobase-ugh]   Interpret and format ciphertexts in base10
 
---puffer-output   VOID   Will digest the entire data before initiating any output.
+--buffer-output   VOID   Will digest the entire data before initiating any output.
 
 --lib-version   VOID   Will supply the version of GCryptLib used.
 
@@ -154,10 +154,10 @@ File `decrypted_cat.jpg` will be created. You can now open it again. Its content
 
 #### Encrypting large files takes time. How's the progress?
 ```sh
-$ gcrypt -e --keyask --infile "cat.jpg" --puffer-input --progress
+$ gcrypt -e --keyask --infile "cat.jpg" --buffer-input --progress
 ```
 Something along the lines of `Encrypting... (Block 200 / 1148 - 17.4216%)` will be regularly, but not too often, printed to stderr.
-Obviously, to print progress, we have to know the size of the input. Hence, it has to be puffered.
+Obviously, to print progress, we have to know the size of the input. Hence, it has to be buffered.
 
 #### Any cipher can also compute hashsums
 ```sh
@@ -186,8 +186,8 @@ $ gcrypt -d --key "123" --infile "music.mp3.crypt" | mpv -
 By default, gcrypt will read a block, digest it, and output the result immediately.  
 Sometimes you don't want that. Use these flags, respectively:
 ```
---puffer-input # Reads all input to memory before beginning to digest it
---puffer-output # Digests all input before beginning to write any
+--buffer-input # Reads all input to memory before beginning to digest it
+--buffer-output # Digests all input before beginning to write any
 ```
 
 ## Esoteric data formats
