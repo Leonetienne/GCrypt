@@ -1,4 +1,6 @@
-﻿# GCrypt
+﻿[![Build Status](https://drone.leonetienne.de/api/badges/leonetienne/GCrypt/status.svg)](https://drone.leonetienne.de/leonetienne/GCrypt)
+
+# GCrypt
 *(GhettoCrypt), because frankly I have no idea what the fuck I'm doing*  
 <sub>*Please don't use this for anything critical*</sub>
 
