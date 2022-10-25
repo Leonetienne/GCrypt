@@ -1,0 +1,12 @@
+kind: pipeline
+type: kubernetes
+name: cicd-pipeline
+
+steps:
+    - name: all-tmp
+      image: ubuntu
+      commands:
+        - cd "GCryptLib/doxygen"
+        - make
+        - eval "$(ssh-agent -s)"
+        - echo $ssh-pub
