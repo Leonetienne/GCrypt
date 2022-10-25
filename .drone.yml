@@ -12,6 +12,7 @@ steps:
           install
           make
           doxygen
+          graphviz
           -y
         - cd "GCryptLib/doxygen"
         - make
