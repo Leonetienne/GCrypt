@@ -1,6 +1,6 @@
 all:
 	# Copy all but the header of the readme here
-	tail ../../readme.md -n +7 > index.md
+	tail ../../readme.md -n +9 > index.md
 	#
 	# Run doxygen
 	doxygen doxyfig
