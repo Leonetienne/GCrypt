@@ -1,15 +1,17 @@
 [submodule "StringTools"]
 	path = StringTools
-	url = https://gitea.leonetienne.de/leonetienne/StringTools.git
+	url = https://code.ze.mawtrixx.net/leonetienne/StringTools.git
 [submodule "Hazelnupp"]
 	path = Hazelnupp
-	url = https://gitea.leonetienne.de/leonetienne/Hazelnupp.git
+	url = https://code.ze.mawtrixx.net/leonetienne/Hazelnupp.git
 [submodule "GeneralUtility"]
 	path = GeneralUtility
-	url = https://gitea.leonetienne.de/leonetienne/GeneralUtility.git
+	url = https://code.ze.mawtrixx.net/leonetienne/GeneralUtility.git
 [submodule "GCryptLib/exec/Eule"]
 	path = GCryptLib/exec/Eule
-	url = https://gitea.leonetienne.de/leonetienne/Eule.git
+	url = https://code.ze.mawtrixx.net/leonetienne/Eule.git
 [submodule "GCryptLib/exec/BmpPP"]
 	path = GCryptLib/exec/BmpPP
-	url = https://gitea.leonetienne.de/leonetienne/BmpPP.git
+	url = https://code.ze.mawtrixx.net/leonetienne/BmpPP.git
+[submodule "BmpPP"]
+	url = https://code.ze.mawtrixx.net/leonetienne/BmpPP.git
