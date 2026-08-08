@@ -1,24 +1,22 @@
 ﻿[![Build Status](https://drone.leonetienne.de/api/badges/leonetienne/GCrypt/status.svg)](https://drone.leonetienne.de/leonetienne/GCrypt)
 
 # GCrypt
-*(GhettoCrypt), because frankly I have no idea what the fuck I'm doing*  
+*GCrypt (GNU Crypt) — an educational project for learning how block ciphers work*  
 <sub>*Please don't use this for anything critical*</sub>
+
+> **Note:** This project is unrelated to [libgcrypt](https://www.gnupg.org/software/libgcrypt/index.html), the cryptographic library used by GnuPG. Any naming similarity is coincidental — "GCrypt" here just stands for "GNU Crypt".
 
 ## [Documentation](https://gcrypt.rtfm.leonetienne.de/)
   
 
-## What the hell is this?
+## What is this?
 An educational project on implementing a block cipher using a feistel network.  
 This block cipher employs a few modes of operation. Read more about them [here](#modes-of-operation).
 
 ## Features
-* It has very easy syntax
-* It's slow
-* It's probably super insecure
-* But the syntax is pythonlike easy🙇
+* Very easy to use
 * 512-bit keys
-
-It's pretty ghetto, you know?
+* Not performance-optimized, and not audited for security
 
 ## What are the actual advantages?
 * It's two files to import into your project
@@ -30,9 +28,8 @@ It's pretty ghetto, you know?
 * For data obfuscation
 * If your only other option would be no encryption at all
 
-### I am not kidding, don't use this for critical stuff! Homebrew ciphers tend to be shit!
-Especially mine!🗡️  
-Even assumed it's a good cipher, it's implementation leaves a lot to be desired in terms of being cryptographically secure.
+### Seriously, don't use this for anything critical. Homebrew ciphers are rarely secure — this one included.
+Even assuming it's a good cipher, its implementation leaves a lot to be desired in terms of being cryptographically secure.
 
 ## How do I use this?
 ### *"I don't care about the library. Just let me use it from the command line!"*
